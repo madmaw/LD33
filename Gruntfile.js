@@ -17,8 +17,9 @@
             }
         },
         clean: {
-            all: ["build", "dist", "dist.zip"]
-        },
+            all: ["build", "dist", "dist.zip"],
+            dist: ["dist"]
+        },  
         uglify: {
             options: {
                 mangle: false,
@@ -90,7 +91,7 @@
 
     // Default task(s).
     grunt.registerTask('reset', ['clean']);
-    grunt.registerTask('dist', ['typescript', 'uglify', 'copy', 'replace', 'zip']);
+    grunt.registerTask('dist', ['typescript', 'uglify', 'copy', 'replace', 'zip', 'clean:dist']);
     grunt.registerTask('default', ['typescript']);
 
 };
