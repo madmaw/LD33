@@ -22,12 +22,13 @@
         },
         uglify: {
             options: {
-                mangle: false,
-                compress: false
+                mangle: true,
+                compress: true
             },
             dist: {
                 files: {
-                    'dist/out.min.js': ['build/out.js']
+                    'dist/out.min.js': ['build/out.js'],
+                    'dist/lib/analytics.min.js': ['lib/analytics.js']
                 }
             }
         },
