@@ -27,8 +27,29 @@
             },
             dist: {
                 files: {
-                    'dist/out.min.js': ['build/out.js'],
-                    'dist/lib/analytics.min.js': ['lib/analytics.js']
+                    'dist/out.min.js': ['build/out.js']
+                }
+            }
+        },
+        htmlmin: {                                     
+            options: {
+                removeComments: true,
+                collapseWhitespace: true,
+                minifyJS: true,
+                removeAttributeQuotes: true
+            },
+            dist: {
+                files: {                               
+                    'dist/index.html': 'index.html'
+                }
+            }
+        },
+        cssmin: {
+            options: {
+            },
+            dist: {
+                files: {
+                    'dist/app.css': ['app.css']
                 }
             }
         },
@@ -36,9 +57,7 @@
             dist: {
                 files: [
                     { expand: true, src: ['lib/*.min.js'], dest: 'dist/' },
-                    { expand: true, src: ['res/**/*'], dest: 'dist/' },
-                    { expand: true, src: ['*.css'], dest: 'dist/' },
-                    { expand: true, src: ['*.html'], dest: 'dist/' }
+                    { expand: true, src: ['res/**/*'], dest: 'dist/' }
                 ]
             }
         },
@@ -80,6 +99,10 @@
     grunt.loadNpmTasks('grunt-contrib-clean');
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    // load the plugin that provides the htmlmin task
+    grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    // load the plugin that provides the cssmin task
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     // Load the plugin that provides the "TS" task.
     grunt.loadNpmTasks('grunt-typescript');
     // zip
@@ -91,7 +114,8 @@
 
     // Default task(s).
     grunt.registerTask('reset', ['clean:all']);
-    grunt.registerTask('dist', ['typescript', 'uglify', 'copy', 'replace', 'zip', 'clean:dist']);
+    grunt.registerTask('dist_', ['typescript', 'uglify', 'htmlmin', 'cssmin', 'copy', 'replace', 'zip']);
+    grunt.registerTask('dist', ['dist_', 'clean:dist']);
     grunt.registerTask('default', ['typescript']);
 
 };
