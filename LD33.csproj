@@ -30,6 +30,25 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\main\ts\app.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\AbstractState.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\AbstractUpdatingState.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractEntity.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractPolarEntity.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Collision.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\EntityHolder.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\PlayerEntity.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\PlayerEntityTarget.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\IEntity.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\GroupId.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\IEntityRenderer.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\IMotion.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\LevelState.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Motion\SimpleMotion.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\PolarBounds.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\IState.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\IStateListener.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\PolarEdge.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\PathEntityRenderer.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="package.json" />
