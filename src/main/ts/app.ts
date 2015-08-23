@@ -40,7 +40,7 @@ window.onload = () => {
     var skyscraperLevelStateFactory = new Poust.Level.Factory.SkyscraperLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
 
     var levelStateFactories: { [_: string]: Poust.IStateFactory } = {};
-    levelStateFactories[level1] = concentricLevelStateFactory.createStateFactory(level2, 0, 10, 20, 70, 300, 5);
+    levelStateFactories[level1] = concentricLevelStateFactory.createStateFactory(level2, 1, 10, 20, 70, 300, 5);
     levelStateFactories[level2] = skyscraperLevelStateFactory.createStateFactory(level1, 1, 8, 20, 100, 10, 300);
 
     var delegatingLevelStateFactory = (new Poust.Level.Factory.DelegatingLevelStateFactory(levelStateFactories, level1)).createStateFactory();

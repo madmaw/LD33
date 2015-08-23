@@ -116,7 +116,7 @@
 
     // Default task(s).
     grunt.registerTask('reset', ['clean:all']);
-    grunt.registerTask('dist_', ['typescript', 'uglify', 'htmlmin', 'cssmin', 'copy', 'replace', 'zip']);
+    grunt.registerTask('dist_', ['ts', 'uglify', 'htmlmin', 'cssmin', 'copy', 'replace', 'zip']);
     grunt.registerTask('dist', ['dist_', 'clean:dist']);
     grunt.registerTask('default', ['ts']);
 
