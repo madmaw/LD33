@@ -5,8 +5,10 @@
         public _velocityRPX: number;
         public _velocityAPX: number;
         private _anchorRight: boolean;
+        private _widthPx: number;
+        private _heightPx: number;
 
-        public constructor(_groupId: GroupId, private _widthPX: number, private _mass: number, private _respectsGravity: boolean) {
+        public constructor(_groupId: GroupId, private _mass: number, public _respectsGravity: boolean) {
             super(_groupId);
             this._velocityAPX = 0;
             this._velocityRPX = 0;
@@ -56,7 +58,7 @@
             var r = bounds.getInnerRadiusPx() + rpx;
 
             var ar = apx / r;
-            var wr = this._widthPX / r;
+            var wr = this._widthPx / r;
             var a: number;
             if (this._anchorRight) {
                 a = bounds.getEndAngleRadians() - wr;
@@ -64,9 +66,32 @@
                 a = bounds.getStartAngleRadians();
             }
             a += ar;
-            var newBounds = new PolarBounds(r, a, bounds.getHeightPx(), wr);
+            var newBounds = new PolarBounds(r, a, this._heightPx, wr);
             newBounds.normalize();
-            return new Poust.Level.Motion.SimpleMotion(newBounds, this);
+            return this._createMotion(newBounds);
+        }
+
+        public calculateBounds(r: number, a: number, heightPx: number, widthPx: number): PolarBounds {
+            var wr = this._widthPx / r;
+            var bounds = new PolarBounds(r, a, this._heightPx, wr);
+            bounds.normalize();
+            return bounds;
+        }
+
+        public setBounds(r: number, a: number, heightPx?: number, widthPx?: number) {
+            if (widthPx) {
+                this._widthPx = widthPx;
+            }
+            if (heightPx) {
+                this._heightPx = heightPx;
+            }
+            var bounds = this.calculateBounds(r, a, heightPx, widthPx);
+            this._bounds = bounds;
+        }
+
+
+        public _createMotion(bounds: PolarBounds) {
+            return new Poust.Level.Motion.PolarMotion(bounds, this);
         }
 
         update(level: LevelState, timeMillis: number): void {

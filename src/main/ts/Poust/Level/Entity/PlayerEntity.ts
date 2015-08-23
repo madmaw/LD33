@@ -1,43 +1,51 @@
 ﻿module Poust.Level.Entity {
 
-    export class PlayerEntity extends AbstractPolarEntity {
+    export class PlayerEntity extends AbstractLivingPolarEntity {
 
         public static JUMP_INPUT_ID = -1;
 
         private _onGround: boolean;
         private _onRightWall: boolean;
         private _onLeftWall: boolean;
-        private _runningRight: boolean;
+        private _runningLeft: boolean;
         private _targets: { [_: number]: PlayerEntityTarget };
+        private _nextLevelParams: any;
         
         // gun
 
-        public constructor(groupId: GroupId, widthPx: number, mass: number, private _jumpPower: number) {
-            super(groupId, widthPx, mass, true);
-            this._runningRight = true;
+        public constructor(groupId: GroupId, mass: number, private _jumpPower: number, private _gun: IGun) {
+            super(groupId, mass, true);
+            this._runningLeft = true;
             this._targets = {};
             this._continuousCollisions = true;
         }
 
-        public setTarget(inputId: number, r: number, a: number, allowJump: boolean) {
+        public reset(r: number, a: number) {
+            this.setBounds(r, a);
+            this._velocityAPX = 0;
+            this._velocityRPX = 0;
+        }
+
+        public setTarget(inputId: number, r: number, a: number, allowJump: boolean, gestureHint: Gesture) {
             var target = this._targets[inputId];
             if (target == null) {
                 if (allowJump) {
-                    if (this._onGround) {
-                        // TODO better check to see if we have clicked below
+                    if (this._onGround && gestureHint == Gesture.Down) {
                         target = new PlayerEntityTarget(true, r, a);
-                    } else if (this._onLeftWall) {
+                    } else if (this._onLeftWall && gestureHint == Gesture.Left) {
                         target = new PlayerEntityTarget(true, r, a);
-                        // TODO better check to see if we have clicked on the left
-                    } else if (this._onRightWall) {
+                    } else if (this._onRightWall && gestureHint == Gesture.Right) {
                         target = new PlayerEntityTarget(true, r, a);
-                        // TODO better check to see if we have clicked on the right
                     }
                 }
                 if (target == null) {
-                    // shoot?
+                    // shoot
+                    target = new PlayerEntityTarget(false, r, a);
                 }
                 this._targets[inputId] = target;
+            } else {
+                target.a = a;
+                target.r = r;
             }
         }
 
@@ -62,42 +70,78 @@
         }
 
         notifyCollision(withEntity: IEntity, onEdge: PolarEdge): void {
-            if (onEdge == PolarEdge.Bottom) {
-                this._onGround = true;
-            } else if (onEdge == PolarEdge.Right) {
-                this._onRightWall = true;
-            } else if (onEdge == PolarEdge.Left) {
-                this._onLeftWall = true;
+            if (withEntity.getGroupId() == GroupId.Enemy) {
+                if (withEntity instanceof LevelExitEntity) {
+                    var levelExitEntity = <LevelExitEntity>withEntity;
+                    this._nextLevelParams = levelExitEntity._nextLevelParamsFactory(this);
+                } else {
+                    this.setDying(withEntity);
+                }
+            } else {
+                if (onEdge == PolarEdge.Bottom) {
+                    this._onGround = true;
+                } else if (onEdge == PolarEdge.Right) {
+                    this._onRightWall = true;
+                } else if (onEdge == PolarEdge.Left) {
+                    this._onLeftWall = true;
+                }
             }
         }
 
-        update(level: LevelState, timeMillis: number): void {
-            super.update(level, timeMillis);
+        public _createMotion(bounds: PolarBounds) {
+            // only center when alive
+            if (this.isDying()) {
+                return super._createMotion(bounds);
+            } else {
+                return new Poust.Level.Motion.CameraCenterPolarMotion(bounds, this);
+            }
+        }
+
+
+        updateAlive(level: LevelState, timeMillis: number) {
             var jumpTarget: PlayerEntityTarget = null;
+
             // are we jumping?
+            var gunTargets: PolarPoint[] = [];
             for (var i in this._targets) {
                 var target = this._targets[i];
                 if (target != null) {
-                    if (target.jumping && !target.jumped) {
-                        jumpTarget = target;
-                        break;
+                    if (target.jumping) {
+                        if (!target.jumped) {
+                            jumpTarget = target;
+                        }
+                    } else {
+                        // it's shooting
+                        gunTargets.push(target);
                     }
+                }
+            }
+
+
+            // shoot!
+            if (this._gun) {
+
+                var recoil = this._gun.update(timeMillis, level, this._onGround, this._bounds.getCenterRadiusPx(), this._bounds.getCenterAngleRadians(), gunTargets);
+                if (recoil) {
+                    this._velocityRPX += recoil.r;
+                    this._velocityAPX += recoil.a;
                 }
             }
 
             if (this._onGround) {
                 if (this._onRightWall) {
-                    this._runningRight = false;
+                    this._runningLeft = true;
                 } else if (this._onLeftWall) {
-                    this._runningRight = true;
+                    this._runningLeft = false;
                 }
-                var acc: number;
-                if (this._runningRight) {
-                    acc = 0.0001;
+                var accMul: number;
+                if (this._runningLeft) {
+                    accMul = -1;
                 } else {
-                    acc = -0.0001;
+                    accMul = 1;
                 }
-                this._velocityAPX += acc * timeMillis;
+                var acc = 1 / ((Math.abs(this._velocityAPX * this._velocityAPX * this._velocityAPX * 7000) + 1) * 1000);
+                this._velocityAPX += accMul * acc * timeMillis;
                 if (jumpTarget) {
                     this._velocityRPX = this._jumpPower;
                     jumpTarget.jumped = true;
@@ -108,17 +152,17 @@
                 if (jumpTarget) {
                     if (this._onRightWall) {
                         // wall jump
-                        this._runningRight = false;
+                        this._runningLeft = true;
                         this._velocityRPX = this._jumpPower;
                         this._velocityAPX = -this._jumpPower;
                         jumpTarget.jumped = true;
                     } else if (this._onLeftWall) {
                         // wall jump
-                        this._runningRight = true;
+                        this._runningLeft = false;
                         this._velocityRPX = this._jumpPower;
                         this._velocityAPX = this._jumpPower;
                         jumpTarget.jumped = true;
-                    } 
+                    }
                 } else {
                     // add a little bit of forward momentum so we keep getting collision events for wall jump
                 
@@ -136,7 +180,7 @@
                         var target = this._targets[i];
                         if (target != null) {
                             if (target.jumping && target.jumped) {
-                                this._velocityRPX += 0.0003 * timeMillis;
+                                this._velocityRPX += 0.00045 * timeMillis;
                                 break;
                             }
                         }
@@ -146,7 +190,13 @@
             this._onGround = false;
             this._onRightWall = false;
             this._onLeftWall = false;
+
+            if (this._nextLevelParams) {
+                level.fireStateChangeEvent(this._nextLevelParams);
+                this._nextLevelParams = null;
+            }
         }
+
 
     }
 

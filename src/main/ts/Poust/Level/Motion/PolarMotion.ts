@@ -1,6 +1,6 @@
 ﻿module Poust.Level.Motion {
 
-    export class SimpleMotion implements IMotion {
+    export class PolarMotion implements IMotion {
 
         public constructor(private _bounds: PolarBounds, private _entity: AbstractEntity) {
         }
@@ -13,7 +13,7 @@
             return this._entity;
         }
 
-        apply(): void {
+        apply(state: LevelState): void {
             this._entity._bounds = this._bounds;
         }
     }

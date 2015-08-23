@@ -6,11 +6,32 @@
         private _sensor: boolean;
         public _bounds: PolarBounds;
         public _continuousCollisions: boolean;
+        public _collidable: boolean;
+        public _state: string;
+        public _stateAgeMillis: number;
 
         public constructor(private _groupId: GroupId) {
             this._dead = false;
             this._sensor = false;
             this._continuousCollisions = false;
+            this._collidable = true;
+
+            this._stateAgeMillis = 0;
+        }
+
+        public setState(state: string, force?: boolean) {
+            if (this._state != state || force) {
+                this._state = state;
+                this._stateAgeMillis = 0;
+            }
+        }
+
+        public getState(): string {
+            return this._state;
+        }
+
+        public getStateAgeMillis(): number {
+            return this._stateAgeMillis;
         }
 
         getGroupId(): GroupId {
@@ -51,7 +72,7 @@
 
 
         calculateMotion(timeMillis: number): IMotion {
-            return new Poust.Level.Motion.SimpleMotion(this.getBounds(), this);
+            return new Poust.Level.Motion.PolarMotion(this.getBounds(), this);
         }
 
         notifyCollision(withEntity: IEntity, onEdge: PolarEdge): void {
@@ -59,6 +80,11 @@
         }
 
         update(level: LevelState, timeMillis: number): void {
+            this._stateAgeMillis += timeMillis;
+            if (this._bounds.getInnerRadiusPx() <= 0) {
+                // welp, we're dead now!?
+                this.setDead();
+            }
 
         }
 
@@ -72,6 +98,10 @@
 
         isSensor(): boolean {
             return this._sensor;
+        }
+
+        isCollidable(): boolean {
+            return this._collidable;
         }
 
         public setSensor(sensor: boolean): void {

@@ -19,7 +19,9 @@
                         }
                     }
                     this._lastUpdateMillis = timeMillis;
-                    requestAnimationFrame(this._animationFrameCallback);
+                    if (this.isStarted()) {
+                        requestAnimationFrame(this._animationFrameCallback);
+                    }
                 } else {
                     this._lastUpdateMillis = null;
                 }

@@ -1,8 +1,7 @@
 ﻿module Poust.Level.Renderer {
 
-    export class PathEntityRenderer implements IEntityRenderer {
-
-        public constructor(private _lineWidth: number, private _strokeStyle: any, private _fillStyle: any) {
+    export class SeekerEntityRenderer implements IEntityRenderer {
+        constructor(private _lineWidth: number, private _strokeStyle: any, private _fillStyle: any) {
 
         }
 
@@ -14,6 +13,11 @@
 
             var bounds = entity.getBounds();
 
+            var age = entity.getStateAgeMillis() % 3000;
+
+
+            var acr = bounds.getCenterAngleRadians();
+
             var asr = bounds.getStartAngleRadians();
             var sinsr = Math.sin(asr);
             var cossr = Math.cos(asr);
@@ -22,20 +26,23 @@
             var siner = Math.sin(aer);
             var coser = Math.cos(aer);
 
+            //acr = (aer + asr) / 2;
+            var sincr = Math.sin(acr);
+            var coscr = Math.cos(acr);
+
+            var cr = bounds.getCenterRadiusPx();
             var ir = bounds.getInnerRadiusPx();
             var or = bounds.getOuterRadiusPx();
             if (ir > 0) {
+                var r = Math.max(Math.abs(cossr * cr - coscr * cr), Math.abs(or - cr));
                 context.beginPath();
-                context.moveTo(cossr * or, sinsr * or);
-                context.arc(0, 0, or, asr, aer, false);
-                context.lineTo(coser * ir, siner * ir);
-                context.arc(0, 0, ir, aer, asr, true);
+                //context.moveTo(cossr * cr, sincr * cr);
+                context.arc(coscr * cr, sincr * cr, r, 0, Math.PI * 2);
                 context.closePath();
                 context.fill();
                 context.stroke();
-            }
+            }            
         }
-
     }
 
 }

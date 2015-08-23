@@ -6,7 +6,7 @@
 
         getEntity(): IEntity;
 
-        apply(): void;
+        apply(state: LevelState): void;
     }
 
 }

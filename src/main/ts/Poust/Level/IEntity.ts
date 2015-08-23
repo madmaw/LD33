@@ -26,9 +26,15 @@
 
         isDead(): boolean;
 
+        isCollidable(): boolean;
+
         isSensor(): boolean;
 
         isContinuousCollisions(): boolean;
+
+        getState(): string;
+
+        getStateAgeMillis(): number;
     }
 
 }

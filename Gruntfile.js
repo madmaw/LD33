@@ -3,16 +3,17 @@
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        typescript: {
+        ts: {
             build: {
                 src: ['src/main/ts/**/*.ts', 'src/main/d.ts/**/*.d.ts'],
-                dest: 'build/out.js',
+                out: 'build/out.js',
+                reference: 'reference.ts',
                 options: {
                     module: 'amd', //or commonjs
                     target: 'es5', //or es3
-                    rootDir: 'src/main/ts',
+                    basePath: 'src/main/ts',
                     sourceMap: true,
-                    declaration: true
+                    declaration: false
                 }
             }
         },
@@ -105,7 +106,7 @@
     // load the plugin that provides the cssmin task
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     // Load the plugin that provides the "TS" task.
-    grunt.loadNpmTasks('grunt-typescript');
+    grunt.loadNpmTasks('grunt-ts');
     // zip
     grunt.loadNpmTasks('grunt-zip');
     // copy
@@ -117,6 +118,6 @@
     grunt.registerTask('reset', ['clean:all']);
     grunt.registerTask('dist_', ['typescript', 'uglify', 'htmlmin', 'cssmin', 'copy', 'replace', 'zip']);
     grunt.registerTask('dist', ['dist_', 'clean:dist']);
-    grunt.registerTask('default', ['typescript']);
+    grunt.registerTask('default', ['ts']);
 
 };
