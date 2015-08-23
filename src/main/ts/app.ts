@@ -4,6 +4,11 @@ window.onload = () => {
 
     var e = document.getElementById("canvas");
 
+    var jumpSound = new Poust.AudioSound(["res/jump1.wav", "res/jump2.wav", "res/jump3.wav", "res/jump4.wav"]);
+    var shootSound = new Poust.AudioSound(["res/shoot1.wav", "res/shoot2.wav", "res/shoot3.wav"]);
+    var playerDeathSound = new Poust.AudioSound(["res/death1.wav"]);
+    var monsterDeathSound = new Poust.AudioSound(["res/hurt1.wav"]);
+    var winSound = new Poust.AudioSound(["res/win1.wav"]);
 
     var canvas = <HTMLCanvasElement>e;
     canvas.setAttribute("width", ""+document.body.clientWidth+"px");
@@ -24,7 +29,8 @@ window.onload = () => {
     var spikeRenderer = new Poust.Level.Renderer.SpikeEntityRenderer(2, "#FFFFFF", radialGradient);
     var bouncyRenderer = new Poust.Level.Renderer.BouncyEntityRenderer(2, "#FFFFFF", radialGradient);
     var seekerRenderer = new Poust.Level.Renderer.SeekerEntityRenderer(2, "#FFFFFF", radialGradient);
-    var entityRendererFactory = ((new Poust.Level.Factory.HardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer)).createEntityRendererFactory());
+    var exitRenderer = new Poust.Level.Renderer.ExitEntityRenderer(2, "#FFFFFF", radialGradient);
+    var entityRendererFactory = ((new Poust.Level.Factory.HardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer)).createEntityRendererFactory());
 
     var level1 = "1";
     var level2 = "2";
@@ -34,7 +40,7 @@ window.onload = () => {
     var gravity = 0.0014;
     var maxCollisionSteps = 10;
 
-    var entitySpawner = new Poust.Level.Factory.HardCodedEntitySpawner().createSpawner();
+    var entitySpawner = new Poust.Level.Factory.HardCodedEntitySpawner().createSpawner(monsterDeathSound);
 
     var concentricLevelStateFactory = new Poust.Level.Factory.ConcentricLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
     var skyscraperLevelStateFactory = new Poust.Level.Factory.SkyscraperLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
@@ -43,7 +49,13 @@ window.onload = () => {
     levelStateFactories[level1] = concentricLevelStateFactory.createStateFactory(level2, 1, 10, 20, 70, 300, 5);
     levelStateFactories[level2] = skyscraperLevelStateFactory.createStateFactory(level1, 1, 8, 20, 100, 10, 300);
 
-    var delegatingLevelStateFactory = (new Poust.Level.Factory.DelegatingLevelStateFactory(levelStateFactories, level1)).createStateFactory();
+    var delegatingLevelStateFactory = (new Poust.Level.Factory.DelegatingLevelStateFactory(
+        levelStateFactories,
+        level1,
+        jumpSound,
+        shootSound,
+        playerDeathSound,
+        winSound)).createStateFactory();
 
     var engine = new Poust.Engine(delegatingLevelStateFactory);
     engine.setStateFromParam(new Poust.Level.LevelStateRestartParam());

@@ -4,13 +4,16 @@
         private _dying: boolean;
         private _killedBy: IEntity;
 
-        constructor(groupId: GroupId, mass: number, respectsGravity: boolean) {
+        constructor(groupId: GroupId, mass: number, respectsGravity: boolean, private _deathSound: ISound) {
             super(groupId, mass, respectsGravity);
         }
 
         public setDying(killedBy: IEntity) {
-            this._dying = true;
-            this._killedBy = killedBy;
+            if (!this._dying) {
+                this._dying = true;
+                this._killedBy = killedBy;
+                this._deathSound.play();
+            }
         }
 
         public isDying() {

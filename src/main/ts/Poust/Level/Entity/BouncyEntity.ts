@@ -2,8 +2,8 @@
 
     export class BouncyEntity extends AbstractLivingPolarEntity {
 
-        constructor(groupId: GroupId, mass: number, private _velocity: number, private _goingUp: boolean, private _goingLeft: boolean) {
-            super(groupId, mass, false);
+        constructor(groupId: GroupId, mass: number, deathSound: ISound, private _velocity: number, private _goingUp: boolean, private _goingLeft: boolean) {
+            super(groupId, mass, false, deathSound);
         }
 
         updateAlive(level: LevelState, timeMillis: number) {

@@ -70,15 +70,25 @@
                             spawnArc -= wallArc;
                         }
                         var entities = this._entitySpawner(spawnA, r, ceilingHeight, spawnArc, floorId * param.difficulty / numFloors);
-                        for (var k in entities) {
-                            var entity = entities[k];
-                            level.addEntity(entity);
-                        }
                         r += ceilingHeight;
-                        var floorEntity = new AbstractEntity(GroupId.Terrain);
-                        floorEntity._bounds = new PolarBounds(r, a, floorHeight, arc);
-                        floorEntity._bounds.normalize();
-                        level.addEntity(floorEntity);
+                        if ((Math.random() * 100) < param.difficulty * numTowers && floorId > 1) {
+                            // add an extra ceiling
+                            var bonusFloorEntity = new AbstractEntity(GroupId.Terrain);
+                            bonusFloorEntity._bounds = new PolarBounds(r, a + arc, floorHeight, arc);
+                            bonusFloorEntity._bounds.normalize();
+                            level.addEntity(bonusFloorEntity);
+                        }
+                        if ((Math.random() * 100) > 3) {
+                            for (var k in entities) {
+                                var entity = entities[k];
+                                level.addEntity(entity);
+                            }
+                            var floorEntity = new AbstractEntity(GroupId.Terrain);
+                            floorEntity._bounds = new PolarBounds(r, a, floorHeight, arc);
+                            floorEntity._bounds.normalize();
+                            level.addEntity(floorEntity);
+                        } 
+
 
                         r += floorHeight;
                     }

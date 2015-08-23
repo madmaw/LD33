@@ -6,8 +6,8 @@
 
         private _flapAnyway: boolean;
 
-        constructor(groupId: GroupId, mass: number, private _goingLeft: boolean, private _lateralVelocity: number, private _flapVelocity: number, private _minRadius: number) {
-            super(groupId, mass, true);
+        constructor(groupId: GroupId, mass: number, deathSound: ISound, private _goingLeft: boolean, private _lateralVelocity: number, private _flapVelocity: number, private _minRadius: number) {
+            super(groupId, mass, true, deathSound);
         }
 
         updateAlive(level: LevelState, timeMillis: number) {

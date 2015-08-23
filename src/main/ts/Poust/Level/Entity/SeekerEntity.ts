@@ -11,13 +11,14 @@
         public constructor(
             groupId: GroupId,
             mass: number,
+            deathSound: ISound,
             private _searchRadius: number,
             private _acceleration: number,
             private _bounce: number,
             private _maxVelocityAPx: number,
             private _smallJumpVelocity: number,
             private _bigJumpVelocity: number) {
-            super(groupId, mass, true);
+            super(groupId, mass, true, deathSound);
         }
 
         updateAlive(level: LevelState, timeMillis: number) {

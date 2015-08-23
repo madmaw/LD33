@@ -7,7 +7,9 @@
 /// <reference path="src/main/ts/Poust/Level/Motion/PolarMotion.ts" />
 
 //grunt-start
+/// <reference path="src/main/ts/Poust/AudioSound.ts" />
 /// <reference path="src/main/ts/Poust/Engine.ts" />
+/// <reference path="src/main/ts/Poust/ISound.ts" />
 /// <reference path="src/main/ts/Poust/IState.ts" />
 /// <reference path="src/main/ts/Poust/IStateFactory.ts" />
 /// <reference path="src/main/ts/Poust/IStateListener.ts" />
@@ -45,6 +47,7 @@
 /// <reference path="src/main/ts/Poust/Level/PolarEdge.ts" />
 /// <reference path="src/main/ts/Poust/Level/PolarPoint.ts" />
 /// <reference path="src/main/ts/Poust/Level/Renderer/BouncyEntityRenderer.ts" />
+/// <reference path="src/main/ts/Poust/Level/Renderer/ExitEntityRenderer.ts" />
 /// <reference path="src/main/ts/Poust/Level/Renderer/FlappyEntityRenderer.ts" />
 /// <reference path="src/main/ts/Poust/Level/Renderer/PathEntityRenderer.ts" />
 /// <reference path="src/main/ts/Poust/Level/Renderer/SeekerEntityRenderer.ts" />

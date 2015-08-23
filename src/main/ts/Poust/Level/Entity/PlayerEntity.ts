@@ -13,8 +13,16 @@
         
         // gun
 
-        public constructor(groupId: GroupId, mass: number, private _jumpPower: number, private _gun: IGun) {
-            super(groupId, mass, true);
+        public constructor(
+            groupId: GroupId,
+            mass: number,
+            private _jumpPower: number,
+            private _gun: IGun,
+            deathSound: ISound,
+            private _jumpNSound: ISound,
+            private _winSound: ISound
+            ) {
+            super(groupId, mass, true, deathSound);
             this._runningLeft = true;
             this._targets = {};
             this._continuousCollisions = true;
@@ -120,8 +128,17 @@
 
             // shoot!
             if (this._gun) {
-
-                var recoil = this._gun.update(timeMillis, level, this._onGround, this._bounds.getCenterRadiusPx(), this._bounds.getCenterAngleRadians(), gunTargets);
+                var crpx = this._bounds.getCenterRadiusPx();
+                var recoil = this._gun.update(
+                    timeMillis,
+                    level,
+                    this._onGround,
+                    crpx,
+                    this._bounds.getCenterAngleRadians(),
+                    this.getVelocityRadiusPX(),
+                    this.getVelocityAngleRadians(crpx),
+                    gunTargets
+                );
                 if (recoil) {
                     this._velocityRPX += recoil.r;
                     this._velocityAPX += recoil.a;
@@ -143,6 +160,7 @@
                 var acc = 1 / ((Math.abs(this._velocityAPX * this._velocityAPX * this._velocityAPX * 7000) + 1) * 1000);
                 this._velocityAPX += accMul * acc * timeMillis;
                 if (jumpTarget) {
+                    this._jumpNSound.play();
                     this._velocityRPX = this._jumpPower;
                     jumpTarget.jumped = true;
                 }
@@ -156,12 +174,14 @@
                         this._velocityRPX = this._jumpPower;
                         this._velocityAPX = -this._jumpPower;
                         jumpTarget.jumped = true;
+                        this._jumpNSound.play();
                     } else if (this._onLeftWall) {
                         // wall jump
                         this._runningLeft = false;
                         this._velocityRPX = this._jumpPower;
                         this._velocityAPX = this._jumpPower;
                         jumpTarget.jumped = true;
+                        this._jumpNSound.play();
                     }
                 } else {
                     // add a little bit of forward momentum so we keep getting collision events for wall jump
@@ -192,6 +212,7 @@
             this._onLeftWall = false;
 
             if (this._nextLevelParams) {
+                this._winSound.play();
                 level.fireStateChangeEvent(this._nextLevelParams);
                 this._nextLevelParams = null;
             }
