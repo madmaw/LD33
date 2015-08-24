@@ -31,7 +31,9 @@
                     this._gravity,
                     this._context,
                     this._rendererFactory,
-                    this._maxCollisionSteps
+                    this._maxCollisionSteps,
+                    param.levelName,
+                    param.difficulty
                     );
 
                 var floor = new AbstractEntity(GroupId.Terrain);
@@ -46,6 +48,7 @@
                     var arc = (Math.PI) / numTowers;
                     var a = (Math.PI * 2 * towerId) / numTowers + arc / 2;
                     var r = groundOffset;
+                    var floorCounts: { [_: number]: number } = {};
                     while (floorId < numFloors) {
                         floorId++;
                         var spawnA = a;
@@ -69,14 +72,20 @@
                             level.addEntity(wallEntity);
                             spawnArc -= wallArc;
                         }
-                        var entities = this._entitySpawner(spawnA, r, ceilingHeight, spawnArc, floorId * param.difficulty / numFloors);
                         r += ceilingHeight;
-                        if ((Math.random() * 100) < param.difficulty * numTowers && floorId > 1) {
+                        var entities = this._entitySpawner(spawnA, r + floorHeight, ceilingHeight, spawnArc, Math.min(param.difficulty, (floorId * param.difficulty * 2) / numFloors));
+                        var floorCount = floorCounts[floorId];
+                        if (floorCount == null) {
+                            floorCount = 0;
+                        }
+                        if ((Math.random() * 100) < param.difficulty * (numTowers - floorCount) && floorId > 1) {
                             // add an extra ceiling
                             var bonusFloorEntity = new AbstractEntity(GroupId.Terrain);
                             bonusFloorEntity._bounds = new PolarBounds(r, a + arc, floorHeight, arc);
                             bonusFloorEntity._bounds.normalize();
                             level.addEntity(bonusFloorEntity);
+                            floorCount++;
+                            floorCounts[floorId] = floorCount;
                         }
                         if ((Math.random() * 100) > 3) {
                             for (var k in entities) {

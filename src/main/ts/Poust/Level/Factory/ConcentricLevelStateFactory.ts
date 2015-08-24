@@ -30,7 +30,9 @@
                     this._gravity,
                     this._context,
                     this._rendererFactory,
-                    this._maxCollisionSteps
+                    this._maxCollisionSteps,
+                    param.levelName,
+                    param.difficulty
                     );
 
                 var ring = 0;
@@ -39,7 +41,7 @@
                 while (ring < rings) {
 
                      
-                    var count = Math.max(1, ring);
+                    var count = ring+1;
                     var gapRadians = Math.max(Math.min(param.difficulty * Math.PI / 24 + Math.PI / 8, Math.PI / count), (ringGap + ringWidth) / radius);
 
                     var i = 0;
@@ -57,14 +59,14 @@
                         ringEntity._bounds = bounds;
                         level.addEntity(ringEntity);
 
-                        var baddies = this._entitySpawner(bounds.getStartAngleRadians(), bounds.getOuterRadiusPx(), ringGap, bounds.getWidthRadians(), (param.difficulty * ring) / rings);
+                        var baddies = this._entitySpawner(bounds.getStartAngleRadians(), bounds.getOuterRadiusPx(), ringGap, bounds.getWidthRadians(), Math.min(param.difficulty, (param.difficulty * ring * 2) / rings));
                         for (var j in baddies) {
                             var baddy = baddies[j];
                             level.addEntity(baddy);
                         }
                         i++;
                     }
-                    radius += ringGap + ringWidth + ring * ringGapIncrease;
+                    radius += ringGap + ringWidth + ring * (ringGapIncrease + param.difficulty * 2);
 
                     ring++;
 

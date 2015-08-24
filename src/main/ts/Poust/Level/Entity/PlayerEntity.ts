@@ -213,7 +213,7 @@
 
             if (this._nextLevelParams) {
                 this._winSound.play();
-                level.fireStateChangeEvent(this._nextLevelParams);
+                level.winLevel(this._nextLevelParams);
                 this._nextLevelParams = null;
             }
         }

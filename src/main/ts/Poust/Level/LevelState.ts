@@ -16,17 +16,23 @@
         private _cameraCenterRadius: number;
         private _cameraCenterAngle: number;
 
+        private _levelAgeMillis: number;
+        private _bestLevelTime: number;
+
         public constructor(
             _element: Element,
             private _player: Poust.Level.Entity.PlayerEntity,
             private _gravity: number,
             private _context: CanvasRenderingContext2D,
             private _rendererFactory: IEntityRendererFactory,
-            private _maxCollisionSteps: number
+            private _maxCollisionSteps: number,
+            private _levelName: string, 
+            private _levelDifficulty: number
         ) {
             super(_element);
             this._cameraCenterAngle = 0;
             this._cameraCenterRadius = 0;
+            this._levelAgeMillis = 0;
             this._groups = new Array<EntityHolder[]>();
             this._touchStartListener = (event: TouchEvent) => {
                 for (var i in event.changedTouches) {
@@ -63,17 +69,26 @@
             };
             var spaceUp = true;
             this._keyDownListener = (event: KeyboardEvent) => {
-                if (event.keyCode == 32 && spaceUp) {
+                if ((event.keyCode == 32 || event.keyCode == 88) && spaceUp) {
                     this._player.setJump();
                     spaceUp = false;
                 }
             };
             this._keyUpListener = (event: KeyboardEvent) => {
-                if (event.keyCode == 32) {
+                if (event.keyCode == 32 || event.keyCode == 88) {
                     this._player.clearJump();
                     spaceUp = true;
                 }
             };
+        }
+
+        public init() {
+            super.init();
+            // look up previous best (if any)
+            var bestLevelTimeString = window.localStorage.getItem(this._levelName + "-" + this._levelDifficulty);
+            if (bestLevelTimeString) {
+                this._bestLevelTime = parseInt(bestLevelTimeString);
+            }
         }
 
         public getGroup(groupId: GroupId) {
@@ -174,7 +189,9 @@
 
         public update(diffMillis: number): void {
             this.updateMotion(diffMillis);
-
+            if (!this._player.isDead() && !this._player.isDying()) {
+                this._levelAgeMillis += diffMillis;
+            }
             if (this.isStarted()) {
                 // do collisions
                 var collisions = this.calculateCollisions(diffMillis);
@@ -566,19 +583,44 @@
             }
         }
 
+        private toTimeString(timeMillis: number) {
+            var timeSeconds = Math.floor(timeMillis / 1000);
+            var timeMinutes = Math.floor(timeSeconds / 60);
+            timeSeconds = timeSeconds % 60;
+            var timeSecondsString = "" + timeSeconds;
+            while (timeSecondsString.length < 2) {
+                timeSecondsString = "0" + timeSecondsString;
+            }
+            return timeMinutes + ":" + timeSecondsString;
+        }
+
         public render(): void {
 
             var w = this._element.clientWidth;
             var h = this._element.clientHeight;
-
+            var fontHeight = Math.floor(Math.min(h / 20, w / 20));
+            this._context.font = "bold "+fontHeight + "px Courier";
             this._context.fillStyle = "#000000";
             this._context.fillRect(0, 0, w, h);
 
+            this._context.fillStyle = "#FFFFFF";
+
+            var timeString = this.toTimeString(this._levelAgeMillis);
+            this._context.fillText(timeString, fontHeight, fontHeight * 1.5);
+
+            var bestTimeString;
+            if (this._bestLevelTime) {
+                bestTimeString = "BEST " + this.toTimeString(this._bestLevelTime);
+            } else {
+                bestTimeString = "Unbeaten!";
+            }
+            var bestTimeStringMetric = this._context.measureText(bestTimeString);
+            this._context.fillText(bestTimeString, w - bestTimeStringMetric.width - fontHeight, fontHeight + fontHeight/2);
+
             if (this._player.isDead() || this._player.isDying()) {
-                this._context.fillStyle = "#FFFFFF";
                 var text = "GAME OVER";
                 var textMetric = this._context.measureText(text);
-                this._context.fillText(text, (w - textMetric.width) / 2, h / 2);
+                this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2);
             }
 
             this._context.save();
@@ -612,8 +654,13 @@
 
             this._context.restore();
         }
-        
 
+        public winLevel(param: LevelStateFactoryParam) {
+            if (this._bestLevelTime == null || this._bestLevelTime > this._levelAgeMillis) {
+                window.localStorage.setItem(this._levelName + "-" + this._levelDifficulty, ""+this._levelAgeMillis);
+            }
+            this.fireStateChangeEvent(param);
+        }
     }
 
 }

@@ -30,7 +30,9 @@ window.onload = () => {
     var bouncyRenderer = new Poust.Level.Renderer.BouncyEntityRenderer(2, "#FFFFFF", radialGradient);
     var seekerRenderer = new Poust.Level.Renderer.SeekerEntityRenderer(2, "#FFFFFF", radialGradient);
     var exitRenderer = new Poust.Level.Renderer.ExitEntityRenderer(2, "#FFFFFF", radialGradient);
-    var entityRendererFactory = ((new Poust.Level.Factory.HardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer)).createEntityRendererFactory());
+    var playerRenderer = new Poust.Level.Renderer.PathEntityRenderer(2, "#FFFFFF", "rgba(255, 0, 0, 0.7)");
+    var bulletRenderer = new Poust.Level.Renderer.SeekerEntityRenderer(2, "#FFFFAA", "rgba(255, 255, 0, 0.7");
+    var entityRendererFactory = ((new Poust.Level.Factory.HardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer, playerRenderer, bulletRenderer)).createEntityRendererFactory());
 
     var level1 = "1";
     var level2 = "2";

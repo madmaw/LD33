@@ -57,7 +57,8 @@
                 while (this._ammo > 0 && targetIndex < targets.length) {
                     var target = targets[targetIndex];
                     var targetPosition = PolarPoint.getCartesianPoint(target.r, target.a);
-                    this._ammo--;
+                    // don't show ammo, so never deplete it
+                    //this._ammo--;
                     var bullet = this.createBullet(
                         sourcePosition.x,
                         sourcePosition.y,
