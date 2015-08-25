@@ -40,7 +40,7 @@ window.onload = () => {
     var level4 = "4";
 
     var gravity = 0.0014;
-    var maxCollisionSteps = 10;
+    var maxCollisionSteps = 6;
 
     var entitySpawner = new Poust.Level.Factory.HardCodedEntitySpawner().createSpawner(monsterDeathSound);
 
