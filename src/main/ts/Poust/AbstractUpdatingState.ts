@@ -13,7 +13,9 @@
                     if (this._lastUpdateMillis != null) {
                         var diff = timeMillis - this._lastUpdateMillis;
                         // don't let it run for too long
-                        if (diff > 0 && diff < 200) {
+                        diff = Math.min(diff, 100);
+                        if (diff > 0) {
+                            //diff = 20;
                             this.update(diff);
                             this.render();
                         }

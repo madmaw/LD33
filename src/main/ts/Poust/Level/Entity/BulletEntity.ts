@@ -10,8 +10,8 @@
             this._continuousCollisions = true;
         }
 
-        update(level: LevelState, timeMillis: number): void {
-            super.update(level, timeMillis);
+        update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
+            super.update(level, timeMillis, createdEntities);
             this._lifeRemainingMillis -= timeMillis;
             if (this._lifeRemainingMillis < 0) {
                 this.setDead();

@@ -34,15 +34,17 @@
             this._velocityRPX = 0;
         }
 
-        public setTarget(inputId: number, r: number, a: number, allowJump: boolean, gestureHint: Gesture) {
+        public setTarget(inputId: number, sx: number, sy: number, gestureHint: Gesture) {
             var target = this._targets[inputId];
             if (target == null) {
+                target = new PlayerEntityTarget(gestureHint, sx, sy);
+                /*
                 if (allowJump) {
-                    if (this._onGround && gestureHint == Gesture.Down) {
+                    if (this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && r < this._bounds.getInnerRadiusPx() )) {
                         target = new PlayerEntityTarget(true, r, a);
-                    } else if (this._onLeftWall && gestureHint == Gesture.Left) {
+                    } else if (this._onLeftWall && (gestureHint == Gesture.Left || gestureHint == Gesture.Context && !PolarBounds.isClockwiseAfter(this._bounds.getStartAngleRadians(), a))) {
                         target = new PlayerEntityTarget(true, r, a);
-                    } else if (this._onRightWall && gestureHint == Gesture.Right) {
+                    } else if (this._onRightWall && (gestureHint == Gesture.Right || gestureHint == Gesture.Context && PolarBounds.isClockwiseAfter(this._bounds.getEndAngleRadians(), a))) {
                         target = new PlayerEntityTarget(true, r, a);
                     }
                 }
@@ -50,10 +52,11 @@
                     // shoot
                     target = new PlayerEntityTarget(false, r, a);
                 }
+                */
                 this._targets[inputId] = target;
             } else {
-                target.a = a;
-                target.r = r;
+                target.sx = sx;
+                target.sy = sy;
             }
         }
 
@@ -70,7 +73,7 @@
         }
 
         public setJump() {
-            this._targets[PlayerEntity.JUMP_INPUT_ID] = new PlayerEntityTarget(true, null, null);
+            this._targets[PlayerEntity.JUMP_INPUT_ID] = new PlayerEntityTarget(Gesture.JumpOnly, null, null);
         }
 
         public clearJump() {
@@ -106,21 +109,46 @@
         }
 
 
-        updateAlive(level: LevelState, timeMillis: number) {
+        updateAlive(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
             var jumpTarget: PlayerEntityTarget = null;
 
             // are we jumping?
             var gunTargets: PolarPoint[] = [];
             for (var i in this._targets) {
                 var target = this._targets[i];
+                var jumping = false;
                 if (target != null) {
-                    if (target.jumping) {
+                    // work out context
+                    if (!target.jumped && !target.shooting) {
+                        var gestureHint = target.gestureHint;
+                        var screenWidth = level.getScreenWidth();
+                        var screenHeight = level.getScreenHeight();
+                        var scale = level.getScale(screenWidth, screenHeight);
+                        if (gestureHint == Gesture.JumpOnly) {
+                            jumping = true;
+                        } else if (this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && target.sy > (screenHeight / 2 + this._bounds.getHeightPx() * scale))) {
+                            jumping = true;
+                        } else if (this._onLeftWall && (gestureHint == Gesture.Left || gestureHint == Gesture.Context && target.sx < screenWidth / 2)) {
+                            jumping = true;
+                        } else if (this._onRightWall && (gestureHint == Gesture.Right || gestureHint == Gesture.Context && target.sx >= screenWidth / 2)) {
+                            jumping = true;
+                        } else {
+                            target.shooting = true;
+                        }
+
+                    }
+
+                    if (jumping) {
                         if (!target.jumped) {
                             jumpTarget = target;
                         }
-                    } else {
+                    } else if (target.shooting) {
                         // it's shooting
-                        gunTargets.push(target);
+                        var polarPoint: PolarPoint = level.getPolarPoint(target.sx, target.sy);
+                        if (polarPoint == null) {
+                            polarPoint = level.getPolarPoint(target.sx, target.sy);
+                        }
+                        gunTargets.push(polarPoint);
                     }
                 }
             }
@@ -137,7 +165,8 @@
                     this._bounds.getCenterAngleRadians(),
                     this.getVelocityRadiusPX(),
                     this.getVelocityAngleRadians(crpx),
-                    gunTargets
+                    gunTargets,
+                    createdEntities
                 );
                 if (recoil) {
                     this._velocityRPX += recoil.r;
@@ -199,7 +228,7 @@
                     for (var i in this._targets) {
                         var target = this._targets[i];
                         if (target != null) {
-                            if (target.jumping && target.jumped) {
+                            if (target.jumped) {
                                 this._velocityRPX += 0.00045 * timeMillis;
                                 break;
                             }

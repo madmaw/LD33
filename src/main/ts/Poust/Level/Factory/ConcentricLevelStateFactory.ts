@@ -16,12 +16,13 @@
         public createStateFactory(
             nextLevel: string,
             nextLevelDifficultyDelta: number,
-            rings: number,
+            baseRings: number,
             ringWidth: number,
             ringGapPx: number,
             initialGap: number,
             ringGapIncrease: number
-        ): IStateFactory {
+            ): IStateFactory {
+
             return (param: LevelStateFactoryParam) => {
 
                 var level = new LevelState(
@@ -35,14 +36,17 @@
                     param.difficulty
                     );
 
+                var rings = baseRings + param.difficulty;
+
                 var ring = 0;
                 var radius = initialGap;
                 var ringGap = ringGapPx;
+                var ringSpacing: number = 0;
                 while (ring < rings) {
 
                      
                     var count = ring+1;
-                    var gapRadians = Math.max(Math.min(param.difficulty * Math.PI / 24 + Math.PI / 8, Math.PI / count), (ringGap + ringWidth) / radius);
+                    var gapRadians = Math.max(Math.min(param.difficulty * Math.PI / 48 + Math.PI / 8, Math.PI / count), (ringGap + ringWidth) / radius);
 
                     var i = 0;
                     while (i < count) {
@@ -66,7 +70,8 @@
                         }
                         i++;
                     }
-                    radius += ringGap + ringWidth + ring * (ringGapIncrease + param.difficulty * 2);
+                    ringSpacing = ringGap + ringWidth + ring * (ringGapIncrease + param.difficulty * 2);
+                    radius += ringSpacing;
 
                     ring++;
 
@@ -78,7 +83,7 @@
                 var exit = new Poust.Level.Entity.LevelExitEntity((player: Poust.Level.Entity.PlayerEntity) => {
                     return new Poust.Level.LevelStateFactoryParam(player, nextLevel, param.difficulty + nextLevelDifficultyDelta);
                 });
-                exit._bounds = new PolarBounds(radius, Math.random() * Math.PI * 2, exitHeight, exitWidth);
+                exit._bounds = new PolarBounds(radius - ringSpacing / 2, Math.random() * Math.PI * 2, exitHeight, exitWidth);
                 exit._bounds.normalize();
                 level.addEntity(exit);
 

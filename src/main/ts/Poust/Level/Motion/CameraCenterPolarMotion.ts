@@ -8,7 +8,7 @@
         apply(state: LevelState): void {
             super.apply(state);
             var bounds = this.getBounds();
-            state.setCameraCenter(bounds.getCenterRadiusPx(), bounds.getCenterAngleRadians());
+            state.setCameraCenter(bounds.getOuterRadiusPx(), bounds.getCenterAngleRadians());
         }
 
     }

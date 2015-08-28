@@ -28,7 +28,8 @@
             a: number,
             vr: number,
             va: number,
-            targets: PolarPoint[]
+            targets: PolarPoint[],
+            createdEntities: IEntity[]
         ): PolarPoint {
             this._shootCoolDown -= diffMillis;
             if (onGround) {
@@ -68,7 +69,8 @@
                         baseR.y
                     );
                     if (bullet != null) {
-                        state.addEntity(bullet);
+                        //state.addEntity(bullet);
+                        createdEntities.push(bullet);
                     }
                     var dx = targetPosition.x - sourcePosition.x;
                     var dy = targetPosition.y - sourcePosition.y;

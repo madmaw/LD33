@@ -32,6 +32,7 @@
 /// <reference path="src/main/ts/Poust/Level/Factory/HardCodedEntitySpawner.ts" />
 /// <reference path="src/main/ts/Poust/Level/Factory/IEntitySpawner.ts" />
 /// <reference path="src/main/ts/Poust/Level/Factory/SkyscraperLevelStateFactory.ts" />
+/// <reference path="src/main/ts/Poust/Level/Factory/SpikeyLevelStateFactory.ts" />
 /// <reference path="src/main/ts/Poust/Level/Gesture.ts" />
 /// <reference path="src/main/ts/Poust/Level/GroupId.ts" />
 /// <reference path="src/main/ts/Poust/Level/IEntity.ts" />

@@ -23,7 +23,6 @@
                     var player = new Poust.Level.Entity.PlayerEntity(Poust.Level.GroupId.Player, 1, 0.4, gun, this._deathSound, this._jumpSound, this._winSound);
                     player.setBounds(600, 0, 32, 24);
                     var newParam = new LevelStateFactoryParam(player, this._firstLevelName, 1);
-                    //var newParam = new LevelStateFactoryParam(player, "2", 5);
                     return this._stateFactories[newParam.levelName](newParam);
                 }
             };

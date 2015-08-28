@@ -6,7 +6,7 @@
             super(groupId, mass, false, deathSound);
         }
 
-        updateAlive(level: LevelState, timeMillis: number) {
+        updateAlive(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
             if (this._goingLeft) {
                 this._velocityAPX = -this._velocity;
             } else {

@@ -2,6 +2,24 @@
 
     export class PolarBounds {
 
+        public static isClockwiseAfter(ca: number, a: number): boolean {
+            // normalize the diff
+            while (a > ca + Math.PI) {
+                a -= Math.PI * 2;
+            }
+            while (a < ca - Math.PI) {
+                a += Math.PI * 2;
+            }
+            return a > ca;
+        }
+
+        public static normalizeAngle(angle: number): number {
+            while (angle < 0) {
+                angle += Math.PI * 2;
+            }
+            return angle % (Math.PI * 2);
+        }
+
         public static intersect(b1: PolarBounds, b2: PolarBounds): PolarBounds {
             var p1s = b1.permutate();
             var p2s = b2.permutate();
@@ -47,6 +65,14 @@
             }
         }
 
+        public static union(b1: PolarBounds, b2: PolarBounds): PolarBounds {
+            var minr = Math.min(b1._r, b2._r);
+            var mina = Math.min(b1._a, b2._a);
+            var maxr = Math.max(b1.getOuterRadiusPx(), b2.getOuterRadiusPx());
+            var maxa = Math.max(b1.getEndAngleRadians(), b2.getEndAngleRadians());
+            return new PolarBounds(minr, mina, maxr - minr, maxa - mina);
+        }
+
         public constructor(private _r: number, private _a: number, private _height: number, private _arc: number) {
 
         }
@@ -56,7 +82,7 @@
         }
 
         public containsHorizontally(aRadians: number): boolean {
-            var naRadians = this.normalizeAngle(aRadians);
+            var naRadians = PolarBounds.normalizeAngle(aRadians);
             return this._a <= naRadians && this._a + this._arc > naRadians;
         }
 
@@ -104,14 +130,7 @@
 
         public normalize(): void {
             // ensure that our angles are between 0 and 2 * PI
-            this._a = this.normalizeAngle(this._a);
-        }
-
-        private normalizeAngle(angle: number): number {
-            while (angle < 0) {
-                angle += Math.PI * 2;
-            }
-            return angle % (Math.PI * 2);
+            this._a = PolarBounds.normalizeAngle(this._a);
         }
 
         public permutate(): PolarBounds[]{

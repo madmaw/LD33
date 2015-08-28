@@ -33,7 +33,9 @@
     <TypeScriptCompile Include="src\main\ts\app.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractState.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractUpdatingState.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\AudioSound.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Engine.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\ISound.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\IStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractCartesianEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractEntity.ts" />
@@ -76,6 +78,7 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\PolarEdge.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\PolarPoint.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\BouncyEntityRenderer.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\ExitEntityRenderer.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\FlappyEntityRenderer.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\PathEntityRenderer.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\SeekerEntityRenderer.ts" />

@@ -94,8 +94,8 @@
             return new Poust.Level.Motion.PolarMotion(bounds, this);
         }
 
-        update(level: LevelState, timeMillis: number): void {
-            super.update(level, timeMillis);
+        update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
+            super.update(level, timeMillis, createdEntities);
             if (this._respectsGravity) {
                 this._velocityRPX -= timeMillis * (level.getGravity() / (Math.abs(this._velocityAPX) + 1));
             }

@@ -79,13 +79,13 @@
 
         }
 
-        update(level: LevelState, timeMillis: number): void {
+        update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
             this._stateAgeMillis += timeMillis;
             if (this._bounds.getInnerRadiusPx() <= 0) {
                 // welp, we're dead now!?
                 this.setDead();
             }
-
+            return null;
         }
 
         isDead(): boolean {

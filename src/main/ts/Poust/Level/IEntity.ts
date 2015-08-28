@@ -22,7 +22,7 @@
 
         notifyCollision(withEntity: IEntity, onEdge: PolarEdge): void;
 
-        update(level: LevelState, timeMillis: number): void;
+        update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void;
 
         isDead(): boolean;
 

@@ -20,10 +20,10 @@
             return this._dying;
         }
 
-        update(level: LevelState, timeMillis: number): void {
-            super.update(level, timeMillis);
+        update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
+            super.update(level, timeMillis, createdEntities);
             if (!this.isDying()) {
-                this.updateAlive(level, timeMillis);
+                this.updateAlive(level, timeMillis, createdEntities);
             } else {
                 this.updateDying(level, timeMillis);
             }
@@ -60,8 +60,8 @@
             }
         }
 
-        updateAlive(level: LevelState, timeMillis: number) {
-
+        updateAlive(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
+            return null;
         }
     }
 

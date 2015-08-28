@@ -10,7 +10,8 @@
             a: number,
             vr: number, 
             va: number,
-            targets: PolarPoint[]
+            targets: PolarPoint[], 
+            createdEntities: IEntity[]
         ): PolarPoint;
 
     }

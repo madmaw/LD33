@@ -18,7 +18,7 @@
             numTowers: number, 
             floorHeight: number, 
             ceilingHeight: number,
-            numFloors: number, 
+            baseNumFloors: number, 
             groundOffset: number
             
         ): IStateFactory {
@@ -48,6 +48,7 @@
                     var arc = (Math.PI) / numTowers;
                     var a = (Math.PI * 2 * towerId) / numTowers + arc / 2;
                     var r = groundOffset;
+                    var numFloors = baseNumFloors + param.difficulty;
                     var floorCounts: { [_: number]: number } = {};
                     while (floorId < numFloors) {
                         floorId++;
