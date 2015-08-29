@@ -24,7 +24,8 @@
         uglify: {
             options: {
                 mangle: true,
-                compress: true
+                compress: true,
+                drop_console: true
             },
             dist: {
                 files: {
@@ -93,7 +94,14 @@
                 src: ['dist/**'],
                 dest: 'dist.zip',
                 compression: 'DEFLATE'
+            },
+            js13k: {
+                cwd: 'dist/',
+                src: ['dist/*', 'dist/lib/**'],
+                dest: 'js13k.zip',
+                compression: 'DEFLATE'
             }
+
         }
     });
 
@@ -116,8 +124,9 @@
 
     // Default task(s).
     grunt.registerTask('reset', ['clean:all']);
-    grunt.registerTask('dist_', ['ts', 'uglify', 'htmlmin', 'cssmin', 'copy', 'replace', 'zip']);
-    grunt.registerTask('dist', ['dist_', 'clean:dist']);
+    grunt.registerTask('prod', ['ts', 'uglify', 'htmlmin', 'cssmin', 'copy', 'replace']);
+    grunt.registerTask('dist', ['prod', 'zip:dist', 'clean:dist']);
+    grunt.registerTask('js13k', ['prod', 'zip:js13k', 'clean:dist']);
     grunt.registerTask('default', ['ts']);
 
 };

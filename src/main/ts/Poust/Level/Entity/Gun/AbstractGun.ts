@@ -88,7 +88,7 @@
                 recoil = new PolarPoint(recoilCartesian.x, recoilCartesian.y);
 
                 this._shootCoolDown += this._millisBetweenShots;
-                this._shootSound.play();
+                this._shootSound();
             }
             if (this._reloadCoolDown < 0) {
                 this._reloadCoolDown = 0;
@@ -112,7 +112,7 @@
             var dx = tox - fromx;
             var dy = toy - fromy;
             var h = Math.sqrt(dx * dx + dy * dy);
-            var v = 0.7;
+            var v = 1;
             dx = (dx * v) / h;
             dy = (dy * v) / h;
 

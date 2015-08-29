@@ -7,7 +7,6 @@
 /// <reference path="src/main/ts/Poust/Level/Motion/PolarMotion.ts" />
 
 //grunt-start
-/// <reference path="src/main/ts/Poust/AudioSound.ts" />
 /// <reference path="src/main/ts/Poust/Engine.ts" />
 /// <reference path="src/main/ts/Poust/ISound.ts" />
 /// <reference path="src/main/ts/Poust/IState.ts" />
@@ -47,11 +46,17 @@
 /// <reference path="src/main/ts/Poust/Level/PolarBounds.ts" />
 /// <reference path="src/main/ts/Poust/Level/PolarEdge.ts" />
 /// <reference path="src/main/ts/Poust/Level/PolarPoint.ts" />
-/// <reference path="src/main/ts/Poust/Level/Renderer/BouncyEntityRenderer.ts" />
-/// <reference path="src/main/ts/Poust/Level/Renderer/ExitEntityRenderer.ts" />
-/// <reference path="src/main/ts/Poust/Level/Renderer/FlappyEntityRenderer.ts" />
-/// <reference path="src/main/ts/Poust/Level/Renderer/PathEntityRenderer.ts" />
-/// <reference path="src/main/ts/Poust/Level/Renderer/SeekerEntityRenderer.ts" />
-/// <reference path="src/main/ts/Poust/Level/Renderer/SpikeEntityRenderer.ts" />
+/// <reference path="src/main/ts/Poust/Level/Renderer/bouncyEntityRendererFactory.ts" />
+/// <reference path="src/main/ts/Poust/Level/Renderer/exitEntityRendererFactory.ts" />
+/// <reference path="src/main/ts/Poust/Level/Renderer/flappyEntityRendererFactory.ts" />
+/// <reference path="src/main/ts/Poust/Level/Renderer/pathEntityRendererFactory.ts" />
+/// <reference path="src/main/ts/Poust/Level/Renderer/playerEntityRendererFactory.ts" />
+/// <reference path="src/main/ts/Poust/Level/Renderer/seekerEntityRendererFactory.ts" />
+/// <reference path="src/main/ts/Poust/Level/Renderer/spikeEntityRendererFactory.ts" />
+/// <reference path="src/main/ts/Poust/Sound/audioSoundFactory.ts" />
+/// <reference path="src/main/ts/Poust/Sound/webAudioGunSoundFactory.ts" />
+/// <reference path="src/main/ts/Poust/Sound/webAudioToneSoundFactory.ts" />
+/// <reference path="src/main/ts/Poust/Sound/webAudioVibratoSoundFactory.ts" />
 /// <reference path="src/main/ts/app.ts" />
+/// <reference path="src/main/d.ts/waa.d.ts" />
 //grunt-end

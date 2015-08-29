@@ -2,7 +2,7 @@
 
     export interface IEntityRenderer {
 
-        render(context: CanvasRenderingContext2D, entity: IEntity): void;
+        (context: CanvasRenderingContext2D, entity: IEntity): void;
 
     }
 

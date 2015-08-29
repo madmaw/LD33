@@ -30,10 +30,12 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="reference.ts" />
+    <TypeScriptCompile Include="src\main\d.ts\waa.d.ts" />
     <TypeScriptCompile Include="src\main\ts\app.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractState.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractUpdatingState.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\AudioSound.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\playerEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Sound\audioSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Engine.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\ISound.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\IStateFactory.ts" />
@@ -56,10 +58,11 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\SeekerEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\ConcentricLevelStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\DelegatingLevelStateFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\HardCodedEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\hardCodedEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\HardCodedEntitySpawner.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\IEntitySpawner.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\SkyscraperLevelStateFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\SpikeyLevelStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Gesture.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\IEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\GroupId.ts" />
@@ -77,12 +80,15 @@
     <TypeScriptCompile Include="src\main\ts\Poust\IStateListener.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\PolarEdge.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\PolarPoint.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\BouncyEntityRenderer.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\ExitEntityRenderer.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\FlappyEntityRenderer.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\PathEntityRenderer.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\SeekerEntityRenderer.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\SpikeEntityRenderer.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\bouncyEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\exitEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\flappyEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\pathEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\seekerEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\spikeEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioVibratoSoundFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioGunSoundFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioToneSoundFactory.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="package.json" />
@@ -94,9 +100,7 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\main\d.ts\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
   </PropertyGroup>

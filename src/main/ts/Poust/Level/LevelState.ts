@@ -65,6 +65,8 @@
             this._mouseMoveListener = (event: MouseEvent) => {
                 if (mouseDown) {
                     this.setTarget(0, event.clientX, event.clientY, false);
+                } else {
+                    this.setTarget(0, event.clientX, event.clientY, false, false);
                 }
                 event.stopPropagation();
             };
@@ -159,15 +161,19 @@
             return this._element.clientHeight;
         }
 
-        private setTarget(id: number, x: number, y: number, allowJump: boolean) {
+        private setTarget(id: number, x: number, y: number, allowJump: boolean, allowShoot = true) {
             if (this._player.isDead()) {
-                this.fireStateChangeEvent(new LevelStateRestartParam());
+                if (allowShoot) {
+                    this.fireStateChangeEvent(new LevelStateRestartParam());
+                }
             } else {
                 var gesture: Gesture;
                 if (allowJump) {
                     gesture = Gesture.Context;
-                } else {
+                } else if (allowShoot) {
                     gesture = Gesture.ShootOnly;
+                } else {
+                    gesture = Gesture.AimOnly;
                 }
                 this._player.setTarget(id, x, y, gesture);
             }
@@ -668,26 +674,6 @@
             this._context.fillStyle = "#000000";
             this._context.fillRect(0, 0, w, h);
 
-            this._context.fillStyle = "#FFFFFF";
-
-            var timeString = this.toTimeString(this._levelAgeMillis);
-            this._context.fillText(timeString, fontHeight, fontHeight * 1.5);
-
-            var bestTimeString;
-            if (this._bestLevelTime) {
-                bestTimeString = "BEST " + this.toTimeString(this._bestLevelTime);
-            } else {
-                bestTimeString = "Unbeaten!";
-            }
-            var bestTimeStringMetric = this._context.measureText(bestTimeString);
-            this._context.fillText(bestTimeString, w - bestTimeStringMetric.width - fontHeight, fontHeight + fontHeight/2);
-
-            if (this._player.isDead() || this._player.isDying()) {
-                var text = "GAME OVER";
-                var textMetric = this._context.measureText(text);
-                this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2);
-            }
-
             this._context.save();
             //            this._context.translate(w / 2, h / 2);
             var pr = this._cameraCenterRadius;
@@ -702,7 +688,9 @@
             this._context.scale(scale, scale);
             this._context.translate(px, py);
 
-            for (var i in this._groups) {
+            var i = this._groups.length;
+            while (i > 0) {
+                i--;
                 var group = this._groups[i];
                 var j = group.length;
                 while (j > 0) {
@@ -711,12 +699,34 @@
                     var entity = entityHolder.entity;
                     if (!entity.isDead()) {
                         var renderer = entityHolder.renderer;
-                        renderer.render(this._context, entity);
+                        renderer(this._context, entity);
                     }
                 }
             }
 
             this._context.restore();
+
+            this._context.fillStyle = "#FFFFFF";
+
+            var timeString = this.toTimeString(this._levelAgeMillis);
+            this._context.fillText(timeString, fontHeight, fontHeight * 1.5);
+
+            var bestTimeString;
+            if (this._bestLevelTime) {
+                bestTimeString = "BEST " + this.toTimeString(this._bestLevelTime);
+            } else {
+                bestTimeString = "Unbeaten!";
+            }
+            var bestTimeStringMetric = this._context.measureText(bestTimeString);
+            this._context.fillText(bestTimeString, w - bestTimeStringMetric.width - fontHeight, fontHeight + fontHeight / 2);
+
+            if (this._player.isDead() || this._player.isDying()) {
+                var text = "GAME OVER";
+                var textMetric = this._context.measureText(text);
+                this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2);
+            }
+
+
         }
 
         public winLevel(param: LevelStateFactoryParam) {

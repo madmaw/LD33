@@ -1,16 +1,11 @@
 ﻿module Poust.Level.Renderer {
 
 
-    export class SpikeEntityRenderer implements IEntityRenderer {
-
-        constructor(private _lineWidth: number, private _strokeStyle: any, private _fillStyle: any) {
-
-        }
-
-        render(context: CanvasRenderingContext2D, entity: IEntity): void {
-            context.strokeStyle = this._strokeStyle;
-            context.fillStyle = this._fillStyle;
-            context.lineWidth = this._lineWidth;
+    export function spikeEntityRendererFactory(lineWidth: number, strokeStyle: any, fillStyle: any): IEntityRenderer {
+        return function(context: CanvasRenderingContext2D, entity: IEntity) {
+            context.strokeStyle = strokeStyle;
+            context.fillStyle = fillStyle;
+            context.lineWidth = lineWidth;
 
             var bounds = entity.getBounds();
 

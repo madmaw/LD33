@@ -1,16 +1,12 @@
 ﻿module Poust.Level.Renderer {
 
-    export class PathEntityRenderer implements IEntityRenderer {
+    export function pathEntityRendererFactory(lineWidth: number, strokeStyle: any, fillStyle: any): IEntityRenderer {
 
-        public constructor(private _lineWidth: number, private _strokeStyle: any, private _fillStyle: any) {
+        return function(context: CanvasRenderingContext2D, entity: IEntity): void {
 
-        }
-
-        render(context: CanvasRenderingContext2D, entity: IEntity): void {
-
-            context.strokeStyle = this._strokeStyle;
-            context.fillStyle = this._fillStyle;
-            context.lineWidth = this._lineWidth;
+            context.strokeStyle = strokeStyle;
+            context.fillStyle = fillStyle;
+            context.lineWidth = lineWidth;
 
             var bounds = entity.getBounds();
 

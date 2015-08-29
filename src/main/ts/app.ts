@@ -4,11 +4,28 @@ window.onload = () => {
 
     var e = document.getElementById("canvas");
 
-    var jumpSound = new Poust.AudioSound(["res/jump1.wav", "res/jump2.wav", "res/jump3.wav", "res/jump4.wav"]);
-    var shootSound = new Poust.AudioSound(["res/shoot1.wav", "res/shoot2.wav", "res/shoot3.wav"]);
-    var playerDeathSound = new Poust.AudioSound(["res/death1.wav"]);
-    var monsterDeathSound = new Poust.AudioSound(["res/hurt1.wav"]);
-    var winSound = new Poust.AudioSound(["res/win1.wav"]);
+    var audioContext: AudioContext;
+    if (window["AudioContext"]) {
+        audioContext = new AudioContext();
+    } else if (window["webkitAudioContext"]) {
+        audioContext = new webkitAudioContext();
+    }
+
+    //var jumpSound = Poust.Sound.audioSoundFactory(["res/jump1.wav", "res/jump2.wav", "res/jump3.wav", "res/jump4.wav"]);
+    var jumpSound = Poust.Sound.webAudioToneSoundFactory(audioContext, 'sawtooth', 250, 1000, 200, 0.01, 0.08, 0.12, 0.3);
+    //var shootSound1 = new Poust.Sound.AudioSound(["res/shoot1.wav", "res/shoot2.wav", "res/shoot3.wav"]);
+    var shootSound1 = Poust.Sound.webAudioToneSoundFactory(audioContext, 'square', 600, 100, 100, 0, 0.035, 0.04, 0.2, 0.6);
+    var shootSound = Poust.Sound.webAudioGunSoundFactory(audioContext, shootSound1);
+    
+    var playerDeathSound = Poust.Sound.webAudioVibratoSoundFactory(audioContext, 200, 10, 6, 0.7);
+    //var wallJumpAvailableSound = Poust.Sound.webAudioToneSoundFactory(audioContext, 100, 40, 10, 0, 0.1, 0.14, 0.3);
+    var wallJumpAvailableSound = Poust.Sound.webAudioToneSoundFactory(audioContext, 'square', 250, -150, 100, 0, 0.05, 0.1, 0.2, 0.5);
+    
+
+    //var monsterDeathSound = Poust.Sound.audioSoundFactory(["res/hurt1.wav"]);
+    var monsterDeathSound = Poust.Sound.webAudioToneSoundFactory(audioContext, 'sawtooth', 150, -100, 100, 0.01, 0.05, 0.1, 0.3);
+    //var winSound = Poust.Sound.audioSoundFactory(["res/win1.wav"]);
+    var winSound = Poust.Sound.webAudioVibratoSoundFactory(audioContext, 600, 1000, 14, 0.8);
 
     var canvas = <HTMLCanvasElement>e;
     canvas.setAttribute("width", ""+document.body.clientWidth+"px");
@@ -24,15 +41,17 @@ window.onload = () => {
     radialGradient.addColorStop(0.8, "rgba(0, 0, 255, 0.6)");
     radialGradient.addColorStop(0.92, "rgba(255, 255, 255, 0.7)");
     radialGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-    var defaultRenderer = new Poust.Level.Renderer.PathEntityRenderer(2, "#FFFFFF", radialGradient);
-    var flappyRenderer = new Poust.Level.Renderer.FlappyEntityRenderer(2, "#FFFFFF", radialGradient);
-    var spikeRenderer = new Poust.Level.Renderer.SpikeEntityRenderer(2, "#FFFFFF", radialGradient);
-    var bouncyRenderer = new Poust.Level.Renderer.BouncyEntityRenderer(2, "#FFFFFF", radialGradient);
-    var seekerRenderer = new Poust.Level.Renderer.SeekerEntityRenderer(2, "#FFFFFF", radialGradient);
-    var exitRenderer = new Poust.Level.Renderer.ExitEntityRenderer(2, "#FFFFFF", radialGradient);
-    var playerRenderer = new Poust.Level.Renderer.PathEntityRenderer(2, "#FFFFFF", "rgba(255, 0, 0, 0.7)");
-    var bulletRenderer = new Poust.Level.Renderer.SeekerEntityRenderer(2, "#FFFFAA", "rgba(255, 255, 0, 0.7");
-    var entityRendererFactory = ((new Poust.Level.Factory.HardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer, playerRenderer, bulletRenderer)).createEntityRendererFactory());
+    
+
+    var defaultRenderer = Poust.Level.Renderer.pathEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var flappyRenderer = Poust.Level.Renderer.flappyEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var spikeRenderer = Poust.Level.Renderer.spikeEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var bouncyRenderer = Poust.Level.Renderer.bouncyEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var seekerRenderer = Poust.Level.Renderer.seekerEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var exitRenderer = Poust.Level.Renderer.exitEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var playerRenderer = Poust.Level.Renderer.playerEntityRendererFactory(2, "#FFFFFF", "rgba(255, 0, 0, 1)", "rgba(128, 128, 0, 1)");
+    var bulletRenderer = Poust.Level.Renderer.seekerEntityRendererFactory(2, "#FFFFAA", "rgba(255, 255, 0, 0.7)");
+    var entityRendererFactory = Poust.Level.Factory.hardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer, playerRenderer, bulletRenderer);
 
     var level1 = "1";
     var level2 = "2";
@@ -59,7 +78,8 @@ window.onload = () => {
         jumpSound,
         shootSound,
         playerDeathSound,
-        winSound)).createStateFactory();
+        winSound,
+        wallJumpAvailableSound)).createStateFactory();
 
     var engine = new Poust.Engine(delegatingLevelStateFactory);
     engine.setStateFromParam(new Poust.Level.LevelStateRestartParam());

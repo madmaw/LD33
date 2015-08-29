@@ -1,8 +1,12 @@
 ﻿module Poust.Level.Entity {
 
     export class AbstractLivingPolarEntity extends AbstractPolarEntity {
+
+        public static STATE_DYING = "dying";
+
         private _dying: boolean;
         private _killedBy: IEntity;
+        
 
         constructor(groupId: GroupId, mass: number, respectsGravity: boolean, private _deathSound: ISound) {
             super(groupId, mass, respectsGravity);
@@ -12,7 +16,7 @@
             if (!this._dying) {
                 this._dying = true;
                 this._killedBy = killedBy;
-                this._deathSound.play();
+                this._deathSound();
             }
         }
 
@@ -31,6 +35,7 @@
 
         updateDying(level: LevelState, timeMillis: number) {
             if (this._collidable) {
+                this.setState(AbstractLivingPolarEntity.STATE_DYING);
                 this._collidable = false;
                 this._respectsGravity = true;
                 if (this._killedBy) {

@@ -1,15 +1,11 @@
 ﻿module Poust.Level.Renderer {
 
-    export class FlappyEntityRenderer {
+    export function flappyEntityRendererFactory(lineWidth: number, strokeStyle: any, fillStyle: any): IEntityRenderer {
 
-        constructor(private _lineWidth: number, private _strokeStyle: any, private _fillStyle: any) {
-
-        }
-
-        render(context: CanvasRenderingContext2D, entity: IEntity): void {
-            context.strokeStyle = this._strokeStyle;
-            context.fillStyle = this._fillStyle;
-            context.lineWidth = this._lineWidth;
+        return function(context: CanvasRenderingContext2D, entity: IEntity): void {
+            context.strokeStyle = strokeStyle;
+            context.fillStyle = fillStyle;
+            context.lineWidth = lineWidth;
 
             var bounds = entity.getBounds();
 
