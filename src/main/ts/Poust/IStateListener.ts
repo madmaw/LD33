@@ -1,7 +1,3 @@
-﻿module Poust {
-
-    export interface IStateListener {
-        (source: IState, param: any) : void;
-    }
-
+﻿interface IStateListener {
+    (source: IState, paramType: number, param: any) : void;
 }

@@ -1,34 +1,38 @@
-﻿module Poust.Level.Factory {
+﻿function delegatingLevelStateFactory(
+        stateFactories: { [_: string]: IStateFactory },
+        firstLevelName: string,
+        jumpSound: ISound,
+        shootSound: ISound,
+        deathSound: ISound,
+        winSound: ISound,
+        wallJumpAvailableSound: ISound
+    ): IStateFactory {
+    var createPlayer = function () {
+        var gun = new AbstractGun(300, 600, 6, 0.1, 1, shootSound);
+        var player = new PlayerEntity(GroupId.Player, 1, 0.4, gun, deathSound, jumpSound, winSound, wallJumpAvailableSound);
+        player.setBounds(600, 0, 32, 24);
+        return player;
+    };
+        
+    return function (paramType: number, param: any) {
+        
 
-    export class DelegatingLevelStateFactory {
+        if (paramType == StateFactoryParamType.LevelLoad) {
 
-        public constructor(
-            private _stateFactories: { [_: string]: IStateFactory },
-            private _firstLevelName: string,
-            private _jumpSound: ISound,
-            private _shootSound: ISound,
-            private _deathSound: ISound,
-            private _winSound: ISound,
-            private _wallJumpAvailableSound: ISound
-        ) {
+            var p: ILevelStateFactoryParam = param;
+            if (p.player == null) {
+                p.player = createPlayer();
+            }
 
-        }
-
-
-        public createStateFactory(): IStateFactory {
-            return (param: LevelStateFactoryParam) => {
-                if (param instanceof LevelStateFactoryParam) {
-                    return this._stateFactories[param.levelName](param);
-                } else {
-                    var gun = new Poust.Level.Entity.Gun.AbstractGun(300, 600, 6, 0.1, 1, this._shootSound);
-                    var player = new Poust.Level.Entity.PlayerEntity(Poust.Level.GroupId.Player, 1, 0.4, gun, this._deathSound, this._jumpSound, this._winSound, this._wallJumpAvailableSound);
-                    player.setBounds(600, 0, 32, 24);
-                    var newParam = new LevelStateFactoryParam(player, this._firstLevelName, 1);
-                    return this._stateFactories[newParam.levelName](newParam);
-                }
+            return stateFactories[param.levelName](paramType, param);
+        } else {
+            var player = createPlayer();
+            var newParam: ILevelStateFactoryParam = {
+                player: player,
+                levelName: firstLevelName,
+                difficulty: 1
             };
+            return stateFactories[newParam.levelName](paramType, newParam);
         }
-
-    }
-
+    };
 }

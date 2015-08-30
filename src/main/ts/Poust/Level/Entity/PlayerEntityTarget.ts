@@ -1,14 +1,10 @@
-﻿module Poust.Level.Entity {
+﻿class PlayerEntityTarget {
 
-    export class PlayerEntityTarget {
+    public jumped: boolean;
+    public shooting: boolean;
 
-        public jumped: boolean;
-        public shooting: boolean;
-
-        // TODO this should be x and y to counter for the rotation!
-        public constructor(public gestureHint: Gesture, public sx: number, public sy: number) {
-
-        }
+    // TODO this should be x and y to counter for the rotation!
+    public constructor(public gestureHint: number, public sx: number, public sy: number) {
 
     }
 

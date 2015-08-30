@@ -1,12 +1,8 @@
-﻿module Poust.Level {
+﻿interface IMotion {
 
-    export interface IMotion {
+    getBounds(): PolarBounds;
 
-        getBounds(): PolarBounds;
+    getEntity(): IEntity;
 
-        getEntity(): IEntity;
-
-        apply(state: LevelState): void;
-    }
-
+    apply(state: LevelState): void;
 }

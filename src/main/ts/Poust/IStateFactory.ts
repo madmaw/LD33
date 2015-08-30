@@ -1,9 +1,5 @@
-﻿module Poust {
+﻿interface IStateFactory {
 
-    export interface IStateFactory {
-
-        (param: any): IState;
-
-    }
+    (paramType: number, param: any): IState;
 
 }

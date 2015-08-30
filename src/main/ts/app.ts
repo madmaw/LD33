@@ -11,21 +11,13 @@ window.onload = () => {
         audioContext = new webkitAudioContext();
     }
 
-    //var jumpSound = Poust.Sound.audioSoundFactory(["res/jump1.wav", "res/jump2.wav", "res/jump3.wav", "res/jump4.wav"]);
-    var jumpSound = Poust.Sound.webAudioToneSoundFactory(audioContext, 'sawtooth', 250, 1000, 200, 0.01, 0.08, 0.12, 0.3);
-    //var shootSound1 = new Poust.Sound.AudioSound(["res/shoot1.wav", "res/shoot2.wav", "res/shoot3.wav"]);
-    var shootSound1 = Poust.Sound.webAudioToneSoundFactory(audioContext, 'square', 600, 100, 100, 0, 0.035, 0.04, 0.2, 0.6);
-    var shootSound = Poust.Sound.webAudioGunSoundFactory(audioContext, shootSound1);
-    
-    var playerDeathSound = Poust.Sound.webAudioVibratoSoundFactory(audioContext, 200, 10, 6, 0.7);
-    //var wallJumpAvailableSound = Poust.Sound.webAudioToneSoundFactory(audioContext, 100, 40, 10, 0, 0.1, 0.14, 0.3);
-    var wallJumpAvailableSound = Poust.Sound.webAudioToneSoundFactory(audioContext, 'square', 250, -150, 100, 0, 0.05, 0.1, 0.2, 0.5);
-    
-
-    //var monsterDeathSound = Poust.Sound.audioSoundFactory(["res/hurt1.wav"]);
-    var monsterDeathSound = Poust.Sound.webAudioToneSoundFactory(audioContext, 'sawtooth', 150, -100, 100, 0.01, 0.05, 0.1, 0.3);
-    //var winSound = Poust.Sound.audioSoundFactory(["res/win1.wav"]);
-    var winSound = Poust.Sound.webAudioVibratoSoundFactory(audioContext, 600, 1000, 14, 0.8);
+    var jumpSound = webAudioToneSoundFactory(audioContext, 'sawtooth', 250, 1000, 200, 0.01, 0.08, 0.12, 0.3);
+    var shootSound1 = webAudioToneSoundFactory(audioContext, 'square', 600, 100, 100, 0, 0.035, 0.04, 0.2, 0.6);
+    var shootSound = webAudioGunSoundFactory(audioContext, shootSound1);
+    var playerDeathSound = webAudioVibratoSoundFactory(audioContext, 200, 10, 6, 0.7);
+    var wallJumpAvailableSound = webAudioToneSoundFactory(audioContext, 'square', 250, -150, 100, 0, 0.05, 0.1, 0.2, 0.5);
+    var monsterDeathSound = webAudioToneSoundFactory(audioContext, 'sawtooth', 150, -100, 100, 0.01, 0.05, 0.1, 0.3);
+    var winSound = webAudioVibratoSoundFactory(audioContext, 600, 1000, 14, 0.8);
 
     var canvas = <HTMLCanvasElement>e;
     canvas.setAttribute("width", ""+document.body.clientWidth+"px");
@@ -43,15 +35,15 @@ window.onload = () => {
     radialGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
     
 
-    var defaultRenderer = Poust.Level.Renderer.pathEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var flappyRenderer = Poust.Level.Renderer.flappyEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var spikeRenderer = Poust.Level.Renderer.spikeEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var bouncyRenderer = Poust.Level.Renderer.bouncyEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var seekerRenderer = Poust.Level.Renderer.seekerEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var exitRenderer = Poust.Level.Renderer.exitEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var playerRenderer = Poust.Level.Renderer.playerEntityRendererFactory(2, "#FFFFFF", "rgba(255, 0, 0, 1)", "rgba(128, 128, 0, 1)");
-    var bulletRenderer = Poust.Level.Renderer.seekerEntityRendererFactory(2, "#FFFFAA", "rgba(255, 255, 0, 0.7)");
-    var entityRendererFactory = Poust.Level.Factory.hardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer, playerRenderer, bulletRenderer);
+    var defaultRenderer = pathEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var flappyRenderer = flappyEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var spikeRenderer = spikeEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var bouncyRenderer = bouncyEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var seekerRenderer = seekerEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var exitRenderer = exitEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var playerRenderer = playerEntityRendererFactory(2, "#FFFFFF", "rgba(255, 0, 0, 1)", "rgba(128, 128, 0, 1)");
+    var bulletRenderer = seekerEntityRendererFactory(2, "#FFFFAA", "rgba(255, 255, 0, 0.7)");
+    var entityRendererFactory = hardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer, playerRenderer, bulletRenderer);
 
     var level1 = "1";
     var level2 = "2";
@@ -61,28 +53,82 @@ window.onload = () => {
     var gravity = 0.0014;
     var maxCollisionSteps = 6;
 
-    var entitySpawner = new Poust.Level.Factory.HardCodedEntitySpawner().createSpawner(monsterDeathSound);
+    var entitySpawner = hardCodedEntitySpawner(monsterDeathSound);
 
-    var concentricLevelStateFactory = new Poust.Level.Factory.ConcentricLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
-    var skyscraperLevelStateFactory = new Poust.Level.Factory.SkyscraperLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
-    var spikeLevelStateFactory = new Poust.Level.Factory.SpikeyLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
+    var _concentricLevelStateFactory = concentricLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
+    var _skyscraperLevelStateFactory = skyscraperLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
+    var _spikeLevelStateFactory = spikeyLevelStateFactory(e, context, gravity, entityRendererFactory, maxCollisionSteps, entitySpawner);
 
-    var levelStateFactories: { [_: string]: Poust.IStateFactory } = {};
-    levelStateFactories[level1] = concentricLevelStateFactory.createStateFactory(level2, 1, 6, 20, 70, 300, 5);
-    levelStateFactories[level2] = skyscraperLevelStateFactory.createStateFactory(level1, 1, 8, 20, 100, 6, 300);
-    levelStateFactories[level3] = spikeLevelStateFactory.createStateFactory(level1, 1, 8, 300, 300, 10);
+    var levelStateFactories: { [_: string]: IStateFactory } = {};
+    levelStateFactories[level1] = _concentricLevelStateFactory(level2, 0, 6, 20, 70, 300, 5);
+    levelStateFactories[level2] = _skyscraperLevelStateFactory(level1, 1, 8, 20, 100, 6, 300);
+    levelStateFactories[level3] = _spikeLevelStateFactory(level1, 1, 8, 300, 300, 10);
 
-    var delegatingLevelStateFactory = (new Poust.Level.Factory.DelegatingLevelStateFactory(
+    var _delegatingLevelStateFactory = delegatingLevelStateFactory(
         levelStateFactories,
         level1,
         jumpSound,
         shootSound,
         playerDeathSound,
         winSound,
-        wallJumpAvailableSound)).createStateFactory();
+        wallJumpAvailableSound);
 
-    var engine = new Poust.Engine(delegatingLevelStateFactory);
-    engine.setStateFromParam(new Poust.Level.LevelStateRestartParam());
+    var engine = new Engine(_delegatingLevelStateFactory);
+
+    var locationToLevel = function () {
+        var hash = window.location.hash;
+        var param: any;
+        if (hash) {
+            // attempt to load a specific level
+            hash = hash.substr(1);
+            if (localStorage.getItem("s-"+hash)) {
+                var parts = hash.split("-");
+                var difficulty = parseInt(parts[0]);
+                var levelName = parts[1];
+                if (difficulty && levelName) {
+                    var p: ILevelStateFactoryParam = {
+                        player: null,
+                        difficulty: difficulty,
+                        levelName: levelName
+                    }
+                    param = p;
+                    paramType = StateFactoryParamType.LevelLoad;
+                }
+            } else {
+                param = null;
+            }
+        }
+        return param;
+    
+    };
+
+    var param = locationToLevel();
+    var paramType: number;
+    if (param == null) {
+        paramType = StateFactoryParamType.LevelRestart;
+    } else {
+        var hash = window.location.hash;
+        var newURL = window.location.href.substr(0, window.location.href.length - hash.length);
+        // replace with menu/home screen (then we load a level, so it goes on top of this, so back always goes back!)
+        window.history.replaceState(null, null, newURL);
+    }
+
+    engine.setStateFromParam(paramType, param);
+
+    window.onpopstate = (event: PopStateEvent) => {
+        var state = event.state;
+        if (state == null) {
+            state = locationToLevel();
+        }
+        if (state) {
+            // load it!
+            engine.setStateFromParam(StateFactoryParamType.LevelLoad, state);
+        } else {
+            // restart!
+            // TODO menu
+            engine.setStateFromParam(StateFactoryParamType.LevelRestart, null);
+        }
+    }
 
     /*
     var state = new Poust.Level.LevelState(canvas, player, 0.0014, context, defaultRenderer, 10);

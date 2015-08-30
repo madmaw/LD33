@@ -1,9 +1,5 @@
-﻿module Poust.Level.Factory {
+﻿interface IEntitySpawner {
 
-    export interface IEntitySpawner {
-
-        (a: number, r: number, maxHeight: number, arc: number, difficulty: number): IEntity[];
-
-    }
+    (a: number, r: number, maxHeight: number, arc: number, difficulty: number): IEntity[];
 
 }

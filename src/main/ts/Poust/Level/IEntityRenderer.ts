@@ -1,9 +1,5 @@
-﻿module Poust.Level {
+﻿interface IEntityRenderer {
 
-    export interface IEntityRenderer {
-
-        (context: CanvasRenderingContext2D, entity: IEntity): void;
-
-    }
+    (context: CanvasRenderingContext2D, entity: IEntity): void;
 
 }

@@ -1,17 +1,14 @@
-﻿module Poust {
+﻿interface IState {
 
-    export interface IState {
+    setStateListener(stateListener: IStateListener): void;
 
-        setStateListener(stateListener: IStateListener): void;
+    init(): void;
 
-        init(): void;
+    start(): void;
 
-        start(): void;
+    stop(): void;
 
-        stop(): void;
+    destroy(): void;
 
-        destroy(): void;
-
-    }
 }
 

@@ -1,40 +1,36 @@
-﻿module Poust.Level {
+﻿interface IEntity {
 
-    export interface IEntity {
+    getGroupId(): number;
 
-        getGroupId(): GroupId;
+    getBounds(): PolarBounds;
 
-        getBounds(): PolarBounds;
+    getVelocityRadiusPX(): number;
 
-        getVelocityRadiusPX(): number;
+    setVelocityRadiusPX(velocityRadiusPX: number): void;
 
-        setVelocityRadiusPX(velocityRadiusPX: number): void;
+    getVelocityAngleRadians(atRadiusPX: number): number;
 
-        getVelocityAngleRadians(atRadiusPX: number): number;
+    setVelocityAngleRadians(velocityAngleRadians: number, atRadiusPX: number): void;
 
-        setVelocityAngleRadians(velocityAngleRadians: number, atRadiusPX: number): void;
+    setAnchorRight(anchorRight: boolean): void;
 
-        setAnchorRight(anchorRight: boolean): void;
+    getMass(): number;
 
-        getMass(): number;
+    calculateMotion(timeMillis: number): IMotion;
 
-        calculateMotion(timeMillis: number): IMotion;
+    notifyCollision(withEntity: IEntity, onEdge: number): void;
 
-        notifyCollision(withEntity: IEntity, onEdge: PolarEdge): void;
+    update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void;
 
-        update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void;
+    isDead(): boolean;
 
-        isDead(): boolean;
+    isCollidable(): boolean;
 
-        isCollidable(): boolean;
+    isSensor(): boolean;
 
-        isSensor(): boolean;
+    isContinuousCollisions(): boolean;
 
-        isContinuousCollisions(): boolean;
+    getState(): string;
 
-        getState(): string;
-
-        getStateAgeMillis(): number;
-    }
-
+    getStateAgeMillis(): number;
 }

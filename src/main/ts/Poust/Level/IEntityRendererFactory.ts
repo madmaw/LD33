@@ -1,7 +1,3 @@
-﻿module Poust.Level {
-
-    export interface IEntityRendererFactory {
-        (entity: IEntity): IEntityRenderer;
-    }
-
+﻿interface IEntityRendererFactory {
+    (entity: IEntity): IEntityRenderer;
 }

@@ -1,19 +1,15 @@
-﻿module Poust.Level.Entity {
+﻿interface IGun {
 
-    export interface IGun {
-
-        update(
-            diffMillis: number,
-            state: LevelState,
-            onGround: boolean,
-            r: number,
-            a: number,
-            vr: number, 
-            va: number,
-            targets: PolarPoint[], 
-            createdEntities: IEntity[]
-        ): PolarPoint;
-
-    }
+    update(
+        diffMillis: number,
+        state: LevelState,
+        onGround: boolean,
+        r: number,
+        a: number,
+        vr: number, 
+        va: number,
+        targets: PolarPoint[], 
+        createdEntities: IEntity[]
+    ): PolarPoint;
 
 }

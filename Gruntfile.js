@@ -34,6 +34,18 @@
                 }
             }
         },
+        'closure-compiler': {
+            dist: {
+                closurePath: 'libbuild/closure-compiler',
+                js: 'build/out.js',
+                jsOutputFile: 'dist/out.min.js',
+                maxBuffer: 500,
+                options: {
+                    compilation_level: 'ADVANCED_OPTIMIZATIONS',
+                    language_in: 'ECMASCRIPT5'
+                }
+            }
+        },
         htmlmin: {                                     
             options: {
                 removeComments: true,
@@ -109,6 +121,8 @@
     grunt.loadNpmTasks('grunt-contrib-clean');
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    // load the plugin that provides the closure compiler
+    grunt.loadNpmTasks('grunt-closure-compiler');
     // load the plugin that provides the htmlmin task
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
     // load the plugin that provides the cssmin task
@@ -124,7 +138,7 @@
 
     // Default task(s).
     grunt.registerTask('reset', ['clean:all']);
-    grunt.registerTask('prod', ['ts', 'uglify', 'htmlmin', 'cssmin', 'copy', 'replace']);
+    grunt.registerTask('prod', ['ts', 'closure-compiler', 'htmlmin', 'cssmin', 'copy', 'replace']);
     grunt.registerTask('dist', ['prod', 'zip:dist', 'clean:dist']);
     grunt.registerTask('js13k', ['prod', 'zip:js13k', 'clean:dist']);
     grunt.registerTask('default', ['ts']);

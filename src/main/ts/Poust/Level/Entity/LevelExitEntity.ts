@@ -1,12 +1,8 @@
-﻿module Poust.Level.Entity{
+﻿class LevelExitEntity extends AbstractEntity {
 
-    export class LevelExitEntity extends AbstractEntity {
-
-        constructor(public _nextLevelParamsFactory: (player: PlayerEntity) => any) {
-            super(GroupId.Enemy);
-            this.setSensor(true);
-        }
-
+    constructor(public _nextLevelParamsFactory: (player: PlayerEntity) => any) {
+        super(GroupId.Enemy);
+        this.setSensor(true);
     }
 
 }
