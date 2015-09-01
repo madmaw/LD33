@@ -15,11 +15,21 @@
                     break;
                 case 1:
                     {
-                        var spike = new ObstacleEntity(GroupId.Enemy);
-                        var width = 22 + difficulty;
+                        var width: number;
+                        var height: number;
+                        var obstacle: AbstractPolarEntity;
+                        if (difficulty < Math.random() * 10 + 1) {
+                            obstacle = new ChomperEntity(GroupId.Enemy, 1, deathSound, Math.random() > 0.5);
+                            height = 32 + difficulty * 2;
+                            width = 28 + difficulty * 1.9;
+                        } else {
+                            obstacle = new ObstacleEntity(GroupId.Enemy);
+                            height = 22 + difficulty;
+                            width = 22 + difficulty;
+                        }
                         var ae = a + Math.random() * (arc - width / r);
-                        spike.setBounds(r, ae, width, width);
-                        entity = spike;
+                        obstacle.setBounds(r, ae, height, width);
+                        entity = obstacle;
                     }
                     break;
                 case 2:

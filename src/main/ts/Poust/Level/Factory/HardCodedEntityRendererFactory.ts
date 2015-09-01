@@ -6,7 +6,8 @@
         seekerEntityRenderer: IEntityRenderer,
         exitEntityRenderer: IEntityRenderer,
         playerEntityRenderer: IEntityRenderer,
-        bulletEntityRenderer: IEntityRenderer)
+        bulletEntityRenderer: IEntityRenderer,
+        chomperEntityRenderer: IEntityRenderer)
 {
 
     return (entity: IEntity) => {
@@ -24,6 +25,8 @@
             return playerEntityRenderer;
         } else if (entity instanceof BulletEntity) {
             return bulletEntityRenderer;
+        } else if (entity instanceof ChomperEntity) {
+            return chomperEntityRenderer;
         } else {
             return defaultEntityRenderer;
         }

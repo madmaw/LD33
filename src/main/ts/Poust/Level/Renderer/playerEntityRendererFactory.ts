@@ -156,7 +156,7 @@
             var armShoulderCx = -width  * 0.25;
             var armShoulderCy = -height * 0.55;
             var armRotation = (1 - cycleMultiplier) * (playerEntity._runningLeft?-Math.PI/3:Math.PI/3);
-            if (playerEntity._aimAngle != null && playerEntity._aimAge < 1000) {
+            if (playerEntity._aimAngle != null && playerEntity._aimAge < 200) {
                 armRotation = -playerEntity._aimAngle + Math.PI / 2;
             }
 

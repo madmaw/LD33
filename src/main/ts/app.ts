@@ -23,27 +23,34 @@ window.onload = () => {
     canvas.setAttribute("width", ""+document.body.clientWidth+"px");
     canvas.setAttribute("height", ""+document.body.clientHeight+"px");
     var context = canvas.getContext("2d");
+    var f = function (g: CanvasGradient, alpha: number) {
+        g.addColorStop(0, "rgba(0, 0, 0, "+alpha+")");
+        g.addColorStop(0.2, "rgba(255, 0, 255, " + alpha +")");
+        g.addColorStop(0.32, "rgba(255, 0, 0, " + alpha +")");
+        g.addColorStop(0.44, "rgba(255, 255, 0, " + alpha +")");
+        g.addColorStop(0.56, "rgba(0, 255, 0, " + alpha +")");
+        g.addColorStop(0.68, "rgba(0, 255, 255, " + alpha +")");
+        g.addColorStop(0.8, "rgba(0, 0, 255, " + alpha +")");
+        g.addColorStop(0.92, "rgba(255, 255, 255, 0.7)");
+        g.addColorStop(1, "rgba(255, 255, 255, 0)");
+    };
     var radialGradient = context.createRadialGradient(0, 0, 0, 0, 0, 1500);
-    radialGradient.addColorStop(0, "rgba(0, 0, 0, 0.5)");
-    radialGradient.addColorStop(0.2, "rgba(255, 0, 255, 0.5)");
-    radialGradient.addColorStop(0.32, "rgba(255, 0, 0, 0.5)");
-    radialGradient.addColorStop(0.44, "rgba(255, 255, 0, 0.5)");
-    radialGradient.addColorStop(0.56, "rgba(0, 255, 0, 0.5)");
-    radialGradient.addColorStop(0.68, "rgba(0, 255, 255, 0.5)");
-    radialGradient.addColorStop(0.8, "rgba(0, 0, 255, 0.6)");
-    radialGradient.addColorStop(0.92, "rgba(255, 255, 255, 0.7)");
-    radialGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+    f(radialGradient, 0.5);
+
+    var enemyGradient = context.createRadialGradient(0, 0, 200, 0, 0, 1700);
+    f(enemyGradient, 0.75);
     
 
     var defaultRenderer = pathEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var flappyRenderer = flappyEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var spikeRenderer = spikeEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var bouncyRenderer = bouncyEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var seekerRenderer = seekerEntityRendererFactory(2, "#FFFFFF", radialGradient);
-    var exitRenderer = exitEntityRendererFactory(2, "#FFFFFF", radialGradient);
+    var flappyRenderer = flappyEntityRendererFactory(2, "#FFFFFF", enemyGradient);
+    var spikeRenderer = spikeEntityRendererFactory(2, "#FFFFFF", "rgba(255, 255, 255, 0.8)");
+    var bouncyRenderer = bouncyEntityRendererFactory(2, "#FFFFFF", enemyGradient);
+    var seekerRenderer = seekerEntityRendererFactory(2, "#FFFFFF", enemyGradient);
+    var exitRenderer = exitEntityRendererFactory(2, "#FFFFFF", enemyGradient);
     var playerRenderer = playerEntityRendererFactory(2, "#FFFFFF", "rgba(255, 0, 0, 1)", "rgba(128, 128, 0, 1)");
     var bulletRenderer = seekerEntityRendererFactory(2, "#FFFFAA", "rgba(255, 255, 0, 0.7)");
-    var entityRendererFactory = hardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer, playerRenderer, bulletRenderer);
+    var chomperRenderer = chomperEntityRendererFactory(2, "#FFFFFF", enemyGradient);
+    var entityRendererFactory = hardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer, playerRenderer, bulletRenderer, chomperRenderer);
 
     var level1 = "1";
     var level2 = "2";

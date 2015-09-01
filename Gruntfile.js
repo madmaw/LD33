@@ -40,6 +40,7 @@
                 js: 'build/out.js',
                 jsOutputFile: 'dist/out.min.js',
                 maxBuffer: 500,
+                reportFile: 'closure.txt',
                 options: {
                     compilation_level: 'ADVANCED_OPTIMIZATIONS',
                     language_in: 'ECMASCRIPT5'

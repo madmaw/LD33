@@ -79,7 +79,11 @@
     }
 
     public clearTarget(inputId: number) {
-        delete this._targets[inputId];
+        //delete this._targets[inputId];
+        var target = this._targets[inputId];
+        if (target) {
+            target.cleared = true;
+        }
     }
 
     public setJump() {
@@ -138,21 +142,26 @@
                     var scale = level.getScale(screenWidth, screenHeight);
                     if (gestureHint == Gesture.JumpOnly) {
                         jumping = true;
-                    } else if (this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && target.sy > (screenHeight / 2 + this._bounds.getHeightPx() * scale))) {
-                        jumping = true;
-                    } else if (this._onLeftWall && (gestureHint == Gesture.Left || gestureHint == Gesture.Context && target.sx < screenWidth / 2)) {
-                        jumping = true;
-                    } else if (this._onRightWall && (gestureHint == Gesture.Right || gestureHint == Gesture.Context && target.sx >= screenWidth / 2)) {
-                        jumping = true;
-                    } else if (gestureHint == Gesture.AimOnly) {
-                            
-                        this._aimAngle = Math.atan2(target.sy - screenHeight / 2, target.sx - screenWidth / 2);
-                        this._aimAge = 0;
                     } else {
-                        //TODO aim
-                        target.shooting = true;
-                    }
+                        // are we jumping?
 
+                        //var miny = (screenHeight / 2 + this._bounds.getHeightPx() * scale);
+                        var p = level.getPolarPoint(target.sx, target.sy);
+                        if (!target.groundJumpDisallowed && this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && this._bounds.getInnerRadiusPx() > p.r)) {
+                            jumping = true;
+                        } else if (this._onLeftWall && (gestureHint == Gesture.Left || gestureHint == Gesture.Context && target.sx < screenWidth / 2)) {
+                            jumping = true;
+                        } else if (this._onRightWall && (gestureHint == Gesture.Right || gestureHint == Gesture.Context && target.sx >= screenWidth / 2)) {
+                            jumping = true;
+                        } else {
+                            this._aimAngle = Math.atan2(target.sy - screenHeight / 2, target.sx - screenWidth / 2);
+                            this._aimAge = 0;
+                            if (gestureHint == Gesture.ShootOnly || gestureHint == Gesture.Context && !target.jumped && target.cleared) {
+                                target.shooting = true;
+                            }
+                            target.groundJumpDisallowed = true;
+                        }
+                    }
                 }
 
                 if (jumping) {
@@ -165,6 +174,9 @@
                     gunTargets.push(polarPoint);
                     this._aimAngle = Math.atan2(target.sy - screenHeight / 2, target.sx - screenWidth / 2);
                     this._aimAge = 0;
+                }
+                if (target.cleared) {
+                    delete this._targets[i];
                 }
             }
         }

@@ -30,12 +30,14 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="reference.ts" />
+    <TypeScriptCompile Include="src\main\d.ts\ga.d.ts" />
     <TypeScriptCompile Include="src\main\d.ts\waa.d.ts" />
     <TypeScriptCompile Include="src\main\ts\app.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractState.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractUpdatingState.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\ChomperEntity.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\chomperEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\playerEntityRendererFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Sound\audioSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Engine.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\ISound.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\IStateFactory.ts" />
@@ -51,18 +53,17 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\IGun.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\LevelExitEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\ObstacleEntity.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\ObstacleType.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\PlayerEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\PlayerEntityTarget.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\FlappyEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\SeekerEntity.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\ConcentricLevelStateFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\DelegatingLevelStateFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\concentricLevelStateFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\delegatingLevelStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\hardCodedEntityRendererFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\HardCodedEntitySpawner.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\hardCodedEntitySpawner.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\IEntitySpawner.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\SkyscraperLevelStateFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\SpikeyLevelStateFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\skyscraperLevelStateFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\spikeyLevelStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Gesture.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\IEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\GroupId.ts" />
@@ -70,8 +71,7 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\IEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\IMotion.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\LevelState.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\LevelStateFactoryParam.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\LevelStateRestartParam.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\ILevelStateFactoryParam.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Motion\CameraCenterPolarMotion.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Motion\CartesianMotion.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Motion\PolarMotion.ts" />
@@ -89,6 +89,7 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioVibratoSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioGunSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioToneSoundFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\StateFactoryParamType.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="package.json" />
