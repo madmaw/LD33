@@ -33,10 +33,18 @@
     <TypeScriptCompile Include="src\main\d.ts\ga.d.ts" />
     <TypeScriptCompile Include="src\main\d.ts\waa.d.ts" />
     <TypeScriptCompile Include="src\main\ts\app.ts" />
+    <TypeScriptCompile Include="src\main\ts\levelNameToLevelStateFactoryParam.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractState.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractUpdatingState.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\ChomperEntity.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\Grid.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\gridLevelStateFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\Grid\looseEndsTrimmingGridFactoryProxy.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\Grid\mazeGridFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\Grid\mergingGridFactoryProxy.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\IGridFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\chomperEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\livingEntityRendererContext.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\playerEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Engine.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\ISound.ts" />
@@ -44,7 +52,7 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractCartesianEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractPolarEntity.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Collision.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\ICollision.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\EntityHolder.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\AbstractLivingPolarEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\BouncyEntity.ts" />
@@ -63,7 +71,6 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\hardCodedEntitySpawner.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\IEntitySpawner.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\skyscraperLevelStateFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\spikeyLevelStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Gesture.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\IEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\GroupId.ts" />
@@ -86,10 +93,12 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\pathEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\seekerEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\spikeEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Menu\MenuState.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioVibratoSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioGunSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioToneSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\StateFactoryParamType.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\toTimeString.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="package.json" />

@@ -17,16 +17,16 @@
             return bouncyEntityRenderer;
         } else if (entity instanceof FlappyEntity) {
             return flappyEntityRenderer;
-        } else if (entity instanceof ObstacleEntity) {
-            return spikeEntityRenderer;
-        } else if (entity instanceof LevelExitEntity) {
+        } else if ((<ILevelExitEntity>entity).nextLevelParamsFactory) {
             return exitEntityRenderer;
         } else if (entity instanceof PlayerEntity) {
             return playerEntityRenderer;
         } else if (entity instanceof BulletEntity) {
             return bulletEntityRenderer;
-        } else if (entity instanceof ChomperEntity) {
+        } else if (entity instanceof AbstractLivingPolarEntity) {
             return chomperEntityRenderer;
+        } else if (entity instanceof AbstractPolarEntity) {
+            return spikeEntityRenderer;
         } else {
             return defaultEntityRenderer;
         }

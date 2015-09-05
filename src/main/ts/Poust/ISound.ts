@@ -1,3 +1,3 @@
 ﻿interface ISound {
-    (): void;
+    (intensity: number): void;
 }

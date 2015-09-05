@@ -2,16 +2,16 @@
 
     public static JUMP_INPUT_ID = -1;
 
-    public static STATE_RUNNING = "running";
-    public static STATE_JUMPING = "jumping";
-    public static STATE_WALL_SLIDING = "wall_sliding";
+    public static STATE_RUNNING = "r";
+    public static STATE_JUMPING = "j";
+    public static STATE_WALL_SLIDING = "ws";
 
     private _onGround: boolean;
     private _onRightWall: boolean;
     private _onLeftWall: boolean;
     private _wasOnWall: boolean;
     public _runningLeft: boolean;
-    private _targets: { [_: number]: PlayerEntityTarget };
+    private _targets: { [_: number]: IPlayerEntityTarget };
     private _nextLevelParams: any;
 
     public _aimAngle: number;
@@ -23,7 +23,7 @@
         groupId: number,
         mass: number,
         private _jumpPower: number,
-        private _gun: IGun,
+        public _gun: IGun,
         deathSound: ISound,
         private _jumpSound: ISound,
         private _winSound: ISound,
@@ -46,22 +46,8 @@
     public setTarget(inputId: number, sx: number, sy: number, gestureHint: number) {
         var target = this._targets[inputId];
         if (target == null) {
-            target = new PlayerEntityTarget(gestureHint, sx, sy);
-            /*
-            if (allowJump) {
-                if (this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && r < this._bounds.getInnerRadiusPx() )) {
-                    target = new PlayerEntityTarget(true, r, a);
-                } else if (this._onLeftWall && (gestureHint == Gesture.Left || gestureHint == Gesture.Context && !PolarBounds.isClockwiseAfter(this._bounds.getStartAngleRadians(), a))) {
-                    target = new PlayerEntityTarget(true, r, a);
-                } else if (this._onRightWall && (gestureHint == Gesture.Right || gestureHint == Gesture.Context && PolarBounds.isClockwiseAfter(this._bounds.getEndAngleRadians(), a))) {
-                    target = new PlayerEntityTarget(true, r, a);
-                }
-            }
-            if (target == null) {
-                // shoot
-                target = new PlayerEntityTarget(false, r, a);
-            }
-            */
+            target = { gestureHint: gestureHint, sx: sx, sy: sy, fresh: true };
+
             this._targets[inputId] = target;
         } else {
             target.sx = sx;
@@ -71,7 +57,7 @@
     }
 
     public copyTargets() {
-        var result: { [_: number]: PlayerEntityTarget } = {};
+        var result: { [_: number]: IPlayerEntityTarget } = {};
         for (var id in this._targets) {
             result[id] = this._targets[id];
         }
@@ -87,7 +73,7 @@
     }
 
     public setJump() {
-        this._targets[PlayerEntity.JUMP_INPUT_ID] = new PlayerEntityTarget(Gesture.JumpOnly, null, null);
+        this._targets[PlayerEntity.JUMP_INPUT_ID] = { gestureHint: Gesture.JumpOnly, fresh: true };
     }
 
     public clearJump() {
@@ -96,40 +82,33 @@
 
     notifyCollision(withEntity: IEntity, onEdge: number): void {
         if (withEntity.getGroupId() == GroupId.Enemy) {
-            if (withEntity instanceof LevelExitEntity) {
-                var levelExitEntity = <LevelExitEntity>withEntity;
-                this._nextLevelParams = levelExitEntity._nextLevelParamsFactory(this);
+            var levelExitEntity = <ILevelExitEntity>withEntity;
+
+            if (levelExitEntity.nextLevelParamsFactory) {
+                this._nextLevelParams = levelExitEntity.nextLevelParamsFactory(this);
+                levelExitEntity.setDead();
             } else {
                 this.setDying(withEntity);
             }
         } else {
-            if (onEdge == PolarEdge.Bottom) {
+            if (onEdge == POLAR_EDGE_BOTTOM) {
                 this._onGround = true;
-            } else if (onEdge == PolarEdge.Right) {
+            } else if (onEdge == POLAR_EDGE_RIGHT) {
                 this._onRightWall = true;
-            } else if (onEdge == PolarEdge.Left) {
+            } else if (onEdge == POLAR_EDGE_LEFT) {
                 this._onLeftWall = true;
             }
         }
     }
 
-    public _createMotion(bounds: PolarBounds) {
-        // only center when alive
-        if (this.isDying()) {
-            return super._createMotion(bounds);
-        } else {
-            return new CameraCenterPolarMotion(bounds, this);
-        }
-    }
-
-
     updateAlive(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
         super.updateAlive(level, timeMillis, createdEntities);
 
-        var jumpTarget: PlayerEntityTarget = null;
+        var jumpTarget: IPlayerEntityTarget = null;
+        var charge = false;
 
         // are we jumping?
-        var gunTargets: PolarPoint[] = [];
+        var gunTargets: IPolarPoint[] = [];
         for (var i in this._targets) {
             var target = this._targets[i];
             var jumping = false;
@@ -156,8 +135,11 @@
                         } else {
                             this._aimAngle = Math.atan2(target.sy - screenHeight / 2, target.sx - screenWidth / 2);
                             this._aimAge = 0;
-                            if (gestureHint == Gesture.ShootOnly || gestureHint == Gesture.Context && !target.jumped && target.cleared) {
-                                target.shooting = true;
+                            if (gestureHint != Gesture.AimOnly) {
+                                charge = charge || (gestureHint != Gesture.AimOnly && !target.cleared);
+                                if ((gestureHint == Gesture.ShootOnly || gestureHint == Gesture.Context && !target.jumped) && target.cleared || target.fresh) {
+                                    target.shooting = true;
+                                }
                             }
                             target.groundJumpDisallowed = true;
                         }
@@ -174,10 +156,11 @@
                     gunTargets.push(polarPoint);
                     this._aimAngle = Math.atan2(target.sy - screenHeight / 2, target.sx - screenWidth / 2);
                     this._aimAge = 0;
+                    target.shooting = false;
                 }
                 if (target.cleared) {
                     delete this._targets[i];
-                }
+                } 
             }
         }
 
@@ -189,6 +172,7 @@
                 timeMillis,
                 level,
                 this._onGround,
+                charge, 
                 crpx,
                 this._bounds.getCenterAngleRadians(),
                 this.getVelocityRadiusPX(),
@@ -199,11 +183,19 @@
             if (recoil) {
                 this._velocityRPX += recoil.r;
                 this._velocityAPX += recoil.a;
+                // set the freshness to false
+                for (var i in this._targets) {
+                    var target = this._targets[i];
+                    if (target.fresh) {
+                        target.fresh = false;
+                    }
+                }
             }
         }
 
             
 
+        var intensity = Math.min(this._bounds.getInnerRadiusPx() / 1500, 1);
         if (this._onGround) {
             this.setState(PlayerEntity.STATE_RUNNING);
             if (this._onRightWall) {
@@ -225,7 +217,7 @@
             var acc = 1 / ((v * v * v * 7000 + 1) * 1000);
             this._velocityAPX += accMul * acc * timeMillis;
             if (jumpTarget) {
-                this._jumpSound();
+                this._jumpSound(intensity);
                 this._velocityRPX = this._jumpPower;
                 jumpTarget.jumped = true;
             }
@@ -239,14 +231,14 @@
                     this._velocityRPX = this._jumpPower;
                     this._velocityAPX = -this._jumpPower;
                     jumpTarget.jumped = true;
-                    this._jumpSound();
+                    this._jumpSound(intensity);
                 } else if (this._onLeftWall) {
                     // wall jump
                     this._runningLeft = false;
                     this._velocityRPX = this._jumpPower;
                     this._velocityAPX = this._jumpPower;
                     jumpTarget.jumped = true;
-                    this._jumpSound();
+                    this._jumpSound(intensity);
                 }
             } else {
                 // add a little bit of forward momentum so we keep getting collision events for wall jump
@@ -279,7 +271,7 @@
             this.setState(PlayerEntity.STATE_WALL_SLIDING);
             if (!this._wasOnWall) {
                 if (!this._onGround) {
-                    this._wallJumpAvailableSound();
+                    this._wallJumpAvailableSound(intensity);
                 }
                 this._wasOnWall = true;
             }
@@ -295,7 +287,7 @@
         this._aimAge += timeMillis;
 
         if (this._nextLevelParams) {
-            this._winSound();
+            this._winSound(intensity);
             level.winLevel(this._nextLevelParams);
             this._nextLevelParams = null;
         }

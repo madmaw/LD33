@@ -4,7 +4,8 @@
         gravity: number,
         rendererFactory: IEntityRendererFactory,
         maxCollisionSteps: number,
-        entitySpawner: IEntitySpawner
+        rngFactory: IRandomNumberGeneratorFactory,
+        entitySpawnerFactory: IEntitySpawnerFactory
     ) {
 
     return function(
@@ -17,8 +18,9 @@
         ringGapIncrease: number
         ): IStateFactory {
 
-        return (paramType: number, param: ILevelStateFactoryParam) => {
-
+        return function (paramType: number, param: ILevelStateFactoryParam) {
+            var rng = rngFactory(param.seed);
+            var entitySpawner = entitySpawnerFactory(rng);
             var level = new LevelState(
                 element,
                 param.player,
@@ -30,7 +32,7 @@
                 param.difficulty
                 );
 
-            var rings = baseRings + param.difficulty;
+            var rings = baseRings + Math.round(param.difficulty / 2);
 
             var ring = 0;
             var radius = initialGap;
@@ -44,28 +46,28 @@
             while (ring < rings) {
 
                 if (ring != 0 && ring % splitMod == 0) {
-                    splitOffset += Math.PI;
+                    splitOffset += pi;
                 }
                      
                 var count = ring+1;
-                var gapRadians = Math.max(Math.min(param.difficulty * Math.PI / 48 + Math.PI / 8, Math.PI / count), (ringGap + ringWidth) / radius);
+                var gapRadians = Math.max(Math.min(param.difficulty * pi / 48 + pi / 8, pi / count), (ringGap + ringWidth) / radius);
 
                 var i = 0;
                 while (i < count) {
                     var ringEntity = new AbstractEntity(GroupId.Terrain);
                     var bounds: PolarBounds;
                     if (ring == 0) {
-                        bounds = new PolarBounds(ringWidth, 0, initialGap, Math.PI * 2);
+                        bounds = new PolarBounds(ringWidth, 0, initialGap, pi2);
                     } else {
-                        var arc = (Math.PI * 2 - (gapRadians * count)) / count;
-                        var starta = (Math.PI * 2 * i) / count + gapRadians / 2 + splitOffset;
+                        var arc = (pi2 - (gapRadians * count)) / count;
+                        var starta = (pi2 * i) / count + gapRadians / 2 + splitOffset;
                         bounds = new PolarBounds(radius, starta, ringWidth, arc);
                     }
                     bounds.normalize();
                     ringEntity._bounds = bounds;
                     level.addEntity(ringEntity);
 
-                    var baddies = entitySpawner(bounds.getStartAngleRadians(), bounds.getOuterRadiusPx(), ringGap, bounds.getWidthRadians(), Math.min(param.difficulty, (param.difficulty * ring * 2) / rings));
+                    var baddies = entitySpawner(bounds.getStartAngleRadians(), bounds.getOuterRadiusPx(), ringGap, bounds.getWidthRadians(), Math.min(param.difficulty, (param.difficulty * ring) / rings));
                     for (var j in baddies) {
                         var baddy = baddies[j];
                         level.addEntity(baddy);
@@ -82,14 +84,14 @@
             // exit
             var exitHeight = 64;
             var exitWidth = exitHeight / radius;
-            var exit = new LevelExitEntity((player: PlayerEntity) => {
+            var exit = createLevelExitEntity((player: PlayerEntity) => {
                 return {
                     player: player,
                     levelName: nextLevel,
                     difficulty: param.difficulty + nextLevelDifficultyDelta
                 };
             });
-            exit._bounds = new PolarBounds(radius - ringSpacing / 2, Math.random() * Math.PI * 2, exitHeight, exitWidth);
+            exit._bounds = new PolarBounds(radius - ringSpacing / 2, rng() * pi2, exitHeight, exitWidth);
             exit._bounds.normalize();
             level.addEntity(exit);
 

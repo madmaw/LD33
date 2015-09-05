@@ -1,8 +1,5 @@
-﻿class ObstacleEntity extends AbstractPolarEntity {
-
-    public constructor(groupId: number) {
-        super(groupId, null, false);
-        this.setSensor(true);
-    }
-
+﻿function obstacleEntity() {
+    var result = new AbstractPolarEntity(GroupId.Enemy, null, false);
+    result.setSensor(true);
+    return result;
 }

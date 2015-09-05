@@ -1,16 +1,68 @@
-﻿<!DOCTYPE html>
-
-<html lang="en">
+﻿<html>
 <head>
-    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>LD33</title>
-    <link rel="stylesheet" href="app.css" type="text/css" />
-    <script src="build/out.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            background: black;
+            color: white;
+            font-family: Courier;
+            font-size: larger;
+            text-align: center;
+        }
+
+        a:link, a:visited {
+            color: yellow;
+            text-decoration:none;
+        }
+
+        body > canvas, body > div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .h {
+            display: none;
+        }
+
+        .b {
+            font-weight: bold;
+        }
+
+        .ml {
+            display: block;
+            margin-left: 5%;
+            margin-right: 5%;
+            margin-top: 0.9em;
+        }
+
+        .mln, .mla, .mlt {
+            width: 33%;
+            display: inline-block;
+        }
+
+        .o {
+            background-color: #222222;
+        }
+    </style>
+    <script src="build/out.js?__inline=true"></script>
     <!-- analytics-->
+    <!--
     <script src="lib/analytics.js"></script>
+    -->
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <canvas class="h" id="c"></canvas>
+    <div class="h" id="m">
+        <h1>POUST</h1>
+        <a id="p" href="#1-1"><h2>Play!</h2></a>
+        <div class="ml b"><div class="mln">Level</div><div class="mla">Attempts</div><div class="mlt">Best</div></div>            
+        <div id="l">
+        </div>
+    </div>
 </body>
 </html>

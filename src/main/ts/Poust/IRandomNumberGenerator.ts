@@ -1,0 +1,3 @@
+﻿interface IRandomNumberGenerator {
+    (): number;
+}

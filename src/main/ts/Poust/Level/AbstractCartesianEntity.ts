@@ -11,6 +11,10 @@
         this._velocityDy = 0;
     }
 
+    public getMass(): number {
+        return this._mass;
+    }
+
     public setCenter(cx: number, cy: number, bounds?: PolarBounds): void {
         this._cx = cx;
         this._cy = cy;
@@ -45,6 +49,29 @@
         var newBounds = this.calculateBounds(cx, cy);
         return new CartesianMotion(cx, cy, newBounds, this);
     }
+
+    getVelocityRadiusPX(): number {
+        var cx1 = this._cx + this._velocityDx;
+        var cy1 = this._cy + this._velocityDy;
+        
+        var r = Math.sqrt(this._cx * this._cx + this._cy * this._cy);
+
+        var r1 = Math.sqrt(cx1 * cx1 + cy1 * cy1);
+
+        return r1 - r;
+        
+    }
+
+    getVelocityAngleRadians(atRadiusPX: number): number {
+        var cx1 = this._cx + this._velocityDx;
+        var cy1 = this._cy + this._velocityDy;
+
+        var a1 = Math.atan2(cy1, cx1);
+        var a = Math.atan2(this._cy, this._cx);
+
+        return PolarBounds.subtractAngle(a1, a);
+    }
+
 
 
 }

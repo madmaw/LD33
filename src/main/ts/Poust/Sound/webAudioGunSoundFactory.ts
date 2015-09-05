@@ -7,7 +7,7 @@
         data[i] = Math.random() * 2 - 1;
     }
 
-    return function () {
+    return function (intensity: number) {
         // set up the frequency
         var now = audioContext.currentTime;
         var durationSeconds = sampleDurationSeconds + (Math.random() - 0.5) * 0.1;
@@ -23,12 +23,8 @@
 
         //decay
         var gain = audioContext.createGain();
-        gain.gain.value = 0;
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.4 + Math.random() * 0.1, now + durationSeconds * 0.002);
-        gain.gain.linearRampToValueAtTime(0.1 + Math.random() * 0.05, now + durationSeconds * 0.2 + Math.random() * 0.05);
-        gain.gain.linearRampToValueAtTime(0, now + durationSeconds);
-
+        var decay = durationSeconds * 0.2 + Math.random() * 0.05;
+        linearRampGain(gain, now, intensity + Math.random() * 0.1, 0.1 * intensity + Math.random() * 0.05, durationSeconds * 0.002, decay, null, durationSeconds); 
 
         staticNode.connect(filter);
         filter.connect(gain);
@@ -46,7 +42,7 @@
 
         staticNode.start();
         if (sound) {
-            sound();
+            sound(intensity);
         }
     }
 

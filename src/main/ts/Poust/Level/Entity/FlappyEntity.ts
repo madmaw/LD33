@@ -22,16 +22,13 @@
     }
 
     notifyCollision(withEntity: IEntity, onEdge: number): void {
-        if (withEntity instanceof BulletEntity) {
-            // we're dead
-            this.setDying(withEntity);
-        } else {
+        if (!this._handleCollision(withEntity, onEdge) ) {
             // assume it's a wall
-            if (onEdge == PolarEdge.Left) {
+            if (onEdge == POLAR_EDGE_LEFT) {
                 this._goingLeft = false;
-            } else if (onEdge == PolarEdge.Right) {
+            } else if (onEdge == POLAR_EDGE_RIGHT) {
                 this._goingLeft = true;
-            } else if (onEdge == PolarEdge.Bottom) {
+            } else if (onEdge == POLAR_EDGE_BOTTOM) {
                 this._flapAnyway = true;
             }
         }

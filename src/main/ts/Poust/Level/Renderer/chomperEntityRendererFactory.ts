@@ -6,19 +6,14 @@
         var ir = bounds.getInnerRadiusPx();
         if (ir > 0) {
             context.strokeStyle = strokeStyle;
-            context.fillStyle = fillStyle;
+            livingEntityRendererContextSetup(context, fillStyle, entity);
             context.lineWidth = lineWidth;
 
-            var chomper = <ChomperEntity>entity;
+            var chomper = <IChomperEntity>entity;
 
-            var age = entity.getStateAgeMillis() % 1000;
-            age -= 500;
-            age = Math.abs(age);
+            var scale = ageToScale(entity, 1000);
 
-            var rotation = (Math.PI / 4) * (age / 1000);
-
-            var playerEntity = <PlayerEntity>entity;
-
+            var rotation = (pi / 6) * scale;
 
             var acr = bounds.getCenterAngleRadians();
             var sincr = Math.sin(acr);
@@ -29,7 +24,7 @@
             var height = bounds.getHeightPx();
             var toothWidth = height / 5;
             var heightRaised = height + toothWidth / 2;
-            var car = bounds.getCenterAngleRadians() + Math.PI/2;
+            var car = bounds.getCenterAngleRadians() + pid2;
 
             context.save();
             context.translate(bottomx, bottomy);
@@ -62,7 +57,7 @@
             context.scale(xscale, 1);
             context.beginPath();
             context.moveTo(0, 0);
-            context.arc(0, -height / 2, height / 2, Math.PI / 2, -Math.PI / 2, false);
+            context.arc(0, -height / 2, height / 2, pid2, -pid2, false);
             f(context, height, toothWidth, true);
             context.restore();
 
@@ -70,7 +65,7 @@
             context.save();
             context.rotate(rotation * xscale + car);
             context.scale(xscale, 1);
-            context.arc(0, -heightRaised / 2, heightRaised / 2, Math.PI / 2, -Math.PI / 2, true);
+            context.arc(0, -heightRaised / 2, heightRaised / 2, pid2, -pid2, true);
             f(context, heightRaised, toothWidth, false);
             context.closePath();
             context.restore();
@@ -81,6 +76,7 @@
             context.stroke();
         }
 
+        livingEntityRendererContextRestore(context);
 
     }
 }

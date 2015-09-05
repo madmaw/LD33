@@ -1,5 +1,6 @@
 ﻿function delegatingLevelStateFactory(
         stateFactories: { [_: string]: IStateFactory },
+        menuState: IState,
         firstLevelName: string,
         jumpSound: ISound,
         shootSound: ISound,
@@ -8,7 +9,7 @@
         wallJumpAvailableSound: ISound
     ): IStateFactory {
     var createPlayer = function () {
-        var gun = new AbstractGun(300, 600, 6, 0.1, 1, shootSound);
+        var gun = new AbstractGun(100, 0.03, shootSound);
         var player = new PlayerEntity(GroupId.Player, 1, 0.4, gun, deathSound, jumpSound, winSound, wallJumpAvailableSound);
         player.setBounds(600, 0, 32, 24);
         return player;
@@ -23,9 +24,17 @@
             if (p.player == null) {
                 p.player = createPlayer();
             }
+            if (p.seed == null) {
+                // lookup the seed for this level
+                var data = findLevelStateData(p.difficulty, p.levelName, true);
+                p.seed = data.seed;
+            }
 
             return stateFactories[param.levelName](paramType, param);
         } else {
+            return menuState;
+            /*
+
             var player = createPlayer();
             var newParam: ILevelStateFactoryParam = {
                 player: player,
@@ -33,6 +42,7 @@
                 difficulty: 1
             };
             return stateFactories[newParam.levelName](paramType, newParam);
+            */
         }
     };
 }

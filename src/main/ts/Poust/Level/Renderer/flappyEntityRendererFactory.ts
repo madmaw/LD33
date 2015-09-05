@@ -2,7 +2,7 @@
 
     return function(context: CanvasRenderingContext2D, entity: IEntity): void {
         context.strokeStyle = strokeStyle;
-        context.fillStyle = fillStyle;
+        livingEntityRendererContextSetup(context, fillStyle, entity);
         context.lineWidth = lineWidth;
 
         var bounds = entity.getBounds();
@@ -41,6 +41,8 @@
             context.fill();
             context.stroke();
         }
+        livingEntityRendererContextRestore(context);
+
     }
 }
 

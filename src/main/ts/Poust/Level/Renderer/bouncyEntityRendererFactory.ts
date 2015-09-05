@@ -3,16 +3,14 @@
     return function(context: CanvasRenderingContext2D, entity: IEntity): void {
 
         context.strokeStyle = strokeStyle;
-        context.fillStyle = fillStyle;
         context.lineWidth = lineWidth;
+        livingEntityRendererContextSetup(context, fillStyle, entity);
 
         var bounds = entity.getBounds();
 
-        var age = entity.getStateAgeMillis() % 3000;
-        age -= 1500;
-        age = Math.abs(age);
-        var scalea = 1 + age / 3000;
-        var scaler = 2 - age / 1500;
+        var scale = ageToScale(entity, 3000);
+        var scalea = 1 + scale/2;
+        var scaler = 2 - scale;
 
         var acr = bounds.getCenterAngleRadians();
 
@@ -45,5 +43,6 @@
             context.fill();
             context.stroke();
         }
+        livingEntityRendererContextRestore(context);
     }
 }

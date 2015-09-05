@@ -19,7 +19,8 @@
         },
         clean: {
             all: ["build", "dist", "dist.zip"],
-            dist: ["dist"]
+            dist: ["dist"],
+            js: ["dist/*.js"]
         },
         uglify: {
             options: {
@@ -47,12 +48,18 @@
                 }
             }
         },
+        inline: {
+            js: {
+                src: 'dist/index.html',
+                dest: 'dist/index.html'
+            }
+        },
         htmlmin: {                                     
             options: {
                 removeComments: true,
                 collapseWhitespace: true,
-                minifyJS: true,
-                removeAttributeQuotes: true
+                removeAttributeQuotes: true,
+                minifyCSS: true
             },
             dist: {
                 files: {                               
@@ -72,8 +79,8 @@
         copy: {
             dist: {
                 files: [
-                    { expand: true, src: ['lib/*.min.js'], dest: 'dist/' },
-                    { expand: true, src: ['res/**/*'], dest: 'dist/' }
+                    { expand: true, src: ['lib/*.min.js'], dest: 'dist/' }
+                    //{ expand: true, src: ['res/**/*'], dest: 'dist/' }
                 ]
             }
         },
@@ -136,12 +143,14 @@
     grunt.loadNpmTasks('grunt-contrib-copy');
     // replace text in file
     grunt.loadNpmTasks('grunt-text-replace');
+    // inline js 
+    grunt.loadNpmTasks('grunt-inline');
 
     // Default task(s).
     grunt.registerTask('reset', ['clean:all']);
-    grunt.registerTask('prod', ['ts', 'closure-compiler', 'htmlmin', 'cssmin', 'copy', 'replace']);
-    grunt.registerTask('dist', ['prod', 'zip:dist', 'clean:dist']);
-    grunt.registerTask('js13k', ['prod', 'zip:js13k', 'clean:dist']);
+    grunt.registerTask('prod', ['ts', 'closure-compiler', 'htmlmin', 'copy', 'replace', 'inline']);
+    grunt.registerTask('dist', ['prod', 'clean:js', 'zip:dist', 'clean:dist']);
+    grunt.registerTask('js13k', ['prod', 'clean:js', 'zip:js13k', 'clean:dist']);
     grunt.registerTask('default', ['ts']);
 
 };

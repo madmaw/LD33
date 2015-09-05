@@ -1,6 +1,6 @@
 ﻿class LevelState extends AbstractUpdatingState implements IState {
 
-    private _groups: EntityHolder[][];
+    private _groups: IEntityHolder[][];
 
     private _touchStartListener: EventListener;
     private _touchEndListener: EventListener;
@@ -8,6 +8,7 @@
     private _mouseDownListener: EventListener;
     private _mouseMoveListener: EventListener;
     private _mouseUpListener: EventListener;
+    private _mouseOutListener: EventListener;
     private _keyDownListener: EventListener;
     private _keyUpListener: EventListener;
 
@@ -15,8 +16,10 @@
     private _cameraCenterAngle: number;
 
     private _levelAgeMillis: number;
-    private _bestLevelTime: number;
-    private _attempt: number;
+    private _data: ILevelStateData;
+
+    private _previousWidth: number;
+    private _previousHeight: number;
 
     public constructor(
         _element: Element,
@@ -32,7 +35,7 @@
         this._cameraCenterAngle = 0;
         this._cameraCenterRadius = 0;
         this._levelAgeMillis = 0;
-        this._groups = new Array<EntityHolder[]>();
+        this._groups = new Array<IEntityHolder[]>();
         this._touchStartListener = (event: TouchEvent) => {
             for (var i in event.changedTouches) {
                 var touch = event.changedTouches.item(i);
@@ -62,15 +65,21 @@
             event.stopPropagation();
         };
         this._mouseMoveListener = (event: MouseEvent) => {
+            // aiming target
+            this.setTarget(1, event.clientX, event.clientY, false, false);
             if (mouseDown) {
                 this.setTarget(0, event.clientX, event.clientY, false);
-            } else {
-                this.setTarget(0, event.clientX, event.clientY, false, false);
             }
             event.stopPropagation();
         };
-        this._mouseUpListener = (event: MouseEvent) => {
+        this._mouseUpListener = () => {
             this.clearTarget(0);
+            mouseDown = false;
+            event.stopPropagation();
+        };
+        this._mouseOutListener = () => {
+            this.clearTarget(0);
+            this.clearTarget(1);
             mouseDown = false;
             event.stopPropagation();
         };
@@ -105,10 +114,7 @@
     public init() {
         super.init();
         // look up previous best (if any)
-        var bestLevelTimeString = window.localStorage.getItem(this._levelDifficulty + "-" + this._levelName);
-        if (bestLevelTimeString) {
-            this._bestLevelTime = parseInt(bestLevelTimeString);
-        }
+        this._data = findLevelStateData(this._levelDifficulty, this._levelName, true);
     }
 
     public getGroup(groupId: number) {
@@ -125,7 +131,7 @@
         return null;
     }
 
-    public getPolarPoint(x: number, y: number): PolarPoint {
+    public getPolarPoint(x: number, y: number): IPolarPoint {
         var w = this._element.clientWidth;
         var h = this._element.clientHeight;
 
@@ -141,7 +147,7 @@
         var dx = (x - w / 2) * scale;
         var dy = (y - h / 2) * scale;
 
-        var rd = PolarPoint.rotate(dx, dy, pa + Math.PI / 2);
+        var rd = rotate(dx, dy, pa + pid2);
 
         var wx = px + rd.x;
         var wy = py + rd.y;
@@ -150,7 +156,7 @@
 
         // TODO scale?
 
-        return new PolarPoint(r, a);
+        return { r: r, a: a };
     }
 
     public getScreenWidth(): number {
@@ -191,41 +197,13 @@
     start(): void {
         super.start();
 
-        var hash = window.location.hash;
-        var levelId = this._levelDifficulty + "-" + this._levelName 
         // indicate we started this level
         if (this._levelAgeMillis == 0) {
-            var startedLevelId = "s-" + levelId;
-            var attempt = parseInt(window.localStorage.getItem(startedLevelId));
-            if (!attempt) {
-                attempt = 1;
-            } else {
-                attempt++;
-            }
-            this._attempt = attempt;
-            window.localStorage.setItem(startedLevelId, "" + attempt);
-            if (window['ga']) {
-                ga('send', 'pageview', {
-                    page: levelId
-                });
-            }
-        }
-        levelId = "#" + levelId;
-        if (hash != levelId) {
-            // replace with our current state
-            var newURL = window.location.href.substr(0, window.location.href.length - hash.length) + levelId;
-            var param: ILevelStateFactoryParam = {
-                levelName: this._levelName,
-                difficulty: this._levelDifficulty
-            };
-            if (hash != null && hash != "") {
-                window.history.replaceState(param, this._levelName, newURL);
-            } else {
-                window.history.pushState(param, this._levelName, newURL);
-            }
+            this._data.attempts++;
+            saveLevelStateData(this._levelDifficulty, this._levelName, this._data);
         }
 
-        if (('ontouchstart' in window) || window['DocumentTouch']) {
+        if (('ontouchstart' in w) || w['DocumentTouch']) {
             this._element.addEventListener('touchstart', this._touchStartListener);
             this._element.addEventListener('touchmove', this._touchMoveListener);
             this._element.addEventListener('touchend', this._touchEndListener);
@@ -235,10 +213,10 @@
             this._element.addEventListener('mousedown', this._mouseDownListener);
             this._element.addEventListener('mouseup', this._mouseUpListener);
             this._element.addEventListener('mousemove', this._mouseMoveListener);
-            this._element.addEventListener('mouseout', this._mouseUpListener);
+            this._element.addEventListener('mouseout', this._mouseOutListener);
         }
-        window.addEventListener('keydown', this._keyDownListener);
-        window.addEventListener('keyup', this._keyUpListener);
+        w.addEventListener('keydown', this._keyDownListener);
+        w.addEventListener('keyup', this._keyUpListener);
     }
 
     stop(): void {
@@ -251,9 +229,9 @@
         this._element.removeEventListener('mousedown', this._mouseDownListener);
         this._element.removeEventListener('mouseup', this._mouseUpListener);
         this._element.removeEventListener('mousemove', this._mouseMoveListener);
-        this._element.removeEventListener('mouseout', this._mouseUpListener);
-        window.removeEventListener('keydown', this._keyDownListener);
-        window.removeEventListener('keyup', this._keyUpListener);
+        this._element.removeEventListener('mouseout', this._mouseOutListener);
+        w.removeEventListener('keydown', this._keyDownListener);
+        w.removeEventListener('keyup', this._keyUpListener);
     }
 
 
@@ -261,19 +239,26 @@
         return this._gravity;
     }
 
-    public addEntity(entity: IEntity): EntityHolder {
+    public addEntity(entity: IEntity): IEntityHolder {
         var groupIndex = entity.getGroupId();
         while (this._groups.length <= groupIndex) {
-            this._groups.push(new Array<EntityHolder>());
+            this._groups.push(new Array<IEntityHolder>());
         }
         var group = this._groups[groupIndex];
         var renderer = this._rendererFactory(entity);
-        var entityHolder = new EntityHolder(entity, renderer);
+        var entityHolder = { entity: entity, renderer: renderer };
         group.push(entityHolder);
         return entityHolder;
     }
 
     public update(diffMillis: number): void {
+        var w = document.body.clientWidth;
+        var h = document.body.clientHeight;
+        if (this._previousHeight != h || this._previousWidth != w) {
+            this._element.setAttribute("width", "" + w + "px");
+            this._element.setAttribute("height", "" + h + "px");
+        }
+
         if (!this._player.isDead() && !this._player.isDying()) {
             this._levelAgeMillis += diffMillis;
         }
@@ -289,10 +274,13 @@
             // apply all motions
             this.applyMotion();
         }
-            
+        if (!this._player.isDying()) {
+            var b = this._player.getBounds();
+            this.setCameraCenter(b.getOuterRadiusPx(), b.getCenterAngleRadians());
+        }   
     }
 
-    private resolveCollisions(diffMillis:number, collisions: Collision[]): void {
+    private resolveCollisions(diffMillis:number, collisions: ICollision[]): void {
         // handle the first collision
         var index = 0;
         while (index < collisions.length) {
@@ -327,8 +315,8 @@
                     collision.nearestCollisionIntersection
                     );
                 // work out velocity (edge should be opposite!)
-                if (edge1 == -edge2 && edge1 != PolarEdge.Undefined) {
-                    if (edge1 == PolarEdge.Top || edge1 == PolarEdge.Bottom) {
+                if (edge1 == -edge2 && edge1 != POLAR_EDGE_UNDEFINED) {
+                    if (edge1 == POLAR_EDGE_TOP || edge1 == POLAR_EDGE_BOTTOM) {
                         if (mass1 == null) {
                             entity2.setVelocityRadiusPX(vr1);
                         } else if (mass2 == null) {
@@ -367,22 +355,22 @@
                     }
 
                     // fix up anchoring
-                    if (edge1 == PolarEdge.Left) {
+                    if (edge1 == POLAR_EDGE_LEFT) {
                         entity1.setAnchorRight(false);
-                    } else if (edge1 == PolarEdge.Right) {
+                    } else if (edge1 == POLAR_EDGE_RIGHT) {
                         entity1.setAnchorRight(true);
                     }
-                    if (edge2 == PolarEdge.Left) {
+                    if (edge2 == POLAR_EDGE_LEFT) {
                         entity2.setAnchorRight(false);
-                    } else if (edge2 == PolarEdge.Right) {
+                    } else if (edge2 == POLAR_EDGE_RIGHT) {
                         entity2.setAnchorRight(true);
                     }
                     // move to collision point
                     collision.bestMotion1.apply(this);
                     collision.bestMotion2.apply(this);
 
-                    collision.entityHolder1.calculateMotion(collision.collisionTime, diffMillis);
-                    collision.entityHolder2.calculateMotion(collision.collisionTime, diffMillis);
+                    calculateMotion(collision.entityHolder1, collision.collisionTime, diffMillis);
+                    calculateMotion(collision.entityHolder2, collision.collisionTime, diffMillis);
                     
                     // recalculate any collisions with these entities
                     this.calculateCollisionsForEntity(diffMillis, collisions, collision.entityHolder1, this._groups.length);
@@ -390,17 +378,17 @@
 
                 } else {
                     // !!!
-                    console.log("unmatched or undefined edges falling through!");
-                    edge1 = PolarEdge.Undefined;
-                    edge2 = PolarEdge.Undefined;
+                    //console.log("unmatched or undefined edges falling through!");
+                    edge1 = POLAR_EDGE_UNDEFINED;
+                    edge2 = POLAR_EDGE_UNDEFINED;
 
                     // roll right back and stop moving!!
 
                 }
 
             } else {
-                edge1 = PolarEdge.Undefined;
-                edge2 = PolarEdge.Undefined;
+                edge1 = POLAR_EDGE_UNDEFINED;
+                edge2 = POLAR_EDGE_UNDEFINED;
             }
             entity1.notifyCollision(entity2, edge1);
             entity2.notifyCollision(entity1, edge2);
@@ -430,29 +418,29 @@
         if (wpx < vpx || bottom && dvr <= 0 || !bottom && dvr >= 0) {
             if (left) {
                 if (dva > 0) {
-                    result = PolarEdge.Left;
+                    result = POLAR_EDGE_LEFT;
                 } else {
-                    result = PolarEdge.Undefined;
+                    result = POLAR_EDGE_UNDEFINED;
                 }
             } else {
                 if (dva < 0) {
-                    result = PolarEdge.Right;
+                    result = POLAR_EDGE_RIGHT;
                 } else {
-                    result = PolarEdge.Undefined;
+                    result = POLAR_EDGE_UNDEFINED;
                 }
             }
         } else {
             if (bottom) {
-                result = PolarEdge.Bottom;
+                result = POLAR_EDGE_BOTTOM;
             } else {
-                result = PolarEdge.Top;
+                result = POLAR_EDGE_TOP;
             }
         }
             
         return result;
     }
 
-    private calculateCollisionsForEntity(diffMillis: number, collisions: Collision[], entityHolderk: EntityHolder, startingGroupIndex: number) {
+    private calculateCollisionsForEntity(diffMillis: number, collisions: ICollision[], entityHolderk: IEntityHolder, startingGroupIndex: number) {
         var motionk = entityHolderk.motion;
         var entityk = entityHolderk.entity;
         if (entityk.isCollidable() && !entityk.isDead()) {
@@ -490,8 +478,8 @@
         }
     }
 
-    private calculateCollisions(diffMillis: number): Collision[] {
-        var collisions: Collision[] = new Array<Collision>();
+    private calculateCollisions(diffMillis: number): ICollision[] {
+        var collisions: ICollision[] = new Array<ICollision>();
         var i = this._groups.length;
         while (i > 0) {
             i--;
@@ -506,7 +494,7 @@
         return collisions;
     }
 
-    private calculateContinuousSamples(diffMillis: number, entityHolder: EntityHolder): number {
+    private calculateContinuousSamples(diffMillis: number, entityHolder: IEntityHolder): number {
         var result = 1;
         if (entityHolder.entity.isContinuousCollisions()) {
             var done = false;
@@ -523,13 +511,13 @@
         return result;
     }
 
-    private calculateCollision(diffMillis: number, entityHolder1: EntityHolder, entityHolder2: EntityHolder): Collision {
+    private calculateCollision(diffMillis: number, entityHolder1: IEntityHolder, entityHolder2: IEntityHolder): ICollision {
         // is there a collision?
 
         var motion1 = entityHolder1.motion;
         var motion2 = entityHolder2.motion;
 
-        var collision: Collision;
+        var collision: ICollision;
         if (motion1 != null && motion2 != null) {
             var entity1 = entityHolder1.entity;
             var entity2 = entityHolder2.entity;
@@ -586,17 +574,18 @@
                 
                 // is either a sensor or did they start collided?
                 if (entityHolder1.entity.isSensor() || entityHolder2.entity.isSensor() || entityHolder1.entity.getBounds().overlaps(entityHolder2.entity.getBounds())) {
-                    collision = new Collision(
-                        true,
-                        diffMillis,
-                        overlap,
-                        entityHolder1,
-                        maxCollisionMotion1,
-                        maxCollisionMotion2,
-                        entityHolder2,
-                        motion2,
-                        motion2
-                        );
+                    collision = {
+
+                        sensorCollision: true,
+                        collisionTime: diffMillis,
+                        nearestCollisionIntersection: overlap,
+                        entityHolder1: entityHolder1,
+                        bestMotion1: maxCollisionMotion1,
+                        collisionMotion1: maxCollisionMotion2,
+                        entityHolder2: entityHolder2,
+                        bestMotion2: motion2,
+                        collisionMotion2: motion2
+                    };
                 } else {
                     // when did the collision happen?
                     var collisionSteps = 0;
@@ -630,17 +619,17 @@
                         bestMotion1 = entityHolder1.entity.calculateMotion(preCollisionTime - entityHolder1.motionOffset);
                         bestMotion2 = entityHolder2.entity.calculateMotion(preCollisionTime - entityHolder2.motionOffset);
                     }
-                    collision = new Collision(
-                        false,
-                        preCollisionTime,
-                        previousOverlap,
-                        entityHolder1,
-                        bestMotion1,
-                        collisionMotion1,
-                        entityHolder2,
-                        bestMotion2,
-                        collisionMotion2
-                        );
+                    collision = {
+                        sensorCollision: false,
+                        collisionTime: preCollisionTime,
+                        nearestCollisionIntersection: previousOverlap,
+                        entityHolder1: entityHolder1,
+                        bestMotion1: bestMotion1,
+                        collisionMotion1: collisionMotion1,
+                        entityHolder2: entityHolder2,
+                        bestMotion2: bestMotion2,
+                        collisionMotion2: collisionMotion2
+                    };
                 }
             } else {
                 collision = null;
@@ -665,7 +654,7 @@
                     group.splice(j, 1);
                 } else {
                     // do motion
-                    entityHolder.calculateMotion(0, diffMillis);
+                    calculateMotion(entityHolder, 0, diffMillis);
                 }
             }
         }
@@ -674,7 +663,7 @@
             var createdEntity = createdEntities[i];
             var createdEntityHolder = this.addEntity(createdEntity);
             createdEntity.update(this, diffMillis, createdEntities);
-            createdEntityHolder.calculateMotion(0, diffMillis);
+            calculateMotion(createdEntityHolder, 0, diffMillis);
         }
     }
 
@@ -692,17 +681,6 @@
         }
     }
 
-    private toTimeString(timeMillis: number) {
-        var timeSeconds = Math.floor(timeMillis / 1000);
-        var timeMinutes = Math.floor(timeSeconds / 60);
-        timeSeconds = timeSeconds % 60;
-        var timeSecondsString = "" + timeSeconds;
-        while (timeSecondsString.length < 2) {
-            timeSecondsString = "0" + timeSecondsString;
-        }
-        return timeMinutes + ":" + timeSecondsString;
-    }
-
     public getScale(w: number, h: number): number {
         return Math.min(1, w / 600, h / 500);
     }
@@ -713,7 +691,7 @@
         var h = this._element.clientHeight;
         var fontHeight = Math.floor(Math.min(h / 20, w / 20));
         this._context.font = "bold "+fontHeight + "px Courier";
-        this._context.fillStyle = "#000000";
+        this._context.fillStyle = "#000";
         this._context.fillRect(0, 0, w, h);
 
         this._context.save();
@@ -726,7 +704,7 @@
         var py = -pr * sin;
         var scale = this.getScale(w, h);
         this._context.translate(w / 2, h / 2);
-        this._context.rotate(-pa - Math.PI/2);
+        this._context.rotate(-pa - pid2);
         this._context.scale(scale, scale);
         this._context.translate(px, py);
 
@@ -748,15 +726,15 @@
 
         this._context.restore();
 
-        this._context.fillStyle = "#FFFFFF";
+        this._context.fillStyle = "#FFF";
 
         var levelString = "" + this._levelDifficulty + "-" + this._levelName; 
-        var timeString = levelString+" " + this.toTimeString(this._levelAgeMillis);
+        var timeString = levelString+" " + toTimeString(this._levelAgeMillis);
         this._context.fillText(timeString, fontHeight, fontHeight * 1.5);
 
         var bestTimeString;
-        if (this._bestLevelTime) {
-            bestTimeString = "BEST " + this.toTimeString(this._bestLevelTime);
+        if (this._data.bestTime) {
+            bestTimeString = "BEST " + toTimeString(this._data.bestTime);
         } else {
             bestTimeString = "Unbeaten!";
         }
@@ -767,7 +745,7 @@
         this._context.font = "bold " + fontHeight + "px Courier";
 
         var displayAttemptTime = 2000;
-        if (this._attempt && this._levelAgeMillis < displayAttemptTime) {
+        if (this._data.attempts && this._levelAgeMillis < displayAttemptTime) {
             if (this._levelAgeMillis > displayAttemptTime / 2) {
                 this._context.globalAlpha = ((displayAttemptTime - this._levelAgeMillis) * 2) / displayAttemptTime;
             }
@@ -775,7 +753,7 @@
             var textMetric = this._context.measureText(text);
             this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2 - fontHeight);
 
-            var text = "Attempt " + this._attempt;
+            var text = "Attempt " + this._data.attempts;
             var textMetric = this._context.measureText(text);
             this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2 + fontHeight * 1.5);
 
@@ -788,12 +766,12 @@
             this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2);
         }
 
-
     }
 
     public winLevel(param: ILevelStateFactoryParam) {
-        if (this._bestLevelTime == null || this._bestLevelTime > this._levelAgeMillis) {
-            window.localStorage.setItem(this._levelDifficulty + "-" + this._levelName, ""+this._levelAgeMillis);
+        if (this._data.bestTime == null || this._data.bestTime > this._levelAgeMillis) {
+            this._data.bestTime = this._levelAgeMillis;
+            saveLevelStateData(this._levelDifficulty, this._levelName, this._data);
         }
         this.fireStateChangeEvent(StateFactoryParamType.LevelLoad, param);
     }

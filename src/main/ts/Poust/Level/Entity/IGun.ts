@@ -4,12 +4,13 @@
         diffMillis: number,
         state: LevelState,
         onGround: boolean,
+        charging: boolean,
         r: number,
         a: number,
         vr: number, 
         va: number,
-        targets: PolarPoint[], 
+        targets: IPolarPoint[], 
         createdEntities: IEntity[]
-    ): PolarPoint;
+    ): IPolarPoint;
 
 }

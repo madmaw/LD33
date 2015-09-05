@@ -85,7 +85,7 @@
             var d = Math.sqrt(dsq);
             var sdx = dx / d;
             var sdy = dy / d;
-            var rp = PolarPoint.rotate(sdx, sdy, -ma);
+            var rp = rotate(sdx, sdy, -ma);
 
             var drpx = rp.x;
             var dapx = rp.y * this._acceleration;
@@ -111,10 +111,10 @@
             this.setDying(withEntity);
         } else {
             // assume it's a wall
-            if (onEdge == PolarEdge.Left || onEdge == PolarEdge.Right) {
+            if (onEdge == POLAR_EDGE_LEFT || onEdge == POLAR_EDGE_RIGHT) {
                 // do a bounce on a
                 this._bounceA = -this._prevVelocityAPX * this._bounce;
-            } else if (onEdge == PolarEdge.Bottom) {
+            } else if (onEdge == POLAR_EDGE_BOTTOM) {
                 // do a bounce on r
                 this._onGround = true;
             }

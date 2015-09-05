@@ -13,8 +13,6 @@
 
             var playerEntity = <PlayerEntity>entity;
 
-
-
             var acr = bounds.getCenterAngleRadians();
             var sincr = Math.sin(acr);
             var coscr = Math.cos(acr);
@@ -30,11 +28,7 @@
             var stateAge = playerEntity.getStateAgeMillis();
             if (state == PlayerEntity.STATE_RUNNING && Math.abs(playerEntity._velocityAPX) > 0.0001) {
                 var cycleTime = 300 / Math.abs(playerEntity._velocityAPX);
-                var cyclePosition = (stateAge % cycleTime);
-                if (cyclePosition > cycleTime / 2) {
-                    cyclePosition = cycleTime - cyclePosition;
-                }
-                cycleMultiplier = (cyclePosition * 2) / cycleTime;
+                cycleMultiplier = ageToScale(entity, cycleTime);
             } else {
                 cycleMultiplier = 0;
             }
@@ -46,12 +40,12 @@
             var armLength = width * 0.3;
 
             if (state == PlayerEntity.STATE_DYING) {
-                acr += ((stateAge * Math.PI * 2) / 500)
+                acr += ((stateAge * pi2) / 500)
             }
 
             context.save();
             context.translate(bottomx, bottomy);
-            context.rotate(acr + Math.PI / 2);
+            context.rotate(acr + pid2);
             if (playerEntity._runningLeft) {
                 context.scale(-1, 1);
             }
@@ -64,7 +58,7 @@
 
             var legRotation: number;
             if (state == PlayerEntity.STATE_JUMPING) {
-                legRotation = (Math.PI / 6) * Math.min(1, stateAge / 200);
+                legRotation = (pi / 6) * Math.min(1, stateAge / 200);
             } else {
                 legRotation = 0;
             }
@@ -128,7 +122,7 @@
             context.scale(1, 1.4);
 
             context.beginPath();
-            context.arc(0, 0, eyeRadius, 0, Math.PI * 2);
+            context.arc(0, 0, eyeRadius, 0, pi2);
             context.fill();
 
             context.restore();
@@ -145,7 +139,7 @@
                 context.scale(1, 1.2);
 
                 context.beginPath();
-                context.arc(0, 0, eyeRadius, 0, Math.PI * 2);
+                context.arc(0, 0, eyeRadius, 0, pi2);
                 context.fill();
 
                 context.restore();
@@ -155,9 +149,9 @@
 
             var armShoulderCx = -width  * 0.25;
             var armShoulderCy = -height * 0.55;
-            var armRotation = (1 - cycleMultiplier) * (playerEntity._runningLeft?-Math.PI/3:Math.PI/3);
+            var armRotation = (1 - cycleMultiplier) * (playerEntity._runningLeft?-pi/3:pi/3);
             if (playerEntity._aimAngle != null && playerEntity._aimAge < 200) {
-                armRotation = -playerEntity._aimAngle + Math.PI / 2;
+                armRotation = -playerEntity._aimAngle + pid2;
             }
 
             context.save();
@@ -167,15 +161,28 @@
             } else {
                 context.rotate(-(armRotation));
             }
-            var shootingBackward = armRotation < Math.PI && armRotation > 0;
+            var shootingBackward = armRotation < pi && armRotation > 0;
             if (shootingBackward && playerEntity._runningLeft || !shootingBackward && !playerEntity._runningLeft) {
                 context.scale(-1, 1);
             }
                 
 
-            var gunWidth = armWidth * 2;
-            var gunHeight = armWidth * 3;
-            var gunThickness = armWidth;
+            var gun = <AbstractGun>playerEntity._gun;
+            var gunScale: number;
+            if (gun._chargeTime > 0) {
+                var maxChargeTime = 1000;
+                var chargeTime = (gun._chargeTime + maxChargeTime /2 ) % maxChargeTime - maxChargeTime / 2;
+                if (chargeTime < 0) {
+                    chargeTime = -chargeTime;
+                }
+
+                gunScale = 1 + (chargeTime) / maxChargeTime;
+            } else {
+                gunScale = 1;
+            }
+            var gunWidth = armWidth * 2.3 * gunScale;
+            var gunHeight = armWidth * 2.9 * gunScale;
+            var gunThickness = armWidth * 1.2 * gunScale;
             // draw the gun
             context.beginPath();
             context.moveTo(gunWidth / 2, armLength - armWidth / 2);
@@ -185,7 +192,11 @@
             context.lineTo(-gunWidth / 2, armLength - armWidth / 2 + gunThickness);
             context.lineTo(-gunWidth / 2, armLength - armWidth / 2);
             context.closePath();
-            context.fillStyle = gunFillStyle;
+            if (gun.canShoot()) {
+                context.fillStyle = gunFillStyle;
+            } else {
+                context.fillStyle = "black";
+            }
             context.fill();
             context.stroke();
 

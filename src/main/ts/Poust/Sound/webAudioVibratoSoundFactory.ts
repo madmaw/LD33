@@ -17,11 +17,7 @@
         oscillator.start();
 
         var gain = audioContext.createGain();
-        gain.gain.value = 0;
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.linearRampToValueAtTime(0.1, now + durationSeconds * 0.1);
-        gain.gain.linearRampToValueAtTime(0.1, now + durationSeconds * 0.2);
-        gain.gain.linearRampToValueAtTime(0, now + durationSeconds);
+        linearRampGain(gain, now, 0.2, 0.1, 0, durationSeconds * 0.1, durationSeconds * 0.2, durationSeconds);
 
         var vibrato = audioContext.createOscillator();
         vibrato.frequency.value = vibrations / durationSeconds;

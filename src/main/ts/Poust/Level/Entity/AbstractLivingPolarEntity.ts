@@ -1,6 +1,6 @@
 ﻿class AbstractLivingPolarEntity extends AbstractPolarEntity {
 
-    public static STATE_DYING = "dying";
+    public static STATE_DYING = "d";
 
     private _dying: boolean;
     private _killedBy: IEntity;
@@ -14,7 +14,9 @@
         if (!this._dying) {
             this._dying = true;
             this._killedBy = killedBy;
-            this._deathSound();
+            var r = this._bounds.getInnerRadiusPx();
+            var i = Math.min(1, r / 1500);
+            this._deathSound(i);
         }
     }
 
@@ -40,11 +42,12 @@
                 var mass1 = this.getMass();
                 var mass2 = this._killedBy.getMass();
                 if (mass1 != null && mass2 != null) {
+                    var cr = this.getBounds().getCenterRadiusPx();
                     var vrpx1 = this.getVelocityRadiusPX();
                     var vrpx2 = this._killedBy.getVelocityRadiusPX();
                     var vapx1 = this._velocityAPX;
-                    var va2 = this._killedBy.getVelocityAngleRadians(vrpx1);
-                    var vapx2 = va2 * vrpx1;
+                    var va2 = this._killedBy.getVelocityAngleRadians(cr);
+                    var vapx2 = va2 * cr;
                     var vrpx = (vrpx1 * mass1 + vrpx2 * mass2) / (mass1 + mass2);
                     var vapx = (vapx1 * mass1 + vapx2 * mass2) / (mass1 + mass2);
 
@@ -65,5 +68,20 @@
 
     updateAlive(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
         return null;
+    }
+
+    notifyCollision(withEntity: IEntity, onEdge: number): void {
+        this._handleCollision(withEntity, onEdge);
+    }
+
+    public _handleCollision(withEntity: IEntity, onEdge: number): boolean {
+        if (withEntity instanceof BulletEntity) {
+            // we're dead
+            this.setDying(withEntity);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

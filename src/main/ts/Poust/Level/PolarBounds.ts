@@ -2,20 +2,30 @@
 
     public static isClockwiseAfter(ca: number, a: number): boolean {
         // normalize the diff
-        while (a > ca + Math.PI) {
-            a -= Math.PI * 2;
+        while (a > ca + pi) {
+            a -= pi2;
         }
-        while (a < ca - Math.PI) {
-            a += Math.PI * 2;
+        while (a < ca - pi) {
+            a += pi2;
         }
         return a > ca;
     }
 
+    public static subtractAngle(a1: number, a2: number): number {
+        while (a2 > a1 + pi) {
+            a2 -= pi2;
+        }
+        while (a2 < a1 - pi) {
+            a2 += pi2;
+        }
+        return a1 - a2;
+    }
+
     public static normalizeAngle(angle: number): number {
         while (angle < 0) {
-            angle += Math.PI * 2;
+            angle += pi2;
         }
-        return angle % (Math.PI * 2);
+        return angle % (pi2);
     }
 
     public static intersect(b1: PolarBounds, b2: PolarBounds): PolarBounds {
@@ -134,8 +144,8 @@
     public permutate(): PolarBounds[]{
         var ea = this.getEndAngleRadians();
         var result = [this];
-        if (ea > Math.PI * 2) {
-            result.push(new PolarBounds(this._r, this._a - Math.PI * 2, this._height, this._arc));
+        if (ea > pi2) {
+            result.push(new PolarBounds(this._r, this._a - pi2, this._height, this._arc));
         }
         return result;
     }

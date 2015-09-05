@@ -25,7 +25,7 @@
     }
 
     destroy(): void {
-        this._element.setAttribute("class", "hidden");
+        this._element.setAttribute("class", "h");
     }
 
     public isStarted() {
