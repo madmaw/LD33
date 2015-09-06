@@ -5,7 +5,8 @@
     rendererFactory: IEntityRendererFactory,
     maxCollisionSteps: number,
     rngFactory: IRandomNumberGeneratorFactory,
-    entitySpawnerFactory: IEntitySpawnerFactory
+    entitySpawnerFactory: IEntitySpawnerFactory,
+    maxRingGap: number
     ) {
 
     return function (
@@ -56,14 +57,14 @@
             var y = grid._height;
             var r = initialRadius;
             var rgd = 0;
+            rs.push(initialRadius);
             while (y > 0) {
                 var ring = height - y;
-                r = initialRadius + (ring + 1) * (ringGapPx + ringWidth) + rgd;
+                r += Math.min(ringGapPx + ringWidth + rgd, maxRingGap);
                 rgd += (ringGapDelta + ringGapDeltaScale * param.difficulty) * (ring + 1);
                 rs.splice(0, 0, r);
                 y--;
             }
-            rs.push(initialRadius);
 
             // measure the column sequences
             for (var ix = 0; ix < grid._width; ix++) {
@@ -188,7 +189,7 @@
                         } else {
                             maxHeight = rs[y - 1] - r - ringWidth;
                         }
-                        var baddies = entitySpawner(a, r, maxHeight, arc, Math.min(param.difficulty, (param.difficulty * ring * 2) / height));
+                        var baddies = entitySpawner(a, r, maxHeight, arc, Math.sqrt((param.difficulty * ring * 2) / height));
                         for (var j in baddies) {
                             var baddy = baddies[j];
                             level.addEntity(baddy);
@@ -203,7 +204,7 @@
             }
 
             var floor = new AbstractEntity(GroupId.Terrain);
-            floor._bounds = new PolarBounds(2, 0, initialRadius - 2, pi2);
+            floor._bounds = new PolarBounds(0, 0, initialRadius, pi2);
             level.addEntity(floor);
 
             // exit

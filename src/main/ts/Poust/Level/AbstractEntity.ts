@@ -79,7 +79,7 @@
 
     update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
         this._stateAgeMillis += timeMillis;
-        if (this._bounds.getInnerRadiusPx() <= 0) {
+        if (this._bounds.getInnerRadiusPx() <= 0 && this._groupId != GroupId.Terrain) {
             // welp, we're dead now!?
             this.setDead();
         }

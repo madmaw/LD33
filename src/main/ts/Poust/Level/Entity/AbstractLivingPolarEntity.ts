@@ -13,17 +13,16 @@
     }
 
     public setDying(killedBy: IEntity) {
-        if (this._health > 0 && this._stunTimeout <= 0) {
+        this._killedBy = killedBy;
+        if (this._health && this._stunTimeout <= 0) {
+            // halve size
             this._health--;
-            this._killedBy = killedBy;
-            if (this._health) {
-                // halve size
-                this._heightPx /= 1.5;
-                this._widthPx /= 1.5;
-                this._stunTimeout += 500;
-            }
-            this._deathSound(1-(this._health/10));
+            this._heightPx /= 1.5;
+            this._widthPx /= 1.5;
+            this._mass /= 2;
+            this._stunTimeout += 500;
         }
+        this._deathSound(1-(this._health/10));
     }
 
     public isDying(): boolean {

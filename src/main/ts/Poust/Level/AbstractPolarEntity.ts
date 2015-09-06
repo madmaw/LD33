@@ -6,7 +6,7 @@
     public _widthPx: number;
     public _heightPx: number;
 
-    public constructor(_groupId: number, private _mass: number, public _respectsGravity: boolean) {
+    public constructor(_groupId: number, public _mass: number, public _respectsGravity: boolean) {
         super(_groupId);
         this._velocityAPX = 0;
         this._velocityRPX = 0;

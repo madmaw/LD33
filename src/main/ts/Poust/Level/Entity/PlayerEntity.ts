@@ -125,8 +125,9 @@
                         // are we jumping?
 
                         //var miny = (screenHeight / 2 + this._bounds.getHeightPx() * scale);
-                        var p = level.getPolarPoint(target.sx, target.sy);
-                        if (!target.groundJumpDisallowed && this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && this._bounds.getInnerRadiusPx() > p.r)) {
+                        //var p = level.getPolarPoint(target.sx, target.sy);
+                        var jy = screenHeight / 2 + Math.abs(target.sx - screenWidth / 2) * screenHeight / screenWidth;
+                        if (!target.groundJumpDisallowed && this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && target.sy > jy)) {
                             jumping = true;
                         } else if (this._onLeftWall && (gestureHint == Gesture.Left || gestureHint == Gesture.Context && target.sx < screenWidth / 2)) {
                             jumping = true;

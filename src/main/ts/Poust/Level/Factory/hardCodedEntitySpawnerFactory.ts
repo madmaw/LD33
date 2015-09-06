@@ -14,7 +14,6 @@
         return function (a: number, r: number, maxHeight: number, arc: number, difficulty: number) {
             var entities: IEntity[] = [];
             var quantity = (difficulty * rng() * arc * r) / 500 + rng() * difficulty;
-            var d = difficulty;
 
             var maxCost = Math.ceil(difficulty);
 
@@ -25,74 +24,68 @@
                 var amount = Math.floor(cost);
                 if (amount && preference) {
                     // are you suuure?
-                    if (Math.floor(rng() % numTypes) != amount && preference <= difficulty) {
+                    if (rng() < 0.8 && preference <= difficulty) {
                         amount = preference;
                     }
                 }
-                var entity: IEntity;
+                var entity: AbstractPolarEntity;
+                var entityWidth = 32;
+                var entityR = r;
                 switch (amount) {
                     case 0:
                         entity = null;
                         break;
                     case 1:
                         {
-                            var width: number;
-                            var height: number;
                             var obstacle: AbstractPolarEntity;
-                            if (difficulty < rng() * 10 + 1) {
+                            if (difficulty * rng() < 3) {
                                 obstacle = createChomperEntity(deathSound, rng() > 0.5);
-                                height = 32;
-                                width = 32;
                             } else {
                                 obstacle = obstacleEntity();
-                                var d = difficulty * rng();
-                                height = 22 + d;
-                                width = 22 + d;
+                                entityWidth = 22 + difficulty * rng();
                             }
-                            var ae = a + rng() * (arc - width / r);
-                            obstacle.setBounds(r, ae, height, width);
                             entity = obstacle;
                         }
                         break;
                     case 2:
                         {
-                            var flappy = new FlappyEntity(GroupId.Enemy, 1, deathSound, rng() > 0.5, 0.06 + difficulty * 0.01, 0.3, r + maxHeight * rng() / 2);
-                            flappy.setBounds(r + maxHeight / 2, a + rng() * arc, 32, 32);
+                            var flappy = new FlappyEntity(GroupId.Enemy, 1, deathSound, rng() > 0.5, 0.06 + difficulty * 0.01, 0.3, r + maxHeight * rng() / 4);
+                            //flappy.setBounds(r + maxHeight / 2, a + rng() * arc, 32, 32);
+                            entityR = r + maxHeight / 2;
                             entity = flappy;
                         }
                         break;
                     case 3:
                         {
                             var bouncer = new BouncyEntity(GroupId.Enemy, 1, deathSound, 0.05 + difficulty * 0.02, rng() > 0.5, rng() > 0.5);
-                            bouncer.setBounds(r, a + rng() * arc, 32, 32);
+                            //bouncer.setBounds(r, a + rng() * arc, 32, 32);
                             entity = bouncer;
                         }
                         break;
                     case 4:
                         {
                             var seeker = new SeekerEntity(GroupId.Enemy, 1, deathSound, 200 + 30 * difficulty, 0.1, 1.1, 0.1, 0.3, 0.65);
-                            seeker.setBounds(r, a + rng() * arc, 40, 40);
+                            //seeker.setBounds(r, a + rng() * arc, 40, 40);
+                            entityWidth = 40;
                             entity = seeker;
                         }
                 }
                 if (entity) {
-                    entities.push(entity);
-                }
-                var livingEntity = <AbstractLivingPolarEntity>entity;
-                if (livingEntity && livingEntity._health) {
-                    var health = livingEntity._health;
-                    var h = livingEntity._heightPx;
-                    var w = livingEntity._widthPx;
-                    var maxh = maxHeight - (livingEntity.getBounds()._r - r);
-                    while (h * 2 < maxh && rng() * 50 < d) {
-                        w *= 1.5;
-                        h *= 1.5;
-                        health++;
-                        d--;
+                    var livingEntity = <AbstractLivingPolarEntity>entity;
+                    if (livingEntity._health) {
+                        var health = livingEntity._health;
+                        var maxh = maxHeight - (entityR - r);
+                        while (entityWidth * 2 < maxh && rng() * 100 < difficulty * quantity) {
+                            entityWidth *= 1.5;
+                            entity._mass *= 2;
+                            health++;
+                            quantity -= cost;
+                        }
+                        livingEntity._health = health;
                     }
-                    livingEntity._health = health;
-                    livingEntity._widthPx = w;
-                    livingEntity._heightPx = h;
+                    var ae = a + rng() * (arc - entityWidth / entityR);
+                    entity.setBounds(r, ae, entityWidth, entityWidth);
+                    entities.push(entity);
                 }
                 // what can we buy?
                 quantity -= cost;

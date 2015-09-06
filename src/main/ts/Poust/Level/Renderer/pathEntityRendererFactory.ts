@@ -18,16 +18,16 @@
 
         var ir = bounds.getInnerRadiusPx();
         var or = bounds.getOuterRadiusPx();
+        context.beginPath();
+        context.moveTo(cossr * or, sinsr * or);
+        context.arc(0, 0, or, asr, aer, false);
         if (ir > 0) {
-            context.beginPath();
-            context.moveTo(cossr * or, sinsr * or);
-            context.arc(0, 0, or, asr, aer, false);
             context.lineTo(coser * ir, siner * ir);
             context.arc(0, 0, ir, aer, asr, true);
-            context.closePath();
-            context.fill();
-            context.stroke();
         }
+        context.closePath();
+        context.fill();
+        context.stroke();
     }
 
 }
