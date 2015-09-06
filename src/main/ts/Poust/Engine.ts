@@ -17,16 +17,20 @@
                         // replace with our current state and let the history manager load it
                         var newURL = location.href.substr(0, location.href.length - hash.length) + levelId;
                         // just stop the current state
-                        if (hash != null && hash != "") {
-                            history.replaceState(null, stateFactoryParam.levelName, newURL);
+                        if (hash) {
+                            history.replaceState(null, null, newURL);
+                            this.setStateFromParam(paramType, param);
                         } else {
-                            history.pushState(null, stateFactoryParam.levelName, newURL);
+                            history.pushState(null, null, newURL);
                         }
+                    } else {
+                        this.setStateFromParam(paramType, param);
+
                     }
                 } else {
                     pageId = "";
+                    this.setStateFromParam(paramType, param);
                 }
-                this.setStateFromParam(paramType, param);
                 /* for analytics
                 if (w['ga']) {
                     ga('send', 'pageview', {

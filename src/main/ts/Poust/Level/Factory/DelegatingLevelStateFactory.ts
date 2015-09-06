@@ -21,12 +21,12 @@
         if (paramType == StateFactoryParamType.LevelLoad) {
 
             var p: ILevelStateFactoryParam = param;
-            if (p.player == null) {
+            if (!p.player) {
                 p.player = createPlayer();
             }
-            if (p.seed == null) {
+            if (!p.seed) {
                 // lookup the seed for this level
-                var data = findLevelStateData(p.difficulty, p.levelName, true);
+                var data = loadLevelStateData(p.difficulty, p.levelName, true);
                 p.seed = data.seed;
             }
 

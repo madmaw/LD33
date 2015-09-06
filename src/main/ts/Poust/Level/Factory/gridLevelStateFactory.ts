@@ -104,7 +104,6 @@
                         var h = rs[iy - maxCount + 1] - r - ringWidth;
                         var wall = new AbstractEntity(GroupId.Terrain);
                         wall._bounds = new PolarBounds(r, a, h, arc);
-                        wall._bounds.normalize();
                         level.addEntity(wall);                            
 
                         maxCount = 0;
@@ -181,11 +180,15 @@
 
                         var terrain = new AbstractEntity(GroupId.Terrain);
                         terrain._bounds = new PolarBounds(r - ringWidth, a, ringWidth, arc);
-                        terrain._bounds.normalize();
                         level.addEntity(terrain);
 
-
-                        var baddies = entitySpawner(a, r, ringGapPx, arc, Math.min(param.difficulty, (param.difficulty * ring * 2) / height));
+                        var maxHeight: number;
+                        if (y == 0) {
+                            maxHeight = initialRadius;
+                        } else {
+                            maxHeight = rs[y - 1] - r - ringWidth;
+                        }
+                        var baddies = entitySpawner(a, r, maxHeight, arc, Math.min(param.difficulty, (param.difficulty * ring * 2) / height));
                         for (var j in baddies) {
                             var baddy = baddies[j];
                             level.addEntity(baddy);
@@ -201,7 +204,6 @@
 
             var floor = new AbstractEntity(GroupId.Terrain);
             floor._bounds = new PolarBounds(2, 0, initialRadius - 2, pi2);
-            floor._bounds.normalize();
             level.addEntity(floor);
 
             // exit
@@ -216,7 +218,6 @@
                 };
             });
             exit._bounds = new PolarBounds(exitR, rng() * pi2, exitHeight, exitWidth);
-            exit._bounds.normalize();
             level.addEntity(exit);
 
 

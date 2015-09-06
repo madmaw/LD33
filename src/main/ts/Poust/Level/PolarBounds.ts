@@ -36,8 +36,7 @@
             for (var j in p2s) {
                 var p2 = p2s[j];
                 var s = PolarBounds.reallyIntersects(p1, p2);
-                if (s != null) {
-                    s.normalize();
+                if (s) {
                     return s;
                 }
             }
@@ -64,7 +63,7 @@
             var aoverlap = Math.min(ae1, ae2) - aso;
 
             if (aoverlap > 0) {
-                return new PolarBounds(rio, aso, roverlap, aoverlap);
+                return new PolarBounds(rio, aso, roverlap, aoverlap, false);
             } else {
                 return null;
             }
@@ -78,11 +77,13 @@
         var mina = Math.min(b1._a, b2._a);
         var maxr = Math.max(b1.getOuterRadiusPx(), b2.getOuterRadiusPx());
         var maxa = Math.max(b1.getEndAngleRadians(), b2.getEndAngleRadians());
-        return new PolarBounds(minr, mina, maxr - minr, maxa - mina);
+        return new PolarBounds(minr, mina, maxr - minr, maxa - mina, false);
     }
 
-    public constructor(private _r: number, private _a: number, private _height: number, private _arc: number) {
-
+    public constructor(public _r: number, public _a: number, public _height: number, public _arc: number, normalize: boolean = true) {
+        if (normalize) {
+            this.normalize();
+        }
     }
 
     public containsVertically(rPx: number): boolean {
@@ -145,7 +146,7 @@
         var ea = this.getEndAngleRadians();
         var result = [this];
         if (ea > pi2) {
-            result.push(new PolarBounds(this._r, this._a - pi2, this._height, this._arc));
+            result.push(new PolarBounds(this._r, this._a - pi2, this._height, this._arc, false));
         }
         return result;
     }

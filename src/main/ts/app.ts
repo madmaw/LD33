@@ -1,14 +1,14 @@
-﻿var w = window;
+﻿var _w = window;
 
-w.onload = () => {
+_w.onload = () => {
 
     var levelStateElement = document.getElementById("c");
     var menuStateElement = document.getElementById("m");
 
     var audioContext: AudioContext;
-    if (w["AudioContext"]) {
+    if (_w["AudioContext"]) {
         audioContext = new AudioContext();
-    } else if (w["webkitAudioContext"]) {
+    } else if (_w["webkitAudioContext"]) {
         audioContext = new webkitAudioContext();
     }
 
@@ -80,10 +80,10 @@ w.onload = () => {
 
     var levelStateFactories: { [_: string]: IStateFactory } = {};
     //levelStateFactories[level1] = _concentricLevelStateFactory(level2, 0, 4, 20, 70, 300, 5);
-    levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 32, 3, 2, 1, 20, 70, 15, 1, _concentriGridFactory);
-    levelStateFactories[level2] = _gridLevelStateFactory(level3, 0, 300, 12, 2, 2, 1, 20, 85, 5, 1, looseEndsTrimmingGridFactoryProxy(mergingGridFactoryProxy([_mazeGridFactory], 3)));
-    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 400, 12, 3, 2, 1, 20, 80, 2, 0.5, mergingGridFactoryProxy([_circuitGridFactory], 6));
-    levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 500, 24, 3, 2, 1, 20, 75, 3, 1, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 2));
+    levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 28, 1, 2, 1, 20, 70, 15, 1, _concentriGridFactory);
+    levelStateFactories[level2] = _gridLevelStateFactory(level3, 0, 300, 12, 1, 2, 1, 20, 85, 5, 1, looseEndsTrimmingGridFactoryProxy(mergingGridFactoryProxy([_mazeGridFactory], 3, 0)));
+    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 400, 12, 1, 2, 1, 20, 80, 2, 0.5, mergingGridFactoryProxy([_circuitGridFactory], 4, 0));
+    levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 500, 24, 1, 2, 1, 20, 75, 3, 1, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 2, 0.2));
 
     var menuState = new MenuState(menuStateElement, "l", levelStateFactories);
     
@@ -108,7 +108,7 @@ w.onload = () => {
             hash = hash.substr(1);
             var levelStateFactoryParam = levelNameToLevelStatFactoryParam(hash);
             if (levelStateFactoryParam) {
-                var data = findLevelStateData(levelStateFactoryParam.difficulty, levelStateFactoryParam.levelName);
+                var data = loadLevelStateData(levelStateFactoryParam.difficulty, levelStateFactoryParam.levelName);
                 if (data) {
                     paramType = StateFactoryParamType.LevelLoad;
                     param = levelStateFactoryParam;
@@ -125,7 +125,7 @@ w.onload = () => {
 
     var param = locationToLevel();
     var paramType: number;
-    if (param == null) {
+    if (!param) {
         paramType = StateFactoryParamType.LevelRestart;
     } else {
         var hash = location.hash;
@@ -138,9 +138,9 @@ w.onload = () => {
 
     engine.setStateFromParam(paramType, param);
 
-    w.onpopstate = (event: PopStateEvent) => {
+    _w.onpopstate = (event: PopStateEvent) => {
         var state = event.state;
-        if (state == null) {
+        if (!state) {
             state = locationToLevel();
         }
         if (state) {

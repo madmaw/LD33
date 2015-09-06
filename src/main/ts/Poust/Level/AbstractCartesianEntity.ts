@@ -18,7 +18,7 @@
     public setCenter(cx: number, cy: number, bounds?: PolarBounds): void {
         this._cx = cx;
         this._cy = cy;
-        if (bounds == null) {
+        if (!bounds) {
             bounds = this.calculateBounds(cx, cy);
         }
         this._bounds = bounds;
@@ -36,7 +36,6 @@
         var arcRad = this._widthPx / r;
 
         var newBounds = new PolarBounds(r - this._heightPx / 2, a - arcRad / 2, this._heightPx, arcRad);
-        newBounds.normalize();
         return newBounds;
     }
 

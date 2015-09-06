@@ -38,14 +38,14 @@
     }
 
     public reset(r: number, a: number) {
-        this.setBounds(r, a);
+        this.setBounds(r, a - this._bounds._arc / 2);
         this._velocityAPX = 0;
         this._velocityRPX = 0;
     }
 
     public setTarget(inputId: number, sx: number, sy: number, gestureHint: number) {
         var target = this._targets[inputId];
-        if (target == null) {
+        if (!target) {
             target = { gestureHint: gestureHint, sx: sx, sy: sy, fresh: true };
 
             this._targets[inputId] = target;
@@ -112,7 +112,7 @@
         for (var i in this._targets) {
             var target = this._targets[i];
             var jumping = false;
-            if (target != null) {
+            if (target) {
                 var screenWidth = level.getScreenWidth();
                 var screenHeight = level.getScreenHeight();
                 // work out context
@@ -258,7 +258,7 @@
             if (this._velocityRPX > 0) {
                 for (var i in this._targets) {
                     var target = this._targets[i];
-                    if (target != null) {
+                    if (target) {
                         if (target.jumped) {
                             this._velocityRPX += 0.00045 * timeMillis;
                             break;

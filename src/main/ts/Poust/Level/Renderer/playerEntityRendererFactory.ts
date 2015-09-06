@@ -195,7 +195,7 @@
             if (gun.canShoot()) {
                 context.fillStyle = gunFillStyle;
             } else {
-                context.fillStyle = "black";
+                context.fillStyle = "#000";
             }
             context.fill();
             context.stroke();

@@ -2,16 +2,6 @@
 
     private _groups: IEntityHolder[][];
 
-    private _touchStartListener: EventListener;
-    private _touchEndListener: EventListener;
-    private _touchMoveListener: EventListener;
-    private _mouseDownListener: EventListener;
-    private _mouseMoveListener: EventListener;
-    private _mouseUpListener: EventListener;
-    private _mouseOutListener: EventListener;
-    private _keyDownListener: EventListener;
-    private _keyUpListener: EventListener;
-
     private _cameraCenterRadius: number;
     private _cameraCenterAngle: number;
 
@@ -20,6 +10,8 @@
 
     private _previousWidth: number;
     private _previousHeight: number;
+
+    private _listeners: { [_: string]: EventListener };
 
     public constructor(
         _element: Element,
@@ -36,21 +28,21 @@
         this._cameraCenterRadius = 0;
         this._levelAgeMillis = 0;
         this._groups = new Array<IEntityHolder[]>();
-        this._touchStartListener = (event: TouchEvent) => {
+        var touchStartListener = (event: TouchEvent) => {
             for (var i in event.changedTouches) {
                 var touch = event.changedTouches.item(i);
                 this.setTarget(touch.identifier, touch.clientX, touch.clientY, true);
             }
             event.stopPropagation();
         };
-        this._touchEndListener = (event: TouchEvent) => {
+        var touchEndListener = (event: TouchEvent) => {
             for (var i in event.changedTouches) {
                 var touch = event.changedTouches.item(i);
                 this.clearTarget(touch.identifier);
             }
             event.stopPropagation();
         };
-        this._touchMoveListener = (event: TouchEvent) => {
+        var touchMoveListener = (event: TouchEvent) => {
             for (var i in event.changedTouches) {
                 var touch = event.changedTouches.item(i);
                 this.setTarget(touch.identifier, touch.clientX, touch.clientY, true);
@@ -59,12 +51,12 @@
         };
 
         var mouseDown = false;
-        this._mouseDownListener = (event: MouseEvent) => {
+        var mouseDownListener = (event: MouseEvent) => {
             this.setTarget(0, event.clientX, event.clientY, false);
             mouseDown = true;
             event.stopPropagation();
         };
-        this._mouseMoveListener = (event: MouseEvent) => {
+        var mouseMoveListener = (event: MouseEvent) => {
             // aiming target
             this.setTarget(1, event.clientX, event.clientY, false, false);
             if (mouseDown) {
@@ -72,12 +64,12 @@
             }
             event.stopPropagation();
         };
-        this._mouseUpListener = () => {
+        var mouseUpListener = () => {
             this.clearTarget(0);
             mouseDown = false;
             event.stopPropagation();
         };
-        this._mouseOutListener = () => {
+        var mouseOutListener = () => {
             this.clearTarget(0);
             this.clearTarget(1);
             mouseDown = false;
@@ -85,14 +77,14 @@
         };
             
         var keysDown : { [_:number]: boolean } = {};
-        this._keyDownListener = (event: KeyboardEvent) => {
+        var keyDownListener = (event: KeyboardEvent) => {
             if (!keysDown[event.keyCode]) {
                 keysDown[event.keyCode] = true;
                 this._player.setJump();
             }
             event.stopPropagation();
         };
-        this._keyUpListener = (event: KeyboardEvent) => {
+        var keyUpListener = (event: KeyboardEvent) => {
             if (keysDown[event.keyCode]) {
                 delete keysDown[event.keyCode];
                 var down = false;
@@ -109,12 +101,26 @@
             }
             event.stopPropagation();
         };
+        this._listeners = {
+            'touchstart': touchStartListener,
+            'touchmove': touchMoveListener,
+            'touchend': touchEndListener,
+            'touchleave': touchEndListener,
+            'touchcancel': touchEndListener,
+            'mousedown': mouseDownListener,
+            'mouseup': mouseUpListener,
+            'mousemove': mouseMoveListener,
+            'mouseout': mouseOutListener,
+            'keydown': keyDownListener,
+            'keyup': keyUpListener
+        };
+
     }
 
     public init() {
         super.init();
         // look up previous best (if any)
-        this._data = findLevelStateData(this._levelDifficulty, this._levelName, true);
+        this._data = loadLevelStateData(this._levelDifficulty, this._levelName, true);
     }
 
     public getGroup(groupId: number) {
@@ -202,7 +208,24 @@
             this._data.attempts++;
             saveLevelStateData(this._levelDifficulty, this._levelName, this._data);
         }
-
+        for (var key in this._listeners) {
+            var listener = this._listeners[key];
+            var c = key[0];
+            if (c == 'k') {
+                addEventListener(key, listener);
+            } else {
+                if (('ontouchstart' in _w) || _w['DocumentTouch']) {
+                    if (c == 't') {
+                        this._element.addEventListener(key, listener);
+                    }
+                } else {
+                    if (c == 'm') {
+                        this._element.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
+        /*
         if (('ontouchstart' in w) || w['DocumentTouch']) {
             this._element.addEventListener('touchstart', this._touchStartListener);
             this._element.addEventListener('touchmove', this._touchMoveListener);
@@ -217,10 +240,18 @@
         }
         w.addEventListener('keydown', this._keyDownListener);
         w.addEventListener('keyup', this._keyUpListener);
+        */
     }
 
     stop(): void {
         super.stop();
+        for (var key in this._listeners) {
+            var listener = this._listeners[key];
+            this._element.removeEventListener(key, listener);
+            removeEventListener(key, listener);
+        }
+
+        /*
         this._element.removeEventListener('touchstart', this._touchStartListener);
         this._element.removeEventListener('touchmove', this._touchMoveListener);
         this._element.removeEventListener('touchend', this._touchEndListener);
@@ -232,6 +263,7 @@
         this._element.removeEventListener('mouseout', this._mouseOutListener);
         w.removeEventListener('keydown', this._keyDownListener);
         w.removeEventListener('keyup', this._keyUpListener);
+        */
     }
 
 
@@ -291,7 +323,7 @@
             var mass2 = entity2.getMass();
             var edge1: number;
             var edge2: number;
-            if (!collision.sensorCollision && (mass1 != null || mass2 != null)) {
+            if (!collision.sensorCollision && (mass1 || mass2)) {
 
                 // work out relative velocities
                 var cr = collision.nearestCollisionIntersection.getCenterRadiusPx();
@@ -317,9 +349,9 @@
                 // work out velocity (edge should be opposite!)
                 if (edge1 == -edge2 && edge1 != POLAR_EDGE_UNDEFINED) {
                     if (edge1 == POLAR_EDGE_TOP || edge1 == POLAR_EDGE_BOTTOM) {
-                        if (mass1 == null) {
+                        if (!mass1) {
                             entity2.setVelocityRadiusPX(vr1);
-                        } else if (mass2 == null) {
+                        } else if (!mass2) {
                             entity1.setVelocityRadiusPX(vr2);
                         } else {
                             var vr = (vr2 * mass2 + vr1 * mass1) / (mass1 + mass2);
@@ -459,7 +491,7 @@
                         if (entityl.isCollidable() && !entityl.isDead()) {
                             var motionl = entityHolderl.motion;
                             var collision = this.calculateCollision(diffMillis, entityHolderk, entityHolderl);
-                            if (collision != null) {
+                            if (collision) {
                                 // insert in order of collision time
                                 var index = 0;
                                 while (index < collisions.length) {
@@ -518,7 +550,7 @@
         var motion2 = entityHolder2.motion;
 
         var collision: ICollision;
-        if (motion1 != null && motion2 != null) {
+        if (motion1 && motion2) {
             var entity1 = entityHolder1.entity;
             var entity2 = entityHolder2.entity;
 
@@ -543,7 +575,7 @@
                         var sampleMotion1 = entity1.calculateMotion(sampleTime);
                         var sampleMotion2 = entity2.calculateMotion(sampleTime);
                         overlap = PolarBounds.intersect(sampleMotion1.getBounds(), sampleMotion2.getBounds());
-                        if (overlap != null) {
+                        if (overlap) {
                             maxCollisionMotion1 = sampleMotion1;
                             maxCollisionMotion2 = sampleMotion2;
                             maxCollisionTime = sampleTime;
@@ -570,7 +602,7 @@
             }
             */
 
-            if (overlap != null) {
+            if (overlap) {
                 
                 // is either a sensor or did they start collided?
                 if (entityHolder1.entity.isSensor() || entityHolder2.entity.isSensor() || entityHolder1.entity.getBounds().overlaps(entityHolder2.entity.getBounds())) {
@@ -601,7 +633,7 @@
                         var testMotion1 = entityHolder1.entity.calculateMotion(testCollisionTime);
                         var testMotion2 = entityHolder2.entity.calculateMotion(testCollisionTime);
                         var testOverlap = PolarBounds.intersect(testMotion1.getBounds(), testMotion2.getBounds());
-                        if (testOverlap != null) {
+                        if (testOverlap) {
                             postCollisionTime = testCollisionTime;
                             previousOverlap = testOverlap;
                             collisionMotion1 = testMotion1;
@@ -613,7 +645,7 @@
                         }
                         collisionSteps++;
                     }
-                    if (bestMotion1 == null && bestMotion2 == null) {
+                    if (!bestMotion1 && !bestMotion2) {
                         // roll right back to starting position!
                         //preCollisionTime = 0;
                         bestMotion1 = entityHolder1.entity.calculateMotion(preCollisionTime - entityHolder1.motionOffset);
@@ -674,7 +706,7 @@
                 var entityHolder = group[j];
                 // do motion
                 var motion = entityHolder.motion;
-                if (motion != null) {
+                if (motion) {
                     motion.apply(this);
                 }
             }
@@ -690,6 +722,7 @@
         var w = this._element.clientWidth;
         var h = this._element.clientHeight;
         var fontHeight = Math.floor(Math.min(h / 20, w / 20));
+
         this._context.font = "bold "+fontHeight + "px Courier";
         this._context.fillStyle = "#000";
         this._context.fillRect(0, 0, w, h);
@@ -732,14 +765,12 @@
         var timeString = levelString+" " + toTimeString(this._levelAgeMillis);
         this._context.fillText(timeString, fontHeight, fontHeight * 1.5);
 
-        var bestTimeString;
         if (this._data.bestTime) {
-            bestTimeString = "BEST " + toTimeString(this._data.bestTime);
-        } else {
-            bestTimeString = "Unbeaten!";
+            var bestTimeString = "BEST " + toTimeString(this._data.bestTime);
+            var bestTimeStringMetric = this._context.measureText(bestTimeString);
+            this._context.fillText(bestTimeString, w - bestTimeStringMetric.width - fontHeight, fontHeight + fontHeight / 2);
+
         }
-        var bestTimeStringMetric = this._context.measureText(bestTimeString);
-        this._context.fillText(bestTimeString, w - bestTimeStringMetric.width - fontHeight, fontHeight + fontHeight / 2);
 
         var fontHeight = Math.floor(Math.min(h / 15, w / 15));
         this._context.font = "bold " + fontHeight + "px Courier";
@@ -761,7 +792,7 @@
         }
 
         if (this._player.isDead() || this._player.isDying()) {
-            var text = "GAME OVER";
+            var text = "GAMEOVER";
             var textMetric = this._context.measureText(text);
             this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2);
         }
@@ -769,7 +800,7 @@
     }
 
     public winLevel(param: ILevelStateFactoryParam) {
-        if (this._data.bestTime == null || this._data.bestTime > this._levelAgeMillis) {
+        if (!this._data.bestTime || this._data.bestTime > this._levelAgeMillis) {
             this._data.bestTime = this._levelAgeMillis;
             saveLevelStateData(this._levelDifficulty, this._levelName, this._data);
         }

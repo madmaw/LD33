@@ -89,7 +89,7 @@
                             baseR.y,
                             !charging
                             );
-                        if (bullet != null) {
+                        if (bullet) {
                             //state.addEntity(bullet);
                             createdEntities.push(bullet);
                         }
@@ -140,7 +140,7 @@
         ): IEntity {
         var lifespanMillis: number;
         if (backfire) {
-            lifespanMillis = 200;
+            lifespanMillis = 180;
         } else {
             lifespanMillis = 1000;
         }
@@ -149,7 +149,7 @@
         var dx = tox - fromx;
         var dy = toy - fromy;
         var h = Math.sqrt(dx * dx + dy * dy);
-        var v = 1;
+        var v = 0.7 + Math.random() * 0.4;
         dx = (dx * v) / h;
         dy = (dy * v) / h;
 

@@ -2,7 +2,7 @@
     var parts = hash.split("-");
     var difficulty = parseInt(parts[0]);
     var levelName = parts[1];
-    if (difficulty !=null && levelName != null) {
+    if (difficulty !=null && levelName) {
         var p: ILevelStateFactoryParam = {
             difficulty: difficulty,
             levelName: levelName

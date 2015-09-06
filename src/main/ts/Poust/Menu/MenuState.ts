@@ -17,8 +17,8 @@
         while (!done) {
             for (var levelName in this._levelNames) {
                 var name = "" + difficulty + "-" + levelName;
-                var data = findLevelStateData(difficulty, levelName, false);
-                if (data != null || first) {
+                var data = loadLevelStateData(difficulty, levelName, false);
+                if (data || first) {
                     var attempts: number;
                     if (!data) {
                         attempts = 0;
@@ -32,11 +32,11 @@
                     } else {
                         time = "-:--";
                     }
-                    var s = "<a id='L" + name + "' href='#" + name + "' class='ml"
+                    var s = "<a id=L" + name + " href=#" + name + " class='ml"
                     if (levels.length % 2) {
                         s += " o";
                     }
-                    s += "'><div class='mln'>" + name + "</div><div class='mla'>" + attempts + "</div><div class='mlt'>" + time + "</div></a>";
+                    s += "'><div class=mln>" + name + "</div><div class=mla>" + attempts + "</div><div class=mlt>" + time + "</div></a>";
 
                     innerHTML = s + innerHTML;
                     levels.push(name);

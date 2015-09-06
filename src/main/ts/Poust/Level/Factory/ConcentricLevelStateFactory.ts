@@ -63,7 +63,6 @@
                         var starta = (pi2 * i) / count + gapRadians / 2 + splitOffset;
                         bounds = new PolarBounds(radius, starta, ringWidth, arc);
                     }
-                    bounds.normalize();
                     ringEntity._bounds = bounds;
                     level.addEntity(ringEntity);
 
@@ -92,7 +91,6 @@
                 };
             });
             exit._bounds = new PolarBounds(radius - ringSpacing / 2, rng() * pi2, exitHeight, exitWidth);
-            exit._bounds.normalize();
             level.addEntity(exit);
 
             param.player.reset(initialGap + ringWidth + 2, 0);

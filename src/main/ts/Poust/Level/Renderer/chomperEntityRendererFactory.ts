@@ -21,9 +21,9 @@
 
             var bottomx = coscr * ir;
             var bottomy = sincr * ir;
-            var height = bounds.getHeightPx();
-            var toothWidth = height / 5;
-            var heightRaised = height + toothWidth / 2;
+            var width = bounds.getOuterCircumferencePx();
+            var toothWidth = width / 5;
+            var heightRaised = width + toothWidth / 2;
             var car = bounds.getCenterAngleRadians() + pid2;
 
             context.save();
@@ -57,8 +57,8 @@
             context.scale(xscale, 1);
             context.beginPath();
             context.moveTo(0, 0);
-            context.arc(0, -height / 2, height / 2, pid2, -pid2, false);
-            f(context, height, toothWidth, true);
+            context.arc(0, -width / 2, width / 2, pid2, -pid2, false);
+            f(context, width, toothWidth, true);
             context.restore();
 
             // draw right petal

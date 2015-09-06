@@ -3,8 +3,8 @@
     public _velocityRPX: number;
     public _velocityAPX: number;
     private _anchorRight: boolean;
-    private _widthPx: number;
-    private _heightPx: number;
+    public _widthPx: number;
+    public _heightPx: number;
 
     public constructor(_groupId: number, private _mass: number, public _respectsGravity: boolean) {
         super(_groupId);
@@ -65,14 +65,12 @@
         }
         a += ar;
         var newBounds = new PolarBounds(r, a, this._heightPx, wr);
-        newBounds.normalize();
         return this._createMotion(newBounds);
     }
 
     public calculateBounds(r: number, a: number, heightPx: number, widthPx: number): PolarBounds {
         var wr = this._widthPx / r;
         var bounds = new PolarBounds(r, a, this._heightPx, wr);
-        bounds.normalize();
         return bounds;
     }
 

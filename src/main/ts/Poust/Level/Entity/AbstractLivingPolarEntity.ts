@@ -2,67 +2,75 @@
 
     public static STATE_DYING = "d";
 
-    private _dying: boolean;
     private _killedBy: IEntity;
-        
+    public _health: number;
+    private _stunTimeout: number;
 
     constructor(groupId: number, mass: number, respectsGravity: boolean, private _deathSound: ISound) {
         super(groupId, mass, respectsGravity);
+        this._health = 1;
+        this._stunTimeout = 0;
     }
 
     public setDying(killedBy: IEntity) {
-        if (!this._dying) {
-            this._dying = true;
+        if (this._health > 0 && this._stunTimeout <= 0) {
+            this._health--;
             this._killedBy = killedBy;
-            var r = this._bounds.getInnerRadiusPx();
-            var i = Math.min(1, r / 1500);
-            this._deathSound(i);
+            if (this._health) {
+                // halve size
+                this._heightPx /= 1.5;
+                this._widthPx /= 1.5;
+                this._stunTimeout += 500;
+            }
+            this._deathSound(1-(this._health/10));
         }
     }
 
-    public isDying() {
-        return this._dying;
+    public isDying(): boolean {
+        return !this._health;
     }
 
     update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
         super.update(level, timeMillis, createdEntities);
-        if (!this.isDying()) {
-            this.updateAlive(level, timeMillis, createdEntities);
+        if (this._killedBy) {
+            this.flyAway(level, timeMillis);
+            this.setSensor(false);
+            this._killedBy = null;
+        }
+        if (this.isDying()) {
+            this._collidable = false;
+            this.setState(AbstractLivingPolarEntity.STATE_DYING);
+        } else if (this._stunTimeout > 0) {
+            this._stunTimeout -= timeMillis;
+            if (this._stunTimeout <= 0) {
+                this._velocityAPX = 0;
+            }
         } else {
-            this.updateDying(level, timeMillis);
+            this.updateAlive(level, timeMillis, createdEntities);
         }
     }
 
-    updateDying(level: LevelState, timeMillis: number) {
-        if (this._collidable) {
-            this.setState(AbstractLivingPolarEntity.STATE_DYING);
-            this._collidable = false;
-            this._respectsGravity = true;
-            if (this._killedBy) {
-                var mass1 = this.getMass();
-                var mass2 = this._killedBy.getMass();
-                if (mass1 != null && mass2 != null) {
-                    var cr = this.getBounds().getCenterRadiusPx();
-                    var vrpx1 = this.getVelocityRadiusPX();
-                    var vrpx2 = this._killedBy.getVelocityRadiusPX();
-                    var vapx1 = this._velocityAPX;
-                    var va2 = this._killedBy.getVelocityAngleRadians(cr);
-                    var vapx2 = va2 * cr;
-                    var vrpx = (vrpx1 * mass1 + vrpx2 * mass2) / (mass1 + mass2);
-                    var vapx = (vapx1 * mass1 + vapx2 * mass2) / (mass1 + mass2);
+    flyAway(level: LevelState, timeMillis: number) {
+        this._respectsGravity = true;
+        if (this._killedBy) {
+            var mass1 = this.getMass();
+            var mass2 = this._killedBy.getMass();
+            if (mass1 && mass2) {
+                var cr = this.getBounds().getCenterRadiusPx();
+                var vrpx1 = this.getVelocityRadiusPX();
+                var vrpx2 = this._killedBy.getVelocityRadiusPX();
+                var vapx1 = this._velocityAPX;
+                var va2 = this._killedBy.getVelocityAngleRadians(cr);
+                var vapx2 = va2 * cr;
+                var vrpx = (vrpx1 * mass1 + vrpx2 * mass2) / (mass1 + mass2);
+                var vapx = (vapx1 * mass1 + vapx2 * mass2) / (mass1 + mass2);
 
-                    this._velocityRPX = vrpx;
-                    this._velocityAPX = vapx;
-                } else {
-                    this._velocityAPX = -this._velocityAPX;
-                    this._velocityRPX = -this._velocityRPX;
-                }
+                this._velocityRPX = vrpx;
+                this._velocityAPX = vapx;
+            } else {
+                this._velocityAPX = -this._velocityAPX;
+                this._velocityRPX = -this._velocityRPX;
             }
-
-                
-        }
-        if (this.getBounds().getInnerRadiusPx() <= 0) {
-            this.setDead();
         }
     }
 

@@ -23,8 +23,8 @@
 
         //decay
         var gain = audioContext.createGain();
-        var decay = durationSeconds * 0.2 + Math.random() * 0.05;
-        linearRampGain(gain, now, intensity + Math.random() * 0.1, 0.1 * intensity + Math.random() * 0.05, durationSeconds * 0.002, decay, null, durationSeconds); 
+        var decay = durationSeconds * 0.2;
+        linearRampGain(gain, now, intensity + Math.random() * 0.1, 0.1, durationSeconds * 0.002, decay, null, durationSeconds); 
 
         staticNode.connect(filter);
         filter.connect(gain);
