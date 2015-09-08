@@ -1,8 +1,8 @@
 ﻿interface IEntity {
 
-    getGroupId(): number;
+    groupId: number;
 
-    getBounds(): PolarBounds;
+    bounds: PolarBounds;
 
     getVelocityRadiusPX(): number;
 
@@ -14,7 +14,7 @@
 
     setAnchorRight(anchorRight: boolean): void;
 
-    getMass(): number;
+    mass: number;
 
     calculateMotion(timeMillis: number): IMotion;
 
@@ -22,15 +22,13 @@
 
     update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void;
 
-    isDead(): boolean;
+    dead: boolean;
 
-    isCollidable(): boolean;
+    collidable: boolean;
 
-    isSensor(): boolean;
+    continuousCollisions: boolean;
 
-    isContinuousCollisions(): boolean;
+    state: string;
 
-    getState(): string;
-
-    getStateAgeMillis(): number;
+    stateAgeMillis: number;
 }

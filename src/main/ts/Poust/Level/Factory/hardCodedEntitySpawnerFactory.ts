@@ -77,7 +77,7 @@
                         var maxh = maxHeight - (entityR - r);
                         while (entityWidth * 2 < maxh && rng() * 100 < difficulty * quantity) {
                             entityWidth *= 1.5;
-                            entity._mass *= 2;
+                            entity.mass *= 2;
                             health++;
                             quantity -= cost;
                         }

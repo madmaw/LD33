@@ -1,33 +1,31 @@
 ﻿class AbstractPolarEntity extends AbstractEntity {
 
-    public _velocityRPX: number;
     public _velocityAPX: number;
     private _anchorRight: boolean;
     public _widthPx: number;
     public _heightPx: number;
 
-    public constructor(_groupId: number, public _mass: number, public _respectsGravity: boolean) {
+    public constructor(_groupId: number, mass: number, respectsGravity: boolean) {
         super(_groupId);
+        this.mass = mass;
+        if (respectsGravity) {
+            this.gravityMultiplier = 1;
+        }
         this._velocityAPX = 0;
-        this._velocityRPX = 0;
         this._anchorRight = false;
     }
 
     public setVelocity(velocityRPX: number, velocityAPX: number) {
-        this._velocityRPX = velocityRPX;
+        this.velocityRPX = velocityRPX;
         this._velocityAPX = velocityAPX;
-    }
-
-    getVelocityRadiusPX(): number {
-        return this._velocityRPX;
-    }
-
-    setVelocityRadiusPX(velocityRadiusPX: number): void {
-        this._velocityRPX = velocityRadiusPX;
     }
 
     getVelocityAngleRadians(atRadiusPX: number): number {
         return this._velocityAPX / atRadiusPX;
+    }
+
+    getVelocityAnglePX(atRadiusPx: number): number {
+        return this._velocityAPX;
     }
 
     setVelocityAngleRadians(velocityAngleRadians: number, atRadiusPX: number): void {
@@ -42,18 +40,14 @@
     }
 
 
-    getMass(): number {
-        return this._mass;
-    }
-
-
     calculateMotion(timeMillis: number): IMotion {
-        var bounds = this.getBounds();
+        var bounds = this.bounds;
 
-        var rpx = this._velocityRPX * timeMillis;
+        // handle lateral velocity
         var apx = this._velocityAPX * timeMillis;
+        var rpx = this.velocityRPX * timeMillis;
 
-        var r = bounds.getInnerRadiusPx() + rpx;
+        var r = bounds.innerRadiusPx + rpx;
 
         var ar = apx / r;
         var wr = this._widthPx / r;
@@ -61,11 +55,11 @@
         if (this._anchorRight) {
             a = bounds.getEndAngleRadians() - wr;
         } else {
-            a = bounds.getStartAngleRadians();
+            a = bounds.startAngleRadians;
         }
         a += ar;
-        var newBounds = new PolarBounds(r, a, this._heightPx, wr);
-        return this._createMotion(newBounds);
+
+        return new PolarMotion(new PolarBounds(r, a, this._heightPx, wr), this);
     }
 
     public calculateBounds(r: number, a: number, heightPx: number, widthPx: number): PolarBounds {
@@ -81,21 +75,9 @@
         if (heightPx) {
             this._heightPx = heightPx;
         }
-        var bounds = this.calculateBounds(r, a, heightPx, widthPx);
-        this._bounds = bounds;
+        this.bounds = this.calculateBounds(r, a, heightPx, widthPx);
     }
 
-
-    public _createMotion(bounds: PolarBounds) {
-        return new PolarMotion(bounds, this);
-    }
-
-    update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
-        super.update(level, timeMillis, createdEntities);
-        if (this._respectsGravity) {
-            this._velocityRPX -= timeMillis * (level.getGravity() / (Math.abs(this._velocityAPX) + 1));
-        }
-    }
 
 }
 

@@ -2,7 +2,6 @@
 
 interface ICollision {
 
-    sensorCollision: boolean;
     collisionTime: number;
     nearestCollisionIntersection: PolarBounds;
     entityHolder1: IEntityHolder;

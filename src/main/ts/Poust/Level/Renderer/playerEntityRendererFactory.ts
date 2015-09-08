@@ -6,9 +6,9 @@
         //context.fillStyle = fillStyle;
         context.lineWidth = lineWidth;
 
-        var bounds = entity.getBounds();
+        var bounds = entity.bounds;
 
-        var ir = bounds.getInnerRadiusPx();
+        var ir = bounds.innerRadiusPx;
         if (ir > 0) {
 
             var playerEntity = <PlayerEntity>entity;
@@ -21,11 +21,11 @@
             var bottomy = sincr * ir;
 
             var width = bounds.getOuterCircumferencePx();
-            var height = bounds.getHeightPx();
+            var height = bounds.heightPx;
 
             var cycleMultiplier: number;
-            var state = playerEntity.getState();
-            var stateAge = playerEntity.getStateAgeMillis();
+            var state = playerEntity.state;
+            var stateAge = playerEntity.stateAgeMillis;
             if (state == PlayerEntity.STATE_RUNNING && Math.abs(playerEntity._velocityAPX) > 0.0001) {
                 var cycleTime = 300 / Math.abs(playerEntity._velocityAPX);
                 cycleMultiplier = ageToScale(entity, cycleTime);

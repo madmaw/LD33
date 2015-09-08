@@ -1,8 +1,8 @@
 ﻿interface IMotion {
 
-    getBounds(): PolarBounds;
+    bounds: PolarBounds;
 
-    getEntity(): IEntity;
+    entity: IEntity;
 
     apply(state: LevelState): void;
 }

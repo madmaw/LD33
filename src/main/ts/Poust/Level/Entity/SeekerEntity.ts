@@ -30,7 +30,7 @@
             var foundPlayer = false;
 
 
-            var mb = this.getBounds();
+            var mb = this.bounds;
             var mr = mb.getCenterRadiusPx();
             var ma = mb.getCenterAngleRadians();
             var msin = Math.sin(ma);
@@ -51,7 +51,7 @@
 
             if (players && players.length > 0) {
                 var player = players[0];
-                var pb = player.entity.getBounds();
+                var pb = player.entity.bounds;
                 var pr = pb.getCenterRadiusPx();
                 var pa = pb.getCenterAngleRadians();
                 var psin = Math.sin(pa);
@@ -94,9 +94,9 @@
             this._velocityAPX = Math.max(-this._maxVelocityAPx, Math.min(this._maxVelocityAPx, this._velocityAPX));
 
             if (drpx < 0) {
-                this._velocityRPX += this._smallJumpVelocity;
+                this.velocityRPX += this._smallJumpVelocity;
             } else {
-                this._velocityRPX += this._smallJumpVelocity + (this._bigJumpVelocity - this._smallJumpVelocity) * drpx;
+                this.velocityRPX += this._smallJumpVelocity + (this._bigJumpVelocity - this._smallJumpVelocity) * drpx;
             }
         }
 
@@ -108,7 +108,7 @@
     notifyCollision(withEntity: IEntity, onEdge: number): void {
         if (withEntity instanceof BulletEntity) {
             // we're dead
-            this.setDying(withEntity);
+            this.takeDamage();
         } else {
             // assume it's a wall
             if (onEdge == POLAR_EDGE_LEFT || onEdge == POLAR_EDGE_RIGHT) {

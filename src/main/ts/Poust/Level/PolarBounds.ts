@@ -45,14 +45,14 @@
     }
 
     private static reallyIntersects(b1: PolarBounds, b2: PolarBounds): PolarBounds {
-        var ri1 = b1.getInnerRadiusPx();
+        var ri1 = b1.innerRadiusPx;
         var ro1 = b1.getOuterRadiusPx();
-        var as1 = b1.getStartAngleRadians();
+        var as1 = b1.startAngleRadians;
         var ae1 = b1.getEndAngleRadians();
 
-        var ri2 = b2.getInnerRadiusPx();
+        var ri2 = b2.innerRadiusPx;
         var ro2 = b2.getOuterRadiusPx();
-        var as2 = b2.getStartAngleRadians();
+        var as2 = b2.startAngleRadians;
         var ae2 = b2.getEndAngleRadians();
 
         // check the overlaps
@@ -73,80 +73,63 @@
     }
 
     public static union(b1: PolarBounds, b2: PolarBounds): PolarBounds {
-        var minr = Math.min(b1._r, b2._r);
-        var mina = Math.min(b1._a, b2._a);
+        var minr = Math.min(b1.innerRadiusPx, b2.innerRadiusPx);
+        var mina = Math.min(b1.startAngleRadians, b2.startAngleRadians);
         var maxr = Math.max(b1.getOuterRadiusPx(), b2.getOuterRadiusPx());
         var maxa = Math.max(b1.getEndAngleRadians(), b2.getEndAngleRadians());
         return new PolarBounds(minr, mina, maxr - minr, maxa - mina, false);
     }
 
-    public constructor(public _r: number, public _a: number, public _height: number, public _arc: number, normalize: boolean = true) {
+    public constructor(public innerRadiusPx: number, public startAngleRadians: number, public heightPx: number, public widthRadians: number, normalize: boolean = true) {
         if (normalize) {
             this.normalize();
         }
     }
 
     public containsVertically(rPx: number): boolean {
-        return this._r <= rPx && this._r + this._height > rPx;
+        return this.innerRadiusPx <= rPx && this.innerRadiusPx + this.heightPx > rPx;
     }
 
     public containsHorizontally(aRadians: number): boolean {
         var naRadians = PolarBounds.normalizeAngle(aRadians);
-        return this._a <= naRadians && this._a + this._arc > naRadians;
-    }
-
-    public getInnerRadiusPx(): number {
-        return this._r;
-    }
-
-    public getHeightPx(): number {
-        return this._height;
+        return this.startAngleRadians <= naRadians && this.startAngleRadians + this.widthRadians > naRadians;
     }
 
     public getOuterRadiusPx(): number {
-        return this._r + this._height;
-    }
-
-    public getStartAngleRadians(): number {
-        return this._a;
+        return this.innerRadiusPx + this.heightPx;
     }
 
     getCenterRadiusPx(): number {
-        return this._r + this._height / 2;
+        return this.innerRadiusPx + this.heightPx / 2;
     }
 
     public getEndAngleRadians(): number {
-        return this._a + this._arc;
+        return this.startAngleRadians + this.widthRadians;
     }
 
     public getCenterAngleRadians(): number {
-        return this._a + this._arc / 2;
-    }
-
-    public getWidthRadians(): number {
-        return this._arc;
+        return this.startAngleRadians + this.widthRadians / 2;
     }
 
     public getOuterCircumferencePx(): number {
         var r = this.getOuterRadiusPx();
-        return r * this._arc; 
+        return r * this.widthRadians; 
     }
 
     public getInnerCircumferencePx(): number {
-        var r = this.getInnerRadiusPx();
-        return r * this._arc;
+        return this.innerRadiusPx * this.widthRadians;
     }
 
     public normalize(): void {
         // ensure that our angles are between 0 and 2 * PI
-        this._a = PolarBounds.normalizeAngle(this._a);
+        this.startAngleRadians = PolarBounds.normalizeAngle(this.startAngleRadians);
     }
 
     public permutate(): PolarBounds[]{
         var ea = this.getEndAngleRadians();
         var result = [this];
         if (ea > pi2) {
-            result.push(new PolarBounds(this._r, this._a - pi2, this._height, this._arc, false));
+            result.push(new PolarBounds(this.innerRadiusPx, this.startAngleRadians - pi2, this.heightPx, this.widthRadians, false));
         }
         return result;
     }

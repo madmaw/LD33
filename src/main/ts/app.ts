@@ -30,7 +30,7 @@ _w.onload = () => {
         return "rgba(" + r + "," + g + "," + b + "," + a + ")";
     };
 
-    var f = function (g: CanvasGradient, alpha: number, finalStop) {
+    var f = function (g: CanvasGradient, alpha: number) {
         g.addColorStop(0, rgba(255, 0, 255, alpha));
         g.addColorStop(0.1, rgba(255, 0, 255, alpha));
         g.addColorStop(0.25, rgba(255, 0, 0, alpha));
@@ -38,18 +38,18 @@ _w.onload = () => {
         g.addColorStop(0.55, rgba(0, 255, 0, alpha ));
         g.addColorStop(0.7, rgba(0, 255, 255,  alpha ));
         g.addColorStop(0.85, rgba(0, 0, 255, alpha));
-        g.addColorStop(1, finalStop);
+        g.addColorStop(1, rgba(255, 255, 255, alpha));
     };
     var radialGradient = context.createRadialGradient(0, 0, 0, 0, 0, 2000);
-    f(radialGradient, 0.5, rgba(0, 0, 0, 0));
+    f(radialGradient, 0.6);
 
     var enemyGradient = context.createRadialGradient(0, 0, 500, 0, 0, 2500);
-    f(enemyGradient, 0.75, rgba(255, 255, 255, 0.5));
+    f(enemyGradient, 0.8);
     
     var white = "#FFF";
-    var defaultRenderer = pathEntityRendererFactory(2, white, radialGradient);
+    var defaultRenderer = terrainEntityRendererFactory(2, white, radialGradient);
     var flappyRenderer = flappyEntityRendererFactory(2, white, enemyGradient);
-    var spikeRenderer = spikeEntityRendererFactory(2, white, rgba(255, 255, 255, 0.8));
+    var spikeRenderer = spikeEntityRendererFactory(2, white, rgba(255, 255, 255, 0.9));
     var bouncyRenderer = bouncyEntityRendererFactory(2, white, enemyGradient);
     var seekerRenderer = seekerEntityRendererFactory(2, white, enemyGradient);
     var exitRenderer = exitEntityRendererFactory(2, white, enemyGradient);
@@ -79,10 +79,10 @@ _w.onload = () => {
 
     var levelStateFactories: { [_: string]: IStateFactory } = {};
     //levelStateFactories[level1] = _concentricLevelStateFactory(level2, 0, 4, 20, 70, 300, 5);
-    levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 28, 1, 2, 1, 20, 70, 15, 1, _concentriGridFactory);
-    levelStateFactories[level2] = _gridLevelStateFactory(level3, 0, 300, 13, 1, 4, 1, 20, 85, 5, 1, looseEndsTrimmingGridFactoryProxy(mergingGridFactoryProxy([_mazeGridFactory], 2, 0)));
-    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 500, 15, 1, 3, 1, 20, 80, 2, 0.5, mergingGridFactoryProxy([_circuitGridFactory], 4, 0));
-    levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 500, 22, 2, 4, 1, 20, 75, 3, 1, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 2, 0.25));
+    levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 28, 1, 2, 1, 20, 70, 15, 1, 4500, 1000, 5000, _concentriGridFactory);
+    levelStateFactories[level2] = _gridLevelStateFactory(level3, 0, 300, 13, 1, 4, 1, 20, 85, 5, 1, 4000, 500, 5000, looseEndsTrimmingGridFactoryProxy(mergingGridFactoryProxy([_mazeGridFactory], 2, 0)));
+    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 500, 15, 1, 3, 1, 20, 80, 2, 0.5, 4000, 500, 3000, mergingGridFactoryProxy([_circuitGridFactory], 4, 0));
+    levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 500, 22, 2, 4, 1, 20, 75, 3, 1, 3000, 500, 9000, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 2, 0.25));
 
     var menuState = new MenuState(menuStateElement, "l", levelStateFactories);
     

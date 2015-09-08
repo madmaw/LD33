@@ -32,15 +32,15 @@
         super(groupId, mass, true, deathSound);
         this._runningLeft = true;
         this._targets = {};
-        this._continuousCollisions = true;
+        this.continuousCollisions = true;
         this.setState(PlayerEntity.STATE_RUNNING);
         this._aimAge = 0;
     }
 
     public reset(r: number, a: number) {
-        this.setBounds(r, a - this._bounds._arc / 2);
+        this.setBounds(r, a - this.bounds.widthRadians / 2);
         this._velocityAPX = 0;
-        this._velocityRPX = 0;
+        this.velocityRPX = 0;
     }
 
     public setTarget(inputId: number, sx: number, sy: number, gestureHint: number) {
@@ -81,14 +81,14 @@
     }
 
     notifyCollision(withEntity: IEntity, onEdge: number): void {
-        if (withEntity.getGroupId() == GroupId.Enemy) {
+        if (withEntity.groupId == GroupId.Enemy) {
             var levelExitEntity = <ILevelExitEntity>withEntity;
 
             if (levelExitEntity.nextLevelParamsFactory) {
                 this._nextLevelParams = levelExitEntity.nextLevelParamsFactory(this);
-                levelExitEntity.setDead();
+                levelExitEntity.dead = true;
             } else {
-                this.setDying(withEntity);
+                this.takeDamage();
             }
         } else {
             if (onEdge == POLAR_EDGE_BOTTOM) {
@@ -168,21 +168,21 @@
 
         // shoot!
         if (this._gun) {
-            var crpx = this._bounds.getCenterRadiusPx();
+            var crpx = this.bounds.getCenterRadiusPx();
             var recoil = this._gun.update(
                 timeMillis,
                 level,
                 this._onGround,
                 charge, 
                 crpx,
-                this._bounds.getCenterAngleRadians(),
+                this.bounds.getCenterAngleRadians(),
                 this.getVelocityRadiusPX(),
                 this.getVelocityAngleRadians(crpx),
                 gunTargets,
                 createdEntities
             );
             if (recoil) {
-                this._velocityRPX += recoil.r;
+                this.velocityRPX += recoil.r;
                 this._velocityAPX += recoil.a;
                 // set the freshness to false
                 for (var i in this._targets) {
@@ -196,7 +196,7 @@
 
             
 
-        var intensity = Math.min(this._bounds.getInnerRadiusPx() / 1500, 1);
+        var intensity = Math.min(this.bounds.innerRadiusPx / 1500, 1);
         if (this._onGround) {
             this.setState(PlayerEntity.STATE_RUNNING);
             if (this._onRightWall) {
@@ -219,7 +219,7 @@
             this._velocityAPX += accMul * acc * timeMillis;
             if (jumpTarget) {
                 this._jumpSound(intensity);
-                this._velocityRPX = this._jumpPower;
+                this.velocityRPX = this._jumpPower;
                 jumpTarget.jumped = true;
             }
 
@@ -229,14 +229,14 @@
                 if (this._onRightWall) {
                     // wall jump
                     this._runningLeft = true;
-                    this._velocityRPX = this._jumpPower;
+                    this.velocityRPX = this._jumpPower;
                     this._velocityAPX = -this._jumpPower;
                     jumpTarget.jumped = true;
                     this._jumpSound(intensity);
                 } else if (this._onLeftWall) {
                     // wall jump
                     this._runningLeft = false;
-                    this._velocityRPX = this._jumpPower;
+                    this.velocityRPX = this._jumpPower;
                     this._velocityAPX = this._jumpPower;
                     jumpTarget.jumped = true;
                     this._jumpSound(intensity);
@@ -251,17 +251,17 @@
                     } 
                     this._velocityAPX += acc * timeMillis;
                     var targetRPX = -0.15;
-                    if (this._velocityRPX < targetRPX) {
-                        this._velocityRPX = Math.min(targetRPX, this._velocityRPX + 0.02);
+                    if (this.velocityRPX < targetRPX) {
+                        this.velocityRPX = Math.min(targetRPX, this.velocityRPX + 0.02);
                     }
                 }
             }
-            if (this._velocityRPX > 0) {
+            if (this.velocityRPX > 0) {
                 for (var i in this._targets) {
                     var target = this._targets[i];
                     if (target) {
                         if (target.jumped) {
-                            this._velocityRPX += 0.00045 * timeMillis;
+                            this.velocityRPX += 0.00045 * timeMillis;
                             break;
                         }
                     }

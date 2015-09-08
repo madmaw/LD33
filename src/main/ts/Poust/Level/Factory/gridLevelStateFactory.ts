@@ -9,6 +9,8 @@
     maxRingGap: number
     ) {
 
+    var ringGravity = 0.2;
+
     return function (
         nextLevel: string,
         nextLevelDifficultyDelta: number,
@@ -21,6 +23,9 @@
         ringGapPx: number,
         ringGapDelta: number, 
         ringGapDeltaScale: number,
+        baseTimeout: number, 
+        baseTimeoutDifficultyMultiplier: number,
+        ringDeltaTimeout: number, 
         gridFactory: IGridFactory
     ): IStateFactory {
 
@@ -54,15 +59,21 @@
             var aoff = pi / width;
             // turn the grid into a level
             var rs: number[] = [];
+            //var tos: number[] = [];
             var y = grid._height;
             var r = initialRadius;
             var rgd = 0;
             rs.push(initialRadius);
+            var initialTimeout = Math.max(baseTimeout - param.difficulty * baseTimeoutDifficultyMultiplier, ringDeltaTimeout);
+            //var to = Math.max(ringDeltaTimeout, baseTimeout - param.difficulty * baseTimeoutDifficultyMultiplier);
+            //tos.push(to);
             while (y > 0) {
                 var ring = height - y;
                 r += Math.min(ringGapPx + ringWidth + rgd, maxRingGap);
                 rgd += (ringGapDelta + ringGapDeltaScale * param.difficulty) * (ring + 1);
                 rs.splice(0, 0, r);
+                //to += ringDeltaTimeout;
+                //tos.splice(0, 0, to);
                 y--;
             }
 
@@ -97,14 +108,18 @@
                     if (count == 1) {
                         // create it
                         //var r = initialRadius + (grid._height - (iy + 1)) * (ringGapPx + ringWidth);
-                        var r = rs[iy+1];
-
+                        var r = rs[iy + 1];
+                        
+                        //var to = tos[iy - maxCount + 1] + (tos[iy - 1] - tos[iy - maxCount + 1] - dt/2) * rng();
+                        var to = baseTimeout + (height - iy + (maxCount - 0.5) * rng()) * ringDeltaTimeout;
                         var arc = ringWidth / r;
                         var a = (ix * pi2) / grid._width - arc / 2 + aoff;
                         //var h = (ringGapPx + ringWidth) * maxCount - ringWidth;
                         var h = rs[iy - maxCount + 1] - r - ringWidth;
                         var wall = new AbstractEntity(GroupId.Terrain);
-                        wall._bounds = new PolarBounds(r, a, h, arc);
+                        wall.bounds = new PolarBounds(r, a, h, arc);
+                        wall.respectsGravityTimeout = to;
+                        wall.gravityMultiplier = ringGravity;
                         level.addEntity(wall);                            
 
                         maxCount = 0;
@@ -178,9 +193,15 @@
                         } else {
                             arc += ca / 2;
                         }
+                        //var dt = tos[y] - tos[y + 1];
+                        //var to = tos[y] + (dt/2) * rng() + dt/2;
+                        var to = initialTimeout + (ring+1) * ringDeltaTimeout - ringDeltaTimeout * rng() / 2;
 
                         var terrain = new AbstractEntity(GroupId.Terrain);
-                        terrain._bounds = new PolarBounds(r - ringWidth, a, ringWidth, arc);
+                        terrain.bounds = new PolarBounds(r - ringWidth, a, ringWidth, arc);
+                        terrain.respectsGravityTimeout = to;
+                        terrain.gravityMultiplier = ringGravity;
+
                         level.addEntity(terrain);
 
                         var maxHeight: number;
@@ -191,7 +212,11 @@
                         }
                         var baddies = entitySpawner(a, r, maxHeight, arc, Math.sqrt((param.difficulty * ring * 2) / height));
                         for (var j in baddies) {
-                            var baddy = baddies[j];
+                            var baddy = <AbstractEntity>baddies[j];
+                            if (!baddy.gravityMultiplier) {
+                                baddy.respectsGravityTimeout = to;
+                                baddy.gravityMultiplier = 1;
+                            }
                             level.addEntity(baddy);
                         }
 
@@ -204,7 +229,9 @@
             }
 
             var floor = new AbstractEntity(GroupId.Terrain);
-            floor._bounds = new PolarBounds(0, 0, initialRadius, pi2);
+            floor.bounds = new PolarBounds(0, 0, initialRadius, pi2);
+            floor.respectsGravityTimeout = initialTimeout;
+            floor.gravityMultiplier = ringGravity;
             level.addEntity(floor);
 
             // exit
@@ -218,7 +245,7 @@
                     difficulty: param.difficulty + nextLevelDifficultyDelta
                 };
             });
-            exit._bounds = new PolarBounds(exitR, rng() * pi2, exitHeight, exitWidth);
+            exit.bounds = new PolarBounds(exitR, rng() * pi2, exitHeight, exitWidth);
             level.addEntity(exit);
 
 

@@ -11,9 +11,9 @@
             this._velocityAPX = this._velocity;
         }
         if (this._goingUp) {
-            this._velocityRPX = this._velocity;
+            this.velocityRPX = this._velocity;
         } else {
-            this._velocityRPX = -this._velocity;
+            this.velocityRPX = -this._velocity;
         }
     }
 

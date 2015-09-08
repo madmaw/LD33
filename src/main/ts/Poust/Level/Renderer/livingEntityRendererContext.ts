@@ -3,7 +3,7 @@
     var livingEntity = <AbstractLivingPolarEntity>entity;
     context.fillStyle = fillStyle;
     if (livingEntity.isDying && livingEntity.isDying()) {
-        var age = livingEntity.getStateAgeMillis();
+        var age = livingEntity.stateAgeMillis;
         var opacity = 1 - Math.min(1, age / 500);
         context.globalAlpha = opacity;
     }

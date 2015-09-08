@@ -6,11 +6,11 @@
         livingEntityRendererContextSetup(context, fillStyle, entity);
         context.lineWidth = lineWidth;
 
-        var bounds = entity.getBounds();
+        var bounds = entity.bounds;
 
         var acr = bounds.getCenterAngleRadians();
 
-        var asr = bounds.getStartAngleRadians();
+        var asr = bounds.startAngleRadians;
         var sinsr = Math.sin(asr);
         var cossr = Math.cos(asr);
 
@@ -23,7 +23,7 @@
         var coscr = Math.cos(acr);
 
         var cr = bounds.getCenterRadiusPx();
-        var ir = bounds.getInnerRadiusPx();
+        var ir = bounds.innerRadiusPx;
         var or = bounds.getOuterRadiusPx();
         if (ir > 0) {
             var r = Math.max(Math.abs(cossr * cr - coscr * cr), Math.abs(or - cr));

@@ -63,10 +63,10 @@
                         var starta = (pi2 * i) / count + gapRadians / 2 + splitOffset;
                         bounds = new PolarBounds(radius, starta, ringWidth, arc);
                     }
-                    ringEntity._bounds = bounds;
+                    ringEntity.bounds = bounds;
                     level.addEntity(ringEntity);
 
-                    var baddies = entitySpawner(bounds.getStartAngleRadians(), bounds.getOuterRadiusPx(), ringGap, bounds.getWidthRadians(), Math.min(param.difficulty, (param.difficulty * ring) / rings));
+                    var baddies = entitySpawner(bounds.startAngleRadians, bounds.getOuterRadiusPx(), ringGap, bounds.widthRadians, Math.min(param.difficulty, (param.difficulty * ring) / rings));
                     for (var j in baddies) {
                         var baddy = baddies[j];
                         level.addEntity(baddy);
@@ -90,7 +90,7 @@
                     difficulty: param.difficulty + nextLevelDifficultyDelta
                 };
             });
-            exit._bounds = new PolarBounds(radius - ringSpacing / 2, rng() * pi2, exitHeight, exitWidth);
+            exit.bounds = new PolarBounds(radius - ringSpacing / 2, rng() * pi2, exitHeight, exitWidth);
             level.addEntity(exit);
 
             param.player.reset(initialGap + ringWidth + 2, 0);

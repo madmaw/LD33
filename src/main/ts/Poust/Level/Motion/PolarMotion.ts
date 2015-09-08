@@ -1,17 +1,9 @@
 ﻿class PolarMotion implements IMotion {
 
-    public constructor(private _bounds: PolarBounds, private _entity: AbstractEntity) {
-    }
-
-    getBounds(): PolarBounds {
-        return this._bounds;
-    }
-
-    getEntity(): IEntity {
-        return this._entity;
+    public constructor(public bounds: PolarBounds, public entity: AbstractEntity) {
     }
 
     apply(state: LevelState): void {
-        this._entity._bounds = this._bounds;
+        this.entity.bounds = this.bounds;
     }
 }

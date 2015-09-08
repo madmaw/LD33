@@ -6,7 +6,7 @@
         context.lineWidth = lineWidth;
         livingEntityRendererContextSetup(context, fillStyle, entity);
 
-        var bounds = entity.getBounds();
+        var bounds = entity.bounds;
 
         var scale = ageToScale(entity, 3000);
         var scalea = 1 + scale/2;
@@ -14,7 +14,7 @@
 
         var acr = bounds.getCenterAngleRadians();
 
-        var asr = bounds.getStartAngleRadians();
+        var asr = bounds.startAngleRadians;
         asr = acr + (asr - acr) * scalea;
         var sinsr = Math.sin(asr);
         var cossr = Math.cos(asr);
@@ -29,7 +29,7 @@
         var coscr = Math.cos(acr);
 
         var cr = bounds.getCenterRadiusPx();
-        var ir = bounds.getInnerRadiusPx();
+        var ir = bounds.innerRadiusPx;
         ir = cr + (ir - cr) * scaler;
         var or = bounds.getOuterRadiusPx();
         or = cr + (or - cr) * scaler;

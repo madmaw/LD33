@@ -5,14 +5,11 @@
     public _cx: number;
     public _cy: number;
 
-    public constructor(groupId: number, private _widthPx: number, private _heightPx: number, private _mass: number) {
+    public constructor(groupId: number, private _widthPx: number, private _heightPx: number, mass: number) {
         super(groupId);
+        this.mass = mass;
         this._velocityDx = 0;
         this._velocityDy = 0;
-    }
-
-    public getMass(): number {
-        return this._mass;
     }
 
     public setCenter(cx: number, cy: number, bounds?: PolarBounds): void {
@@ -21,12 +18,7 @@
         if (!bounds) {
             bounds = this.calculateBounds(cx, cy);
         }
-        this._bounds = bounds;
-    }
-
-    isSensor(): boolean {
-        // has to be, cannot sensibly interact with collisions
-        return true;
+        this.bounds = bounds;
     }
 
     calculateBounds(cx: number, cy: number) {
@@ -40,7 +32,7 @@
     }
 
     calculateMotion(timeMillis: number): IMotion {
-        var bounds = this.getBounds();
+        var bounds = this.bounds;
 
         var cx = this._cx + timeMillis * this._velocityDx;
         var cy = this._cy + timeMillis * this._velocityDy;
@@ -70,7 +62,4 @@
 
         return PolarBounds.subtractAngle(a1, a);
     }
-
-
-
 }

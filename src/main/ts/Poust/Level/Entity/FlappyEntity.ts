@@ -14,8 +14,8 @@
         } else {
             this._velocityAPX = this._lateralVelocity;
         }
-        if (this.getBounds().getInnerRadiusPx() < this._minRadius || this._flapAnyway) {
-            this._velocityRPX = this._flapVelocity;
+        if (this.bounds.innerRadiusPx < this._minRadius || this._flapAnyway) {
+            this.velocityRPX = this._flapVelocity;
             this.setState(FlappyEntity.STATE_FLAP, true);
         }
         this._flapAnyway = false;

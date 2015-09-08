@@ -13,8 +13,8 @@ function calculateMotion(holder: IEntityHolder, motionOffset: number, totalMilli
     holder.motionOffset = motionOffset;
     var remainingTime = totalMillis - motionOffset;
     holder.motion = holder.entity.calculateMotion(remainingTime);
-    var entityBounds = holder.entity.getBounds();
-    var motionBounds = holder.motion.getBounds();
+    var entityBounds = holder.entity.bounds;
+    var motionBounds = holder.motion.bounds;
     holder.fullMotionBounds = PolarBounds.union(entityBounds, motionBounds);
 }
 

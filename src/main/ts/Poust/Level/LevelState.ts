@@ -174,7 +174,7 @@
     }
 
     private setTarget(id: number, x: number, y: number, allowJump: boolean, allowShoot = true) {
-        if (this._player.isDead()) {
+        if (this._player.dead) {
             if (allowShoot) {
                 //this.fireStateChangeEvent(StateFactoryParamType.LevelRestart, null);
                 var param: ILevelStateFactoryParam = {
@@ -272,7 +272,7 @@
     }
 
     public addEntity(entity: IEntity): IEntityHolder {
-        var groupIndex = entity.getGroupId();
+        var groupIndex = entity.groupId;
         while (this._groups.length <= groupIndex) {
             this._groups.push(new Array<IEntityHolder>());
         }
@@ -291,7 +291,7 @@
             this._element.setAttribute("height", "" + h + "px");
         }
 
-        if (!this._player.isDead() && !this._player.isDying()) {
+        if (!this._player.dead && !this._player.isDying()) {
             this._levelAgeMillis += diffMillis;
         }
 
@@ -307,7 +307,7 @@
             this.applyMotion();
         }
         if (!this._player.isDying()) {
-            var b = this._player.getBounds();
+            var b = this._player.bounds;
             this.setCameraCenter(b.getOuterRadiusPx(), b.getCenterAngleRadians());
         }   
     }
@@ -319,11 +319,11 @@
             var collision = collisions[index];
             var entity1 = collision.entityHolder1.entity;
             var entity2 = collision.entityHolder2.entity;
-            var mass1 = entity1.getMass();
-            var mass2 = entity2.getMass();
+            var mass1 = entity1.mass;
+            var mass2 = entity2.mass;
             var edge1: number;
             var edge2: number;
-            if (!collision.sensorCollision && (mass1 || mass2)) {
+            if (mass1 || mass2) {
 
                 // work out relative velocities
                 var cr = collision.nearestCollisionIntersection.getCenterRadiusPx();
@@ -337,13 +337,13 @@
                 edge1 = this.calculateCollisionEdge(
                     dvr,
                     dva,
-                    collision.collisionMotion1.getBounds(),
+                    collision.collisionMotion1.bounds,
                     collision.nearestCollisionIntersection
                     );
                 edge2 = this.calculateCollisionEdge(
                     -dvr,
                     -dva,
-                    collision.collisionMotion2.getBounds(),
+                    collision.collisionMotion2.bounds,
                     collision.nearestCollisionIntersection
                     );
                 // work out velocity (edge should be opposite!)
@@ -437,9 +437,9 @@
     ): number {
 
         // does intersection contain the bottom of the bounds?
-        var bottom = collisionIntersection.containsVertically(colliderBounds.getInnerRadiusPx());
-        var left = collisionIntersection.containsHorizontally(colliderBounds.getStartAngleRadians());
-        var vpx = collisionIntersection.getHeightPx();
+        var bottom = collisionIntersection.containsVertically(colliderBounds.innerRadiusPx);
+        var left = collisionIntersection.containsHorizontally(colliderBounds.startAngleRadians);
+        var vpx = collisionIntersection.heightPx;
         var wpx: number;
         if (bottom) {
             wpx = collisionIntersection.getOuterCircumferencePx();
@@ -475,12 +475,12 @@
     private calculateCollisionsForEntity(diffMillis: number, collisions: ICollision[], entityHolderk: IEntityHolder, startingGroupIndex: number) {
         var motionk = entityHolderk.motion;
         var entityk = entityHolderk.entity;
-        if (entityk.isCollidable() && !entityk.isDead()) {
+        if (entityk.collidable && !entityk.dead) {
             var j = startingGroupIndex;
             while (j > 0) {
                 j--;
                 // never check your own group!
-                if (j != entityk.getGroupId()) {
+                if (j != entityk.groupId) {
                     var groupj = this._groups[j];
                     var l = groupj.length;
                     while (l > 0) {
@@ -488,7 +488,7 @@
                         // is there a collision?
                         var entityHolderl = groupj[l];
                         var entityl = entityHolderl.entity;
-                        if (entityl.isCollidable() && !entityl.isDead()) {
+                        if (entityl.collidable && !entityl.dead) {
                             var motionl = entityHolderl.motion;
                             var collision = this.calculateCollision(diffMillis, entityHolderk, entityHolderl);
                             if (collision) {
@@ -528,12 +528,12 @@
 
     private calculateContinuousSamples(diffMillis: number, entityHolder: IEntityHolder): number {
         var result = 1;
-        if (entityHolder.entity.isContinuousCollisions()) {
+        if (entityHolder.entity.continuousCollisions) {
             var done = false;
             while (!done) {
                 var continuousMillis = diffMillis / result;
                 var continuousSample = entityHolder.entity.calculateMotion(continuousMillis);
-                if (continuousSample.getBounds().overlaps(entityHolder.entity.getBounds())) {
+                if (continuousSample.bounds.overlaps(entityHolder.entity.bounds)) {
                     done = true;
                 } else {
                     result++;
@@ -574,7 +574,7 @@
                         var sampleTime = (diffMillis * sample) / samples;
                         var sampleMotion1 = entity1.calculateMotion(sampleTime);
                         var sampleMotion2 = entity2.calculateMotion(sampleTime);
-                        overlap = PolarBounds.intersect(sampleMotion1.getBounds(), sampleMotion2.getBounds());
+                        overlap = PolarBounds.intersect(sampleMotion1.bounds, sampleMotion2.bounds);
                         if (overlap) {
                             maxCollisionMotion1 = sampleMotion1;
                             maxCollisionMotion2 = sampleMotion2;
@@ -587,7 +587,7 @@
                     maxCollisionMotion1 = motion1;
                     maxCollisionMotion2 = motion2;
                     maxCollisionTime = diffMillis;
-                    overlap = PolarBounds.intersect(maxCollisionMotion1.getBounds(), maxCollisionMotion2.getBounds());
+                    overlap = PolarBounds.intersect(maxCollisionMotion1.bounds, maxCollisionMotion2.bounds);
                 }
             } else {
                 // they're not even close
@@ -605,10 +605,9 @@
             if (overlap) {
                 
                 // is either a sensor or did they start collided?
-                if (entityHolder1.entity.isSensor() || entityHolder2.entity.isSensor() || entityHolder1.entity.getBounds().overlaps(entityHolder2.entity.getBounds())) {
+                if (entityHolder1.entity.bounds.overlaps(entityHolder2.entity.bounds)) {
                     collision = {
 
-                        sensorCollision: true,
                         collisionTime: diffMillis,
                         nearestCollisionIntersection: overlap,
                         entityHolder1: entityHolder1,
@@ -632,7 +631,7 @@
                         var testCollisionTime = (preCollisionTime + postCollisionTime) / 2;
                         var testMotion1 = entityHolder1.entity.calculateMotion(testCollisionTime);
                         var testMotion2 = entityHolder2.entity.calculateMotion(testCollisionTime);
-                        var testOverlap = PolarBounds.intersect(testMotion1.getBounds(), testMotion2.getBounds());
+                        var testOverlap = PolarBounds.intersect(testMotion1.bounds, testMotion2.bounds);
                         if (testOverlap) {
                             postCollisionTime = testCollisionTime;
                             previousOverlap = testOverlap;
@@ -652,7 +651,6 @@
                         bestMotion2 = entityHolder2.entity.calculateMotion(preCollisionTime - entityHolder2.motionOffset);
                     }
                     collision = {
-                        sensorCollision: false,
                         collisionTime: preCollisionTime,
                         nearestCollisionIntersection: previousOverlap,
                         entityHolder1: entityHolder1,
@@ -682,7 +680,7 @@
                 var entityHolder = group[j];
                 var entity = entityHolder.entity;
                 entity.update(this, diffMillis, createdEntities);
-                if (entity.isDead()) {
+                if (entity.dead) {
                     group.splice(j, 1);
                 } else {
                     // do motion
@@ -750,7 +748,7 @@
                 j--;
                 var entityHolder = group[j];
                 var entity = entityHolder.entity;
-                if (!entity.isDead()) {
+                if (!entity.dead) {
                     var renderer = entityHolder.renderer;
                     renderer(this._context, entity);
                 }
@@ -791,7 +789,7 @@
             this._context.globalAlpha = 1;
         }
 
-        if (this._player.isDead() || this._player.isDying()) {
+        if (this._player.dead || this._player.isDying()) {
             var text = "GAMEOVER";
             var textMetric = this._context.measureText(text);
             this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2);

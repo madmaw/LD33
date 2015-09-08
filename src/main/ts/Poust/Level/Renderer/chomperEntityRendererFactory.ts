@@ -1,9 +1,9 @@
 ﻿function chomperEntityRendererFactory(lineWidth: number, strokeStyle: any, fillStyle: any) {
     return function (context: CanvasRenderingContext2D, entity: IEntity): void {
 
-        var bounds = entity.getBounds();
+        var bounds = entity.bounds;
 
-        var ir = bounds.getInnerRadiusPx();
+        var ir = bounds.innerRadiusPx;
         if (ir > 0) {
             context.strokeStyle = strokeStyle;
             livingEntityRendererContextSetup(context, fillStyle, entity);

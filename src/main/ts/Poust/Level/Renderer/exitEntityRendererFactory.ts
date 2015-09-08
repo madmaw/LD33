@@ -6,10 +6,10 @@
         context.fillStyle = fillStyle;
         context.lineWidth = lineWidth;
 
-        var bounds = entity.getBounds();
+        var bounds = entity.bounds;
 
         var cycle = 500;
-        var age = entity.getStateAgeMillis();
+        var age = entity.stateAgeMillis;
         var draws = 3;
         var scaleOffset = (age % cycle) / (draws * cycle);
         var scaleDelta = 1 / draws;
@@ -21,7 +21,7 @@
 
             context.globalAlpha = Math.max(0, 1 - scale * scale);
 
-            var w = bounds.getWidthRadians();
+            var w = bounds.widthRadians;
             var acr = bounds.getCenterAngleRadians();
             var asr = acr - w * scale;
             var aer = acr + w * scale;
@@ -33,7 +33,7 @@
             var coser = Math.cos(aer);
 
             var cr = bounds.getCenterRadiusPx();
-            var h = bounds.getHeightPx();
+            var h = bounds.heightPx;
             var ir = cr - h * scale;
             var or = cr + h * scale;
             if (ir > 0) {

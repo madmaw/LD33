@@ -48,7 +48,7 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\Grid\circuitGridFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\IEntitySpawnerFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\IGridFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\findLevelStateData.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\loadLevelStateData.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\ILevelStateData.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\ageToScale.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\chomperEntityRendererFactory.ts" />
@@ -96,7 +96,7 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\bouncyEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\exitEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\flappyEntityRendererFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\pathEntityRendererFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\terrainEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\seekerEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Renderer\spikeEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\saveLevelStateData.ts" />

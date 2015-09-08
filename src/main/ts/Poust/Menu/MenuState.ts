@@ -33,9 +33,11 @@
                         time = "-:--";
                     }
                     var s = "<a id=L" + name + " href=#" + name + " class='ml"
+                    /*
                     if (levels.length % 2) {
                         s += " o";
                     }
+                    */
                     s += "'><div class=mln>" + name + "</div><div class=mla>" + attempts + "</div><div class=mlt>" + time + "</div></a>";
 
                     innerHTML = s + innerHTML;
