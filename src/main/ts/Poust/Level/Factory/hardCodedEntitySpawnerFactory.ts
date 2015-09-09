@@ -40,6 +40,7 @@
                             var obstacle: AbstractPolarEntity;
                             if (difficulty * rng() < 3) {
                                 obstacle = createChomperEntity(deathSound, rng() > 0.5);
+                                obstacle.mass = 3;
                             } else {
                                 obstacle = obstacleEntity();
                                 entityWidth = 22 + difficulty * rng();
@@ -85,6 +86,7 @@
                     }
                     var ae = a + rng() * (arc - entityWidth / entityR);
                     entity.setBounds(r, ae, entityWidth, entityWidth);
+                    (<IEntity>entity).horizontalFriction = 0.05;
                     entities.push(entity);
                 }
                 // what can we buy?

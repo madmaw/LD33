@@ -168,7 +168,8 @@
                 
 
             var gun = <AbstractGun>playerEntity._gun;
-            var gunScale: number;
+            var gunScale: number = 1;
+            /*
             if (gun._chargeTime > 0) {
                 var maxChargeTime = 1000;
                 var chargeTime = (gun._chargeTime + maxChargeTime /2 ) % maxChargeTime - maxChargeTime / 2;
@@ -180,6 +181,7 @@
             } else {
                 gunScale = 1;
             }
+            */
             var gunWidth = armWidth * 2.3 * gunScale;
             var gunHeight = armWidth * 2.9 * gunScale;
             var gunThickness = armWidth * 1.2 * gunScale;
@@ -194,10 +196,8 @@
             context.closePath();
             if (gun.canShoot()) {
                 context.fillStyle = gunFillStyle;
-            } else {
-                context.fillStyle = "#000";
+                context.fill();
             }
-            context.fill();
             context.stroke();
 
             // draw the arm

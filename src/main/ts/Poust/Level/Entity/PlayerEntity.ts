@@ -216,6 +216,7 @@
             }
             v = Math.abs(v);
             var acc = 1 / ((v * v * v * 7000 + 1) * 1000);
+            //var acc = 1 / ((v * v * v * 700 + 1) * 700);
             this._velocityAPX += accMul * acc * timeMillis;
             if (jumpTarget) {
                 this._jumpSound(intensity);

@@ -351,8 +351,24 @@
                     if (edge1 == POLAR_EDGE_TOP || edge1 == POLAR_EDGE_BOTTOM) {
                         if (!mass1) {
                             entity2.setVelocityRadiusPX(vr1);
+                            if (entity2.horizontalFriction) {
+                                // apply friction
+                                // TODO calculate from relative velocity
+                                var a2 = (vr2 - collision.entityHolder2.previousVrPx) / diffMillis;
+                                var f2 = entity2.mass * a2;
+                                var friction = 1 - (entity2.horizontalFriction / (Math.abs(f2) + 1));
+                                entity2.setVelocityAngleRadians(va2 * friction, cr);
+                            }
                         } else if (!mass2) {
                             entity1.setVelocityRadiusPX(vr2);
+                            if (entity1.horizontalFriction) {
+                                // apply friction
+                                // TODO calculate from relative velocity
+                                var a1 = (vr1 - collision.entityHolder1.previousVaPx) / diffMillis;
+                                var f1 = entity1.mass * a1;
+                                var friction = 1 - (entity1.horizontalFriction / (Math.abs(f2) + 1));
+                                entity1.setVelocityAngleRadians(va1 * friction, cr);
+                            }
                         } else {
                             var vr = (vr2 * mass2 + vr1 * mass1) / (mass1 + mass2);
                             entity2.setVelocityRadiusPX(vr);
@@ -361,8 +377,10 @@
                     } else {
                         if (mass1 == null) {
                             entity2.setVelocityAngleRadians(va1, cr);
+                            // apply friction
                         } else if (mass2 == null) {
                             entity1.setVelocityAngleRadians(va2, cr);
+                            // apply friction
                         } else {
                             var va = (va2 * mass2 + va1 * mass1) / (mass1 + mass2);
                             entity2.setVelocityAngleRadians(va, cr);
@@ -679,6 +697,8 @@
                 j--;
                 var entityHolder = group[j];
                 var entity = entityHolder.entity;
+                entityHolder.previousVrPx = entity.getVelocityRadiusPX();
+                entityHolder.previousVaPx = entity.getVelocityAngleRadians(entity.bounds.getCenterRadiusPx());
                 entity.update(this, diffMillis, createdEntities);
                 if (entity.dead) {
                     group.splice(j, 1);

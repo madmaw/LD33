@@ -1,5 +1,7 @@
 ﻿// TODO move to interface
 interface IEntityHolder {
+    previousVrPx?: number;
+    previousVaPx?: number;
     motion?: IMotion;
     motionOffset?: number;
     fullMotionBounds?: PolarBounds;

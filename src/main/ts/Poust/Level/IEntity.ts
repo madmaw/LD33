@@ -31,4 +31,6 @@
     state: string;
 
     stateAgeMillis: number;
+
+    horizontalFriction?: number;
 }

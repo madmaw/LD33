@@ -6,7 +6,8 @@
     maxCollisionSteps: number,
     rngFactory: IRandomNumberGeneratorFactory,
     entitySpawnerFactory: IEntitySpawnerFactory,
-    maxRingGap: number
+    maxRingGap: number,
+    fallSound: ISound
     ) {
 
     var ringGravity = 0.2;
@@ -64,7 +65,7 @@
             var r = initialRadius;
             var rgd = 0;
             rs.push(initialRadius);
-            var initialTimeout = Math.max(baseTimeout - param.difficulty * baseTimeoutDifficultyMultiplier, ringDeltaTimeout);
+            var initialTimeout = Math.max(baseTimeout + param.difficulty * baseTimeoutDifficultyMultiplier, ringDeltaTimeout);
             //var to = Math.max(ringDeltaTimeout, baseTimeout - param.difficulty * baseTimeoutDifficultyMultiplier);
             //tos.push(to);
             while (y > 0) {
@@ -111,7 +112,7 @@
                         var r = rs[iy + 1];
                         
                         //var to = tos[iy - maxCount + 1] + (tos[iy - 1] - tos[iy - maxCount + 1] - dt/2) * rng();
-                        var to = baseTimeout + (height - iy + (maxCount - 0.5) * rng()) * ringDeltaTimeout;
+                        var to = initialTimeout + (height - iy - 1 + (maxCount - 0.5) * rng()) * ringDeltaTimeout;
                         var arc = ringWidth / r;
                         var a = (ix * pi2) / grid._width - arc / 2 + aoff;
                         //var h = (ringGapPx + ringWidth) * maxCount - ringWidth;
@@ -120,6 +121,8 @@
                         wall.bounds = new PolarBounds(r, a, h, arc);
                         wall.respectsGravityTimeout = to;
                         wall.gravityMultiplier = ringGravity;
+                        wall.fallSound = fallSound;
+
                         level.addEntity(wall);                            
 
                         maxCount = 0;
@@ -201,6 +204,7 @@
                         terrain.bounds = new PolarBounds(r - ringWidth, a, ringWidth, arc);
                         terrain.respectsGravityTimeout = to;
                         terrain.gravityMultiplier = ringGravity;
+                        terrain.fallSound = fallSound;
 
                         level.addEntity(terrain);
 
@@ -232,6 +236,7 @@
             floor.bounds = new PolarBounds(0, 0, initialRadius, pi2);
             floor.respectsGravityTimeout = initialTimeout;
             floor.gravityMultiplier = ringGravity;
+            floor.fallSound = fallSound;
             level.addEntity(floor);
 
             // exit

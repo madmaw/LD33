@@ -10,6 +10,7 @@
     public gravityMultiplier: number;
     public respectsGravityTimeout: number;
     public velocityRPX: number;
+    public fallSound: ISound;
 
     public constructor(public groupId: number) {
         this.dead = false;
@@ -77,6 +78,9 @@
         if (this.respectsGravityTimeout != null) {
             if (this.respectsGravityTimeout > 0) {
                 this.respectsGravityTimeout -= timeMillis;
+                if (this.fallSound && this.respectsGravityTimeout <= 0) {
+                    this.fallSound(0.1);
+                }
             }
         }
         if ((!this.respectsGravityTimeout || this.respectsGravityTimeout < 0) && this.gravityMultiplier) {
@@ -87,6 +91,5 @@
             // welp, we're dead now!?
             this.dead = true;
         }
-        return null;
     }
 }

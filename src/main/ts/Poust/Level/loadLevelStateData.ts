@@ -16,7 +16,7 @@
         data = {
             attempts: 0,
             bestTime: null,
-            seed: Math.floor(Math.random() * 999999) + 1
+            seed: Math.floor(Math.random() * 1000000000)
         };
         saveLevelStateData(difficulty, levelName, data);
     }

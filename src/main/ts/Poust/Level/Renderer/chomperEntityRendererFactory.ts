@@ -44,12 +44,15 @@
                 }
             }
 
+            /*
             var xscale: number;
             if (chomper._flipped) {
                 xscale = -1;
             } else {
                 xscale = 1;
             }
+            */
+            var xscale = 1;
 
             // draw left petal
             context.save();
