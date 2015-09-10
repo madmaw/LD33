@@ -1,6 +1,6 @@
 ﻿class PolarMotion implements IMotion {
 
-    public constructor(public bounds: PolarBounds, public entity: AbstractEntity) {
+    public constructor(public bounds: PolarBounds, public entity: AbstractPolarEntity) {
     }
 
     apply(state: LevelState): void {

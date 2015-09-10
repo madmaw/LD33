@@ -4,24 +4,17 @@
 
     public _health: number;
     private _stunTimeout: number;
+    private _justDamaged: boolean;
 
-    constructor(groupId: number, mass: number, respectsGravity: boolean, private _deathSound: ISound) {
-        super(groupId, mass, respectsGravity);
+    constructor(groupId: number, entityTypeId: number, private _deathSound: ISound) {
+        super(groupId, entityTypeId);
         this._health = 1;
         this._stunTimeout = 0;
     }
 
     public takeDamage() {
         if (this._health) {
-            if (this._stunTimeout <= 0) {
-                // halve size
-                this._health--;
-                this._heightPx /= 1.5;
-                this._widthPx /= 1.5;
-                this.mass /= 2;
-                this._stunTimeout += 500;
-            }
-            this._deathSound(1 - (this._health / 10));
+            this._justDamaged = true;
         }
     }
 
@@ -30,11 +23,38 @@
     }
 
     update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
-        var dying = this.isDying();
         super.update(level, timeMillis, createdEntities);
-        
+        if (this._justDamaged) {
+            this._justDamaged = false;
+            var count = 2 + this.mass;
+            var r = this.bounds.getCenterRadiusPx();
+            var a = this.bounds.getCenterAngleRadians();
+            var d = 10;
+
+            while (count > 0) {
+                count--;
+                var blood = new AbstractPolarEntity(GROUP_ID_PLAYER, ENTITY_TYPE_ID_BLOOD);
+                blood.ghostly = true;
+                blood.gravityMultiplier = 1;
+                blood.setBounds(r, a, d, d);
+                blood.velocityAPX = Math.random() - 0.5;
+                blood.velocityRPX = Math.random();
+                createdEntities.push(blood);
+            }
+            if (this._stunTimeout <= 0) {
+                // halve size
+                this._health--;
+                this.bounds.heightPx /= 1.5;
+                this.widthPx /= 1.5;
+                this.mass--;
+                this._stunTimeout = 500;
+            }
+            this._deathSound(1 - (this._health / 10));
+        }
+        var dying = this.isDying();
         if (dying) {
-            this.collidable = false;
+            this.ghostly = true;
+            this.gravityMultiplier = 1;
             this.setState(AbstractLivingPolarEntity.STATE_DYING);
         } else if (this._stunTimeout > 0) {
             this._stunTimeout -= timeMillis;
@@ -56,12 +76,10 @@
         this.respectsGravityTimeout = 0;
     }
 
-    public _handleCollision(withEntity: IEntity, onEdge: number): boolean {
-        if (withEntity instanceof BulletEntity) {
+    public _handleCollision(withEntity: IEntity, onEdge: number): void {
+        if (withEntity.entityTypeId == ENTITY_TYPE_ID_BULLET) {
             // we're dead
             this.takeDamage();
-            return true;
         }
-
     }
 }

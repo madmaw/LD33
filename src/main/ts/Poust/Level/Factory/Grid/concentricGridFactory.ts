@@ -4,23 +4,22 @@
         var grid = new Grid(width, height, true, 0);
 
         var y = height;
-        var switchDelta = 0;
         var switchMod = Math.floor(height / difficulty);
         while (y > 0) {
             y--;
-            var gaps = (height - y + ringOffset) + 1;
-            var maxGapWidth = Math.max(1, Math.floor(width / (gaps * 4))*2);
-            
-            var gapWidth = Math.min(maxGapWidth, Math.max(1, Math.floor((y + difficulty + ringOffset) / 2)) * 2);
-            var fullLength = Math.floor(width / gaps);
+            var ring = height - y + ringOffset;
+            var gaps = ring + 1;
+            //var maxGapWidth = Math.max(1, Math.floor(width / (gaps * 4))*2);
+            var maxGapWidth = Math.max(1, (width + difficulty) / (gaps * 3));
+            var minGapWidth = Math.max(1, width / (gaps * 4));
+            var gapWidth = minGapWidth + rng() * (maxGapWidth - minGapWidth);
+            var fullLength = width / gaps;
             // evenly space them as much as possible
+            var switchDelta = Math.floor(rng() * width);
             for (var x = 0; x < width; x++) {
-                if ((x + Math.floor(gapWidth / 2) + switchDelta) % fullLength >= gapWidth) {
-                    grid.setBlocked(x, y, Grid.BLOCKED_TOP, true);
+                if (x % fullLength >= gapWidth) {
+                    grid.setBlocked((x + switchDelta) % width, y, Grid.BLOCKED_TOP, true);
                 }
-            }
-            if ((y + ringOffset) % switchMod == 0 && y != 0) {
-                switchDelta += Math.floor(width / 2);
             }
         }
 

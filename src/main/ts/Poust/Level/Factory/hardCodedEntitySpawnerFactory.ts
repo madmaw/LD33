@@ -38,9 +38,8 @@
                     case 1:
                         {
                             var obstacle: AbstractPolarEntity;
-                            if (difficulty * rng() < 3) {
+                            if (difficulty * rng() < 2) {
                                 obstacle = createChomperEntity(deathSound, rng() > 0.5);
-                                obstacle.mass = 3;
                             } else {
                                 obstacle = obstacleEntity();
                                 entityWidth = 22 + difficulty * rng();
@@ -50,7 +49,7 @@
                         break;
                     case 2:
                         {
-                            var flappy = new FlappyEntity(GroupId.Enemy, 1, deathSound, rng() > 0.5, 0.06 + difficulty * 0.01, 0.3, r + maxHeight * rng() / 4);
+                            var flappy = new FlappyEntity(GROUP_ID_ENEMY, deathSound, rng() > 0.5, 0.06 + difficulty * 0.01, 0.3, r + maxHeight * rng() / 4);
                             //flappy.setBounds(r + maxHeight / 2, a + rng() * arc, 32, 32);
                             entityR = r + maxHeight / 2;
                             entity = flappy;
@@ -58,14 +57,14 @@
                         break;
                     case 3:
                         {
-                            var bouncer = new BouncyEntity(GroupId.Enemy, 1, deathSound, 0.05 + difficulty * 0.02, rng() > 0.5, rng() > 0.5);
+                            var bouncer = new BouncyEntity(GROUP_ID_ENEMY, deathSound, 0.05 + difficulty * 0.02, rng() > 0.5, rng() > 0.5);
                             //bouncer.setBounds(r, a + rng() * arc, 32, 32);
                             entity = bouncer;
                         }
                         break;
                     case 4:
                         {
-                            var seeker = new SeekerEntity(GroupId.Enemy, 1, deathSound, 200 + 30 * difficulty, 0.1, 1.1, 0.1, 0.3, 0.65);
+                            var seeker = new SeekerEntity(GROUP_ID_ENEMY, deathSound, 200 + 30 * difficulty, 0.1, 1.1, 0.1, 0.3, 0.65);
                             //seeker.setBounds(r, a + rng() * arc, 40, 40);
                             entityWidth = 40;
                             entity = seeker;
@@ -78,7 +77,7 @@
                         var maxh = maxHeight - (entityR - r);
                         while (entityWidth * 2 < maxh && rng() * 100 < difficulty * quantity) {
                             entityWidth *= 1.5;
-                            entity.mass *= 2;
+                            entity.mass++;
                             health++;
                             quantity -= cost;
                         }
@@ -86,7 +85,7 @@
                     }
                     var ae = a + rng() * (arc - entityWidth / entityR);
                     entity.setBounds(r, ae, entityWidth, entityWidth);
-                    (<IEntity>entity).horizontalFriction = 0.05;
+                    (<IEntity>entity).horizontalFriction = 0.1;
                     entities.push(entity);
                 }
                 // what can we buy?

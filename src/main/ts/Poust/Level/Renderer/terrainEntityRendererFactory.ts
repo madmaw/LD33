@@ -2,7 +2,7 @@
 
     return function(context: CanvasRenderingContext2D, entity: IEntity): void {
 
-        var abstractEntity = <AbstractEntity>entity;
+        var abstractEntity = <AbstractPolarEntity>entity;
 
         context.strokeStyle = strokeStyle;
         context.fillStyle = fillStyle;
@@ -13,14 +13,12 @@
 
         var dx = 0;
         var dy = 0;
-        /*
         if (abstractEntity.gravityMultiplier && abstractEntity.respectsGravityTimeout > 0 && abstractEntity.respectsGravityTimeout < 2000) {
             var dt = 2000 - abstractEntity.respectsGravityTimeout;
             dt /= 100;
             dx = Math.random() * dt - dt/2;
             dy = Math.random() * dt - dt/2;
         }
-        */
 
         var asr = bounds.startAngleRadians;
         var sinsr = Math.sin(asr);

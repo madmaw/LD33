@@ -2,6 +2,8 @@
 
     groupId: number;
 
+    entityTypeId: number;
+
     bounds: PolarBounds;
 
     getVelocityRadiusPX(): number;
@@ -12,7 +14,7 @@
 
     setVelocityAngleRadians(velocityAngleRadians: number, atRadiusPX: number): void;
 
-    setAnchorRight(anchorRight: boolean): void;
+    anchor: number;
 
     mass: number;
 
@@ -24,7 +26,7 @@
 
     dead: boolean;
 
-    collidable: boolean;
+    ghostly: boolean;
 
     continuousCollisions: boolean;
 

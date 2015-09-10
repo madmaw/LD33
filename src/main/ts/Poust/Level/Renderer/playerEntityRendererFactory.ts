@@ -26,8 +26,8 @@
             var cycleMultiplier: number;
             var state = playerEntity.state;
             var stateAge = playerEntity.stateAgeMillis;
-            if (state == PlayerEntity.STATE_RUNNING && Math.abs(playerEntity._velocityAPX) > 0.0001) {
-                var cycleTime = 300 / Math.abs(playerEntity._velocityAPX);
+            if (state == PlayerEntity.STATE_RUNNING && Math.abs(playerEntity.velocityAPX) > 0.0001) {
+                var cycleTime = 300 / Math.abs(playerEntity.velocityAPX);
                 cycleMultiplier = ageToScale(entity, cycleTime);
             } else {
                 cycleMultiplier = 0;

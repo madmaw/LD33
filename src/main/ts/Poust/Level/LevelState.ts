@@ -1,4 +1,4 @@
-﻿class LevelState extends AbstractUpdatingState implements IState {
+﻿class LevelState extends AbstractState implements IState {
 
     private _groups: IEntityHolder[][];
 
@@ -13,6 +13,10 @@
 
     private _listeners: { [_: string]: EventListener };
 
+    private _animationFrameCallback: FrameRequestCallback;
+    private _lastUpdateMillis: number;
+
+
     public constructor(
         _element: Element,
         private _player: PlayerEntity,
@@ -21,7 +25,8 @@
         private _rendererFactory: IEntityRendererFactory,
         private _maxCollisionSteps: number,
         private _levelName: string,
-        private _levelDifficulty: number
+        private _levelDifficulty: number,
+        private _background: any
         ) {
         super(_element);
         this._cameraCenterAngle = 0;
@@ -114,7 +119,26 @@
             'keydown': keyDownListener,
             'keyup': keyUpListener
         };
-
+        this._animationFrameCallback = (timeMillis: number) => {
+            if (this.isStarted()) {
+                if (this._lastUpdateMillis != null) {
+                    var diff = timeMillis - this._lastUpdateMillis;
+                    // don't let it run for too long
+                    diff = Math.min(diff, 100);
+                    if (diff > 0) {
+                        //diff = 20;
+                        this.update(diff);
+                        this.render();
+                    }
+                }
+                this._lastUpdateMillis = timeMillis;
+                if (this.isStarted()) {
+                    requestAnimationFrame(this._animationFrameCallback);
+                }
+            } else {
+                this._lastUpdateMillis = null;
+            }
+        };
     }
 
     public init() {
@@ -122,6 +146,7 @@
         // look up previous best (if any)
         this._data = loadLevelStateData(this._levelDifficulty, this._levelName, true);
     }
+
 
     public getGroup(groupId: number) {
         return this._groups[groupId];
@@ -202,6 +227,7 @@
 
     start(): void {
         super.start();
+        requestAnimationFrame(this._animationFrameCallback);
 
         // indicate we started this level
         if (this._levelAgeMillis == 0) {
@@ -405,6 +431,11 @@
                     }
 
                     // fix up anchoring
+                    if (edge1 == POLAR_EDGE_LEFT || edge2 == POLAR_EDGE_LEFT) {
+                        entity1.anchor = edge1;
+                        entity2.anchor = edge2;
+                    }
+                    /*
                     if (edge1 == POLAR_EDGE_LEFT) {
                         entity1.setAnchorRight(false);
                     } else if (edge1 == POLAR_EDGE_RIGHT) {
@@ -415,13 +446,14 @@
                     } else if (edge2 == POLAR_EDGE_RIGHT) {
                         entity2.setAnchorRight(true);
                     }
+                    */
                     // move to collision point
                     collision.bestMotion1.apply(this);
                     collision.bestMotion2.apply(this);
 
                     calculateMotion(collision.entityHolder1, collision.collisionTime, diffMillis);
                     calculateMotion(collision.entityHolder2, collision.collisionTime, diffMillis);
-                    
+
                     // recalculate any collisions with these entities
                     this.calculateCollisionsForEntity(diffMillis, collisions, collision.entityHolder1, this._groups.length);
                     this.calculateCollisionsForEntity(diffMillis, collisions, collision.entityHolder2, this._groups.length);
@@ -493,7 +525,7 @@
     private calculateCollisionsForEntity(diffMillis: number, collisions: ICollision[], entityHolderk: IEntityHolder, startingGroupIndex: number) {
         var motionk = entityHolderk.motion;
         var entityk = entityHolderk.entity;
-        if (entityk.collidable && !entityk.dead) {
+        if (!entityk.ghostly && !entityk.dead) {
             var j = startingGroupIndex;
             while (j > 0) {
                 j--;
@@ -506,7 +538,7 @@
                         // is there a collision?
                         var entityHolderl = groupj[l];
                         var entityl = entityHolderl.entity;
-                        if (entityl.collidable && !entityl.dead) {
+                        if (!entityl.ghostly && !entityl.dead) {
                             var motionl = entityHolderl.motion;
                             var collision = this.calculateCollision(diffMillis, entityHolderk, entityHolderl);
                             if (collision) {
@@ -566,11 +598,11 @@
 
         var motion1 = entityHolder1.motion;
         var motion2 = entityHolder2.motion;
+        var entity1 = entityHolder1.entity;
+        var entity2 = entityHolder2.entity;
 
         var collision: ICollision;
-        if (motion1 && motion2) {
-            var entity1 = entityHolder1.entity;
-            var entity2 = entityHolder2.entity;
+        if (motion1 && motion2 && !entity1.dead && !entity2.dead) {
 
             var maxCollisionTime: number;
             var maxCollisionMotion1: IMotion;
@@ -739,13 +771,9 @@
 
         var w = this._element.clientWidth;
         var h = this._element.clientHeight;
-        var fontHeight = Math.floor(Math.min(h / 20, w / 20));
 
-        this._context.font = "bold "+fontHeight + "px Courier";
-        this._context.fillStyle = "#000";
-        this._context.fillRect(0, 0, w, h);
 
-        this._context.save();
+
         //            this._context.translate(w / 2, h / 2);
         var pr = this._cameraCenterRadius;
         var pa = this._cameraCenterAngle;
@@ -754,10 +782,20 @@
         var px = -pr * cos;
         var py = -pr * sin;
         var scale = this.getScale(w, h);
+
+        this._context.save();
+        //this._context.scale(scale, scale);
+        this._context.translate(w/2, pr);
+        this._context.fillStyle = this._background;
+        this._context.fillRect(-w/2, -pr, w, h);
+        this._context.restore();
+
+        this._context.save();
         this._context.translate(w / 2, h / 2);
-        this._context.rotate(-pa - pid2);
         this._context.scale(scale, scale);
+        this._context.rotate(-pa - pid2);
         this._context.translate(px, py);
+
 
         var i = this._groups.length;
         while (i > 0) {
@@ -777,7 +815,9 @@
 
         this._context.restore();
 
+        var fontHeight = Math.floor(Math.min(h / 15, w / 15));
         this._context.fillStyle = "#FFF";
+        this._context.font = "bold " + fontHeight + "px Courier";
 
         var levelString = "" + this._levelDifficulty + "-" + this._levelName; 
         var timeString = levelString+" " + toTimeString(this._levelAgeMillis);
@@ -790,15 +830,12 @@
 
         }
 
-        var fontHeight = Math.floor(Math.min(h / 15, w / 15));
-        this._context.font = "bold " + fontHeight + "px Courier";
-
         var displayAttemptTime = 2000;
         if (this._data.attempts && this._levelAgeMillis < displayAttemptTime) {
             if (this._levelAgeMillis > displayAttemptTime / 2) {
                 this._context.globalAlpha = ((displayAttemptTime - this._levelAgeMillis) * 2) / displayAttemptTime;
             }
-            var text = "World "+levelString;
+            var text = levelString;
             var textMetric = this._context.measureText(text);
             this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2 - fontHeight);
 

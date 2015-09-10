@@ -5,24 +5,25 @@ _w.onload = () => {
     var levelStateElement = document.getElementById("c");
     var menuStateElement = document.getElementById("m");
 
-    var audioContext: AudioContext;
-    if (_w["AudioContext"]) {
-        audioContext = new AudioContext();
-    } else if (_w["webkitAudioContext"]) {
-        audioContext = new webkitAudioContext();
-    }
+    var audioContext: AudioContext = new AudioContext();
+//    if (_w["AudioContext"]) {
+//        audioContext = new AudioContext();
+//    } else if (_w["webkitAudioContext"]) {
+//        audioContext = new webkitAudioContext();
+//    }
 
     var sawtooth = 'sawtooth';
     var square = 'square';
 
     var jumpSound = webAudioToneSoundFactory(audioContext, sawtooth, 250, 1000, 400, 0.01, 0.08, 0.12, 0.3);
-    var shootSound1 = webAudioToneSoundFactory(audioContext, square, 600, 100, 100, 0, 0.035, 0.04, 0.2, 0.6);
-    var shootSound = webAudioGunSoundFactory(audioContext, shootSound1);
+    var shootSound1 = webAudioToneSoundFactory(audioContext, square, 600, 100, 100, 0, 0.03, 0.04, 0.2, 0.6);
+    var shootSound = webAudioBoomSoundFactory(audioContext, shootSound1, 0.25);
     var playerDeathSound = webAudioVibratoSoundFactory(audioContext, 200, 10, 6, 0.7);
     var wallJumpAvailableSound = webAudioToneSoundFactory(audioContext, square, 250, -150, 100, 0, 0.05, 0.1, 0.2, 0.5);
     var monsterDeathSound = webAudioToneSoundFactory(audioContext, sawtooth, 300, -100, 100, 0.01, 0.05, 0.1, 0.3);
     var winSound = webAudioVibratoSoundFactory(audioContext, 600, 1000, 14, 0.8);
-    var fallSound = webAudioToneSoundFactory(audioContext, sawtooth, 500, 150, 100, 0.05, 0.1, 0.3, 1)
+    var fallSound1 = webAudioToneSoundFactory(audioContext, sawtooth, 500, 150, 200, 0.05, 0.1, 0.3, 1)
+    var fallSound = webAudioBoomSoundFactory(audioContext, fallSound1, 1.5);
 
     var canvas = <HTMLCanvasElement>levelStateElement;
     var context = canvas.getContext("2d");
@@ -46,9 +47,13 @@ _w.onload = () => {
 
     var enemyGradient = context.createRadialGradient(0, 0, 500, 0, 0, 2500);
     f(enemyGradient, 0.8);
+
+    //var backgroundGradient = context.createLinearGradient(0, -2000, 0, 0);
+    var backgroundGradient = context.createRadialGradient(0, 0, 500, 0, 0, 2500);
+    f(backgroundGradient, 0.25);
     
     var white = "#FFF";
-    var defaultRenderer = terrainEntityRendererFactory(2, white, radialGradient);
+    var terrainRenderer = terrainEntityRendererFactory(2, white, radialGradient);
     var flappyRenderer = flappyEntityRendererFactory(2, white, enemyGradient);
     var spikeRenderer = spikeEntityRendererFactory(2, white, rgba(255, 255, 255, 0.9));
     var bouncyRenderer = bouncyEntityRendererFactory(2, white, enemyGradient);
@@ -57,7 +62,19 @@ _w.onload = () => {
     var playerRenderer = playerEntityRendererFactory(2, white, rgba(255, 0, 0, 1), rgba(208, 192, 0, 1));
     var bulletRenderer = seekerEntityRendererFactory(2, "#FFA", rgba(255, 255, 0, 0.7));
     var chomperRenderer = chomperEntityRendererFactory(2, white, enemyGradient);
-    var entityRendererFactory = hardCodedEntityRendererFactory(defaultRenderer, spikeRenderer, flappyRenderer, bouncyRenderer, seekerRenderer, exitRenderer, playerRenderer, bulletRenderer, chomperRenderer);
+    var bloodRenderer = seekerEntityRendererFactory(2, white, enemyGradient);
+    var renderers: { [_: number]: IEntityRenderer } = {};
+    renderers[ENTITY_TYPE_ID_TERRAIN] = terrainRenderer;
+    renderers[ENTITY_TYPE_ID_FLAPPY] = flappyRenderer;
+    renderers[ENTITY_TYPE_ID_SPIKE] = spikeRenderer;
+    renderers[ENTITY_TYPE_ID_BOUNCY] = bouncyRenderer;
+    renderers[ENTITY_TYPE_ID_SEEKER] = seekerRenderer;
+    renderers[ENTITY_TYPE_ID_EXIT] = exitRenderer;
+    renderers[ENTITY_TYPE_ID_PLAYER] = playerRenderer;
+    renderers[ENTITY_TYPE_ID_BULLET] = bulletRenderer;
+    renderers[ENTITY_TYPE_ID_CHOMPER] = chomperRenderer;
+    renderers[ENTITY_TYPE_ID_BLOOD] = bloodRenderer;
+    var entityRendererFactory = hardCodedEntityRendererFactory(renderers);
 
     var level1 = "1";
     var level2 = "2";
@@ -72,7 +89,7 @@ _w.onload = () => {
     var rngFactory = sinRandomNumberGeneratorFactory();
 
     //var _concentricLevelStateFactory = concentricLevelStateFactory(levelStateElement, context, gravity, entityRendererFactory, maxCollisionSteps, rngFactory, entitySpawnerFactory);
-    var _gridLevelStateFactory = gridLevelStateFactory(levelStateElement, context, gravity, entityRendererFactory, maxCollisionSteps, rngFactory, entitySpawnerFactory, 150, fallSound);
+    var _gridLevelStateFactory = gridLevelStateFactory(levelStateElement, context, gravity, entityRendererFactory, maxCollisionSteps, rngFactory, entitySpawnerFactory, 170, fallSound, backgroundGradient);
 
     var _circuitGridFactory = circuitGridFactory();
     var _mazeGridFactory = mazeGridFactory(0.03);
@@ -80,10 +97,10 @@ _w.onload = () => {
 
     var levelStateFactories: { [_: string]: IStateFactory } = {};
     //levelStateFactories[level1] = _concentricLevelStateFactory(level2, 0, 4, 20, 70, 300, 5);
-    levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 28, 1, 2, 1, 20, 70, 15, 1, 20000, 2000, 8000, _concentriGridFactory);
+    levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 28, 1, 2, 1, 30, 70, 10, 1, 20000, 2000, 8000, _concentriGridFactory);
     levelStateFactories[level2] = _gridLevelStateFactory(level3, 0, 300, 13, 1, 4, 1, 20, 85, 5, 1, 20000, 7000, 7000, looseEndsTrimmingGridFactoryProxy(mergingGridFactoryProxy([_mazeGridFactory], 2, 0)));
-    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 500, 15, 1, 3, 1, 20, 80, 2, 0.5, 20000, 5000, 8000, mergingGridFactoryProxy([_circuitGridFactory], 4, 0));
-    levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 500, 22, 2, 4, 1, 20, 75, 3, 1, 30000, 5000, 6000, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 2, 0.25));
+    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 400, 15, 3, 3, 1, 25, 75, 2, 0.5, 60000, 0, 8000, mergingGridFactoryProxy([_circuitGridFactory], 4, 0));
+    levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 400, 14, 2, 4, 1, 20, 75, 3, 1, 40000, 5000, 6000, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 3, 0.2));
 
     var menuState = new MenuState(menuStateElement, "l", levelStateFactories);
     

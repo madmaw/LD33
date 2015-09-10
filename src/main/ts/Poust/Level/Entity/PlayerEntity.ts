@@ -21,7 +21,6 @@
 
     public constructor(
         groupId: number,
-        mass: number,
         private _jumpPower: number,
         public _gun: IGun,
         deathSound: ISound,
@@ -29,7 +28,9 @@
         private _winSound: ISound,
         private _wallJumpAvailableSound: ISound
         ) {
-        super(groupId, mass, true, deathSound);
+        super(groupId, ENTITY_TYPE_ID_PLAYER, deathSound);
+        this.mass = 4;
+        this.gravityMultiplier = 1;
         this._runningLeft = true;
         this._targets = {};
         this.continuousCollisions = true;
@@ -39,7 +40,7 @@
 
     public reset(r: number, a: number) {
         this.setBounds(r, a - this.bounds.widthRadians / 2);
-        this._velocityAPX = 0;
+        this.velocityAPX = 0;
         this.velocityRPX = 0;
     }
 
@@ -81,7 +82,7 @@
     }
 
     notifyCollision(withEntity: IEntity, onEdge: number): void {
-        if (withEntity.groupId == GroupId.Enemy) {
+        if (withEntity.groupId == GROUP_ID_ENEMY) {
             var levelExitEntity = <ILevelExitEntity>withEntity;
 
             if (levelExitEntity.nextLevelParamsFactory) {
@@ -183,7 +184,7 @@
             );
             if (recoil) {
                 this.velocityRPX += recoil.r;
-                this._velocityAPX += recoil.a;
+                this.velocityAPX += recoil.a;
                 // set the freshness to false
                 for (var i in this._targets) {
                     var target = this._targets[i];
@@ -210,14 +211,14 @@
             } else {
                 accMul = 1;
             }
-            var v = this._velocityAPX;
+            var v = this.velocityAPX;
             if (v > 0 && this._runningLeft || v < 0 && !this._runningLeft) {
                 v = 0;
             }
             v = Math.abs(v);
             var acc = 1 / ((v * v * v * 7000 + 1) * 1000);
             //var acc = 1 / ((v * v * v * 700 + 1) * 700);
-            this._velocityAPX += accMul * acc * timeMillis;
+            this.velocityAPX += accMul * acc * timeMillis;
             if (jumpTarget) {
                 this._jumpSound(intensity);
                 this.velocityRPX = this._jumpPower;
@@ -231,14 +232,14 @@
                     // wall jump
                     this._runningLeft = true;
                     this.velocityRPX = this._jumpPower;
-                    this._velocityAPX = -this._jumpPower;
+                    this.velocityAPX = -this._jumpPower;
                     jumpTarget.jumped = true;
                     this._jumpSound(intensity);
                 } else if (this._onLeftWall) {
                     // wall jump
                     this._runningLeft = false;
                     this.velocityRPX = this._jumpPower;
-                    this._velocityAPX = this._jumpPower;
+                    this.velocityAPX = this._jumpPower;
                     jumpTarget.jumped = true;
                     this._jumpSound(intensity);
                 }
@@ -250,7 +251,7 @@
                     } else {
                         acc = -0.001;
                     } 
-                    this._velocityAPX += acc * timeMillis;
+                    this.velocityAPX += acc * timeMillis;
                     var targetRPX = -0.15;
                     if (this.velocityRPX < targetRPX) {
                         this.velocityRPX = Math.min(targetRPX, this.velocityRPX + 0.02);
@@ -262,7 +263,7 @@
                     var target = this._targets[i];
                     if (target) {
                         if (target.jumped) {
-                            this.velocityRPX += 0.00045 * timeMillis;
+                            this.velocityRPX += 0.0005 * timeMillis;
                             break;
                         }
                     }

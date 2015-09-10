@@ -22,7 +22,7 @@
             if (actualSplitHeight > 0) {
                 ringOffset -= actualSplitHeight;
                 var div = split + 1;
-                var splitWidth = Math.max(1, Math.round(width / div));
+                var splitWidth = Math.ceil(width / div);
                 var splitFromX = Math.floor(rng() * splitWidth);
                 var splitFromY = actualSplitHeight - 1;
                 var proxied = proxies[Math.floor(rng() * proxies.length)];

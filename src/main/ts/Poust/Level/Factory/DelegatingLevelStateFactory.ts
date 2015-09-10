@@ -10,7 +10,7 @@
     ): IStateFactory {
     var createPlayer = function () {
         var gun = new AbstractGun(100, 0.03, shootSound);
-        var player = new PlayerEntity(GroupId.Player, 1, 0.4, gun, deathSound, jumpSound, winSound, wallJumpAvailableSound);
+        var player = new PlayerEntity(GROUP_ID_PLAYER, 0.4, gun, deathSound, jumpSound, winSound, wallJumpAvailableSound);
         player.setBounds(600, 0, 32, 24);
         return player;
     };

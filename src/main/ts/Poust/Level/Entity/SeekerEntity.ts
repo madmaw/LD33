@@ -8,7 +8,6 @@
 
     public constructor(
         groupId: number,
-        mass: number,
         deathSound: ISound,
         private _searchRadius: number,
         private _acceleration: number,
@@ -16,17 +15,19 @@
         private _maxVelocityAPx: number,
         private _smallJumpVelocity: number,
         private _bigJumpVelocity: number) {
-        super(groupId, mass, true, deathSound);
+        super(groupId, ENTITY_TYPE_ID_SEEKER, deathSound);
+        this.mass = 1;
+        this.gravityMultiplier = 1;
     }
 
     updateAlive(level: LevelState, timeMillis: number) {
         if (this._bounceA != null) {
-            this._velocityAPX = this._bounceA;
+            this.velocityAPX = this._bounceA;
         }
         if (this._onGround) {
 
             // fly at the player
-            var players = level.getGroup(GroupId.Player);
+            var players = level.getGroup(GROUP_ID_PLAYER);
             var foundPlayer = false;
 
 
@@ -90,8 +91,8 @@
             var drpx = rp.x;
             var dapx = rp.y * this._acceleration;
 
-            this._velocityAPX += dapx;
-            this._velocityAPX = Math.max(-this._maxVelocityAPx, Math.min(this._maxVelocityAPx, this._velocityAPX));
+            this.velocityAPX += dapx;
+            this.velocityAPX = Math.max(-this._maxVelocityAPx, Math.min(this._maxVelocityAPx, this.velocityAPX));
 
             if (drpx < 0) {
                 this.velocityRPX += this._smallJumpVelocity;
@@ -100,13 +101,13 @@
             }
         }
 
-        this._prevVelocityAPX = this._velocityAPX;
+        this._prevVelocityAPX = this.velocityAPX;
         this._bounceA = null;
         this._onGround = false;
     }
 
     notifyCollision(withEntity: IEntity, onEdge: number): void {
-        if (withEntity instanceof BulletEntity) {
+        if (withEntity.entityTypeId == ENTITY_TYPE_ID_BULLET) {
             // we're dead
             this.takeDamage();
         } else {

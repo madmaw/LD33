@@ -144,7 +144,7 @@
         } else {
             lifespanMillis = 1000;
         }
-        var result = new BulletEntity(GroupId.Player, 10, 10, 1, lifespanMillis);
+        var result = new AbstractCartesianEntity(GROUP_ID_PLAYER, 10, 10, 1, lifespanMillis);
         result.setCenter(fromx, fromy);
         var dx = tox - fromx;
         var dy = toy - fromy;

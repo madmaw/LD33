@@ -1,15 +1,19 @@
-﻿class AbstractCartesianEntity extends AbstractEntity {
+﻿class AbstractCartesianEntity extends AbstractPolarEntity {
 
     public _velocityDx: number;
     public _velocityDy: number;
     public _cx: number;
     public _cy: number;
+    private _lifeRemainingMillis: number;
 
-    public constructor(groupId: number, private _widthPx: number, private _heightPx: number, mass: number) {
-        super(groupId);
+
+    public constructor(groupId: number, private _widthPx: number, private _heightPx: number, mass: number, private _lifespanMillis: number) {
+        super(groupId, ENTITY_TYPE_ID_BULLET);
         this.mass = mass;
         this._velocityDx = 0;
         this._velocityDy = 0;
+        this._lifeRemainingMillis = this._lifespanMillis;
+        this.continuousCollisions = true;
     }
 
     public setCenter(cx: number, cy: number, bounds?: PolarBounds): void {
@@ -62,4 +66,18 @@
 
         return PolarBounds.subtractAngle(a1, a);
     }
+
+    update(level: LevelState, timeMillis: number, createdEntities: IEntity[]): void {
+        super.update(level, timeMillis, createdEntities);
+        this._lifeRemainingMillis -= timeMillis;
+        if (this._lifeRemainingMillis < 0) {
+            this.dead = true;
+        }
+    }
+
+    notifyCollision(withEntity: IEntity, onEdge: number): void {
+        // just die
+        this.dead = true;
+    }
+
 }

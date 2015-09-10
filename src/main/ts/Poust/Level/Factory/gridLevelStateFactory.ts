@@ -7,7 +7,8 @@
     rngFactory: IRandomNumberGeneratorFactory,
     entitySpawnerFactory: IEntitySpawnerFactory,
     maxRingGap: number,
-    fallSound: ISound
+    fallSound: ISound,
+    background: any
     ) {
 
     var ringGravity = 0.2;
@@ -43,7 +44,8 @@
                 rendererFactory,
                 maxCollisionSteps,
                 param.levelName,
-                param.difficulty
+                param.difficulty,
+                background
                 );
 
             var fromx = 0;
@@ -117,7 +119,7 @@
                         var a = (ix * pi2) / grid._width - arc / 2 + aoff;
                         //var h = (ringGapPx + ringWidth) * maxCount - ringWidth;
                         var h = rs[iy - maxCount + 1] - r - ringWidth;
-                        var wall = new AbstractEntity(GroupId.Terrain);
+                        var wall = new AbstractPolarEntity();
                         wall.bounds = new PolarBounds(r, a, h, arc);
                         wall.respectsGravityTimeout = to;
                         wall.gravityMultiplier = ringGravity;
@@ -200,7 +202,7 @@
                         //var to = tos[y] + (dt/2) * rng() + dt/2;
                         var to = initialTimeout + (ring+1) * ringDeltaTimeout - ringDeltaTimeout * rng() / 2;
 
-                        var terrain = new AbstractEntity(GroupId.Terrain);
+                        var terrain = new AbstractPolarEntity();
                         terrain.bounds = new PolarBounds(r - ringWidth, a, ringWidth, arc);
                         terrain.respectsGravityTimeout = to;
                         terrain.gravityMultiplier = ringGravity;
@@ -216,7 +218,7 @@
                         }
                         var baddies = entitySpawner(a, r, maxHeight, arc, Math.sqrt((param.difficulty * ring * 2) / height));
                         for (var j in baddies) {
-                            var baddy = <AbstractEntity>baddies[j];
+                            var baddy = <AbstractPolarEntity>baddies[j];
                             if (!baddy.gravityMultiplier) {
                                 baddy.respectsGravityTimeout = to;
                                 baddy.gravityMultiplier = 1;
@@ -232,7 +234,7 @@
                 }
             }
 
-            var floor = new AbstractEntity(GroupId.Terrain);
+            var floor = new AbstractPolarEntity();
             floor.bounds = new PolarBounds(0, 0, initialRadius, pi2);
             floor.respectsGravityTimeout = initialTimeout;
             floor.gravityMultiplier = ringGravity;
