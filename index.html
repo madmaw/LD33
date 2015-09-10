@@ -5,18 +5,11 @@
         html, body {
             margin: 0;
             background: #000;
-            color: #FFF;
+            color: #FF0;
             font-family: Courier;
             font-size: larger;
             font-weight: bold;
             text-align: center;
-        }
-
-        a:visited {
-            color: #FF0;
-            /*
-            text-decoration:none;
-            */
         }
 
         body > * {
@@ -28,18 +21,22 @@
             width: 100%;
         }
 
+        .d {
+            color: #FFF;
+        }
+
         .h {
             display: none;
         }
 
-        .ml {
+        .l {
             display: block;
             margin-left: 5%;
             margin-right: 5%;
             margin-top: 0.9em;
         }
 
-        .mln, .mla, .mlt {
+        .l * {
             width: 33%;
             display: inline-block;
         }
@@ -59,7 +56,7 @@
     <canvas class="h" id="c"></canvas>
     <div class="h" id="m">
         <a id="p"><h1>POUST</h1></a>
-        <div class="ml"><div class="mln">World</div><div class="mla">#</div><div class="mlt">Best</div></div>            
+        <div class="l d"><div>World</div><div>#</div><div>Best</div></div>            
         <div id="l">
         </div>
     </div>

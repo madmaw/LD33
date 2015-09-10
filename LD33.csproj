@@ -35,9 +35,9 @@
     <TypeScriptCompile Include="src\main\ts\levelNameToLevelStateFactoryParam.ts" />
     <TypeScriptCompile Include="src\main\ts\math.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\AbstractState.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\AbstractUpdatingState.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\IRandomNumberGenerator.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\IRandomNumberGeneratorFactory.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Level\EntityTypeId.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\IChomperEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\Grid.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\gridLevelStateFactory.ts" />
@@ -58,13 +58,11 @@
     <TypeScriptCompile Include="src\main\ts\Poust\ISound.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\IStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractCartesianEntity.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\AbstractPolarEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\ICollision.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\IEntityHolder.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\AbstractLivingPolarEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\BouncyEntity.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\BulletEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\Gun\AbstractGun.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\IGun.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\ILevelExitEntity.ts" />
@@ -73,7 +71,6 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\IPlayerEntityTarget.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\FlappyEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\SeekerEntity.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\concentricLevelStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\delegatingLevelStateFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\hardCodedEntityRendererFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Factory\hardCodedEntitySpawnerFactory.ts" />
@@ -103,8 +100,8 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Menu\MenuState.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\RNG\sinRandomNumberGeneratorFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\linearRampGain.ts" />
+    <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioBoomSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioVibratoSoundFactory.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioGunSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Sound\webAudioToneSoundFactory.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\StateFactoryParamType.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\toTimeString.ts" />

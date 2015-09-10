@@ -52,12 +52,12 @@
                 xscale = 1;
             }
             */
-            var xscale = 1;
+            //var xscale = 1;
 
             // draw left petal
             context.save();
-            context.rotate(-rotation * xscale + car);
-            context.scale(xscale, 1);
+            context.rotate(-rotation + car);
+            //context.scale(xscale, 1);
             context.beginPath();
             context.moveTo(0, 0);
             context.arc(0, -width / 2, width / 2, pid2, -pid2, false);
@@ -66,8 +66,8 @@
 
             // draw right petal
             context.save();
-            context.rotate(rotation * xscale + car);
-            context.scale(xscale, 1);
+            context.rotate(rotation + car);
+            //context.scale(xscale, 1);
             context.arc(0, -heightRaised / 2, heightRaised / 2, pid2, -pid2, true);
             f(context, heightRaised, toothWidth, false);
             context.closePath();

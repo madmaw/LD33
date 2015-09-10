@@ -23,14 +23,11 @@
                         } else {
                             history.pushState(null, null, newURL);
                         }
-                    } else {
-                        this.setStateFromParam(paramType, param);
-
                     }
-                } else {
-                    pageId = "";
-                    this.setStateFromParam(paramType, param);
+                //} else {
+                    //pageId = "";
                 }
+                this.setStateFromParam(paramType, param);
                 /* for analytics
                 if (w['ga']) {
                     ga('send', 'pageview', {

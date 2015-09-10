@@ -107,7 +107,7 @@
 
             // draw the eyes
 
-            var eyeCy = -height * 0.75;
+            var eyeCy = -height * 0.7;
             var eyeRadius = width * 0.1;
             var eyeBasex = -width * 0.1 + eyeRadius * 2 * (1 + cycleMultiplier);
 
@@ -168,22 +168,16 @@
                 
 
             var gun = <AbstractGun>playerEntity._gun;
-            var gunScale: number = 1;
-            /*
-            if (gun._chargeTime > 0) {
-                var maxChargeTime = 1000;
-                var chargeTime = (gun._chargeTime + maxChargeTime /2 ) % maxChargeTime - maxChargeTime / 2;
-                if (chargeTime < 0) {
-                    chargeTime = -chargeTime;
-                }
+            var gunScale: number;
 
-                gunScale = 1 + (chargeTime) / maxChargeTime;
+            if (gun._chargeTime) {
+                gunScale = 1 + Math.min(0.5, (gun._chargeTime / 999));
             } else {
                 gunScale = 1;
             }
-            */
-            var gunWidth = armWidth * 2.3 * gunScale;
-            var gunHeight = armWidth * 2.9 * gunScale;
+
+            var gunWidth = armWidth * 2 * gunScale;
+            var gunHeight = armWidth * 3 * gunScale;
             var gunThickness = armWidth * 1.2 * gunScale;
             // draw the gun
             context.beginPath();
@@ -196,8 +190,10 @@
             context.closePath();
             if (gun.canShoot()) {
                 context.fillStyle = gunFillStyle;
-                context.fill();
+            } else {
+                context.fillStyle = "#000";
             }
+            context.fill();
             context.stroke();
 
             // draw the arm

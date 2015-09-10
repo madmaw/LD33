@@ -12,12 +12,7 @@
         var coscr = Math.cos(acr);
 
         var age = entity.stateAgeMillis;
-        var scale: number;
-        if (age < 200) {
-            scale = age / 200;
-        } else {
-            scale = 1;
-        }
+        var scale = Math.min(age/300 + 0.2, 1);
 
         var asr = bounds.startAngleRadians;
         asr = acr + (asr - acr) * scale;

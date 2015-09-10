@@ -5,12 +5,12 @@ _w.onload = () => {
     var levelStateElement = document.getElementById("c");
     var menuStateElement = document.getElementById("m");
 
-    var audioContext: AudioContext = new AudioContext();
-//    if (_w["AudioContext"]) {
-//        audioContext = new AudioContext();
+    var audioContext: AudioContext;
+    if (_w["AudioContext"]) {
+        audioContext = new AudioContext();
 //    } else if (_w["webkitAudioContext"]) {
 //        audioContext = new webkitAudioContext();
-//    }
+    }
 
     var sawtooth = 'sawtooth';
     var square = 'square';
@@ -99,7 +99,7 @@ _w.onload = () => {
     //levelStateFactories[level1] = _concentricLevelStateFactory(level2, 0, 4, 20, 70, 300, 5);
     levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 28, 1, 2, 1, 30, 70, 10, 1, 20000, 2000, 8000, _concentriGridFactory);
     levelStateFactories[level2] = _gridLevelStateFactory(level3, 0, 300, 13, 1, 4, 1, 20, 85, 5, 1, 20000, 7000, 7000, looseEndsTrimmingGridFactoryProxy(mergingGridFactoryProxy([_mazeGridFactory], 2, 0)));
-    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 400, 15, 3, 3, 1, 25, 75, 2, 0.5, 60000, 0, 8000, mergingGridFactoryProxy([_circuitGridFactory], 4, 0));
+    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 600, 20, 3, 3, 1, 25, 75, 2, 0.5, 60000, 0, 8000, mergingGridFactoryProxy([_circuitGridFactory], 4, 0));
     levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 400, 14, 2, 4, 1, 20, 75, 3, 1, 40000, 5000, 6000, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 3, 0.2));
 
     var menuState = new MenuState(menuStateElement, "l", levelStateFactories);

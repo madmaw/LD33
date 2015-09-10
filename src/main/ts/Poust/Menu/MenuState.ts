@@ -32,13 +32,7 @@
                     } else {
                         time = "-:--";
                     }
-                    var s = "<a id=L" + name + " href=#" + name + " class='ml"
-                    /*
-                    if (levels.length % 2) {
-                        s += " o";
-                    }
-                    */
-                    s += "'><div class=mln>" + name + "</div><div class=mla>" + attempts + "</div><div class=mlt>" + time + "</div></a>";
+                    var s = "<a id=L" + name + " class='l'><div>" + name + "</div><div>" + attempts + "</div><div>" + time + "</div></a>";
 
                     innerHTML = s + innerHTML;
                     levels.push(name);
@@ -65,7 +59,6 @@
                 levelElement.onclick = f;
                 if (i == levels.length - 1) {
                     var playElement = <HTMLElement>this._element.querySelector("#p");
-                    playElement.setAttribute("href", "#"+level);
                     playElement.onclick = f;
                 }
             }

@@ -4,21 +4,22 @@
 
         var grids: Grid[] = [];
         var adjustedSplitHeight = splitHeight + Math.floor(difficultyDSplitHeight * difficulty);
-        var splits = Math.floor(height / adjustedSplitHeight);
+        var splits = Math.round(height / adjustedSplitHeight);
         var splitToX = toX;
         var splitToY = 0;
         var ringOffset = height;
-        for (var split = 0; split <= splits; split++) {
+        var previousSplitY = 0;
+        for (var split = 0; split < Math.max(1, splits); split++) {
             var actualSplitHeight: number;
-            
+            var splitY: number;
             if (!splits) {
-                actualSplitHeight = height;
+                splitY = height;
             } else {
-                actualSplitHeight = adjustedSplitHeight;
-                if (!split) {
-                    actualSplitHeight += height % adjustedSplitHeight;
-                }
+                splitY = Math.floor(((split+1) * height) / splits);
             }
+            actualSplitHeight = splitY - previousSplitY;
+            previousSplitY = splitY;
+            
             if (actualSplitHeight > 0) {
                 ringOffset -= actualSplitHeight;
                 var div = split + 1;
