@@ -95,6 +95,17 @@
                     from: /.js/g,
                     to: ".min.js"
                 }]
+            },
+            js13k: {
+                src: ['dist/*.html'],
+                overwrite: true,
+                replacements: [{
+                    from: "</canvas></body></html>",
+                    to: ""
+                }, {
+                    from: "</head>",
+                    to: ""
+                }]
             }
         },
         zip: {
@@ -148,9 +159,9 @@
 
     // Default task(s).
     grunt.registerTask('reset', ['clean:all']);
-    grunt.registerTask('prod', ['ts', 'closure-compiler', 'htmlmin', 'copy', 'replace', 'inline']);
+    grunt.registerTask('prod', ['ts', 'closure-compiler', 'htmlmin', 'copy', 'replace:dist',  'replace:js13k', 'inline']);
     grunt.registerTask('dist', ['prod', 'clean:js', 'zip:dist', 'clean:dist']);
-    grunt.registerTask('js13k', ['prod', 'clean:js', 'zip:js13k', 'clean:dist']);
+    grunt.registerTask('js13k', ['prod', 'replace:js13k', 'clean:js', 'zip:js13k', 'clean:dist']);
     grunt.registerTask('default', ['ts']);
 
 };

@@ -4,7 +4,7 @@
 
     public static STATE_RUNNING = "r";
     public static STATE_JUMPING = "j";
-    public static STATE_WALL_SLIDING = "ws";
+    public static STATE_WALL_SLIDING = "s";
 
     private _onGround: boolean;
     private _onRightWall: boolean;
@@ -127,8 +127,8 @@
 
                         //var miny = (screenHeight / 2 + this._bounds.getHeightPx() * scale);
                         //var p = level.getPolarPoint(target.sx, target.sy);
-                        var jy = screenHeight / 2 + Math.abs(target.sx - screenWidth / 2) * screenHeight / screenWidth;
-                        if (!target.groundJumpDisallowed && this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && target.sy > jy)) {
+                        var jy = screenHeight / 2 + Math.abs(target.sx - screenWidth / 2) * screenHeight * 0.75 / screenWidth;
+                        if (this._onGround && (gestureHint == Gesture.Down || gestureHint == Gesture.Context && target.sy > jy)) {
                             jumping = true;
                         } else if (this._onLeftWall && (gestureHint == Gesture.Left || gestureHint == Gesture.Context && target.sx < screenWidth / 2)) {
                             jumping = true;
@@ -143,7 +143,6 @@
                                     target.shooting = true;
                                 }
                             }
-                            target.groundJumpDisallowed = true;
                         }
                     }
                 }

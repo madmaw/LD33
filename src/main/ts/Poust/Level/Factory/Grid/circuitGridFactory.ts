@@ -33,6 +33,7 @@
                     var nx: number;
                     var ny: number;
                     var directions = [Grid.UP, Grid.DOWN, Grid.LEFT, Grid.RIGHT];
+                    directions.splice(previousDirection - 1, 1);
                     var direction: number;
                     var valid = false;
                     while (directions.length > 0) {
@@ -73,9 +74,9 @@
                                 if (previousDirection != Grid.RIGHT) {
                                     grid.setBlocked(x, y + 1, Grid.UP, false);
                                 }
-                                if (previousDirection != Grid.UP || true) {
+                                //if (previousDirection != Grid.UP || true) {
                                     grid.setBlocked(x, y + 1, Grid.RIGHT, false);
-                                }
+                                //}
                                 break;
                             case Grid.DOWN:
                                 grid.setBlocked(x, y + 1, Grid.DOWN, false);
@@ -86,9 +87,9 @@
                                 if (previousDirection != Grid.RIGHT) {
                                     grid.setBlocked(x, y, Grid.DOWN, false);
                                 }
-                                if (previousDirection != Grid.DOWN) {
+                                //if (previousDirection != Grid.DOWN) {
                                     grid.setBlocked(x, y, Grid.RIGHT, false);
-                                }
+                                //}
                                 break;
                             case Grid.LEFT:
                                 grid.setBlocked(x, y, Grid.LEFT, false);
@@ -99,9 +100,10 @@
                                 if (previousDirection != Grid.UP) {
                                     grid.setBlocked(x + 1, y + 1, Grid.LEFT, false);
                                 }
-                                if (previousDirection != Grid.LEFT) {
+                                
+                                //if (previousDirection != Grid.LEFT) {
                                     grid.setBlocked(x + 1, y, Grid.DOWN, false);
-                                }
+                                //}
                                 break;
                             case Grid.RIGHT:
                                 grid.setBlocked(x + 1, y, Grid.RIGHT, false);
@@ -112,9 +114,9 @@
                                 if (previousDirection != Grid.UP) {
                                     grid.setBlocked(x, y + 1, Grid.RIGHT, false);
                                 }
-                                if (previousDirection != Grid.RIGHT) {
+                                //if (previousDirection != Grid.RIGHT) {
                                     grid.setBlocked(x, y, Grid.DOWN, false);
-                                }
+                                //}
                                 break;
                         }
                         x = nx;

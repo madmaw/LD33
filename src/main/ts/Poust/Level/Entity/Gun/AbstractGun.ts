@@ -25,11 +25,6 @@
         targets: IPolarPoint[],
         createdEntities: IEntity[]
         ): IPolarPoint {
-        if (charging) {
-            this._chargeTime += diffMillis;
-        } else {
-            this._chargeTime = 0;
-        }
 
         this._shootCoolDown -= diffMillis;
         var recoil: IPolarPoint = null;
@@ -120,6 +115,11 @@
         if (this._shootCoolDown < 0) {
             this._shootCoolDown = 0;
         }
+        if (charging) {
+            this._chargeTime += diffMillis;
+        } else {
+            this._chargeTime = 0;
+        }
         return recoil;
     }
 
@@ -140,7 +140,7 @@
         ): IEntity {
         var lifespanMillis: number;
         if (backfire) {
-            lifespanMillis = 180;
+            lifespanMillis = this._chargeTime;
         } else {
             lifespanMillis = 1000;
         }

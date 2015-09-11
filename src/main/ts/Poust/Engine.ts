@@ -19,7 +19,6 @@
                         // just stop the current state
                         if (hash) {
                             history.replaceState(null, null, newURL);
-                            this.setStateFromParam(paramType, param);
                         } else {
                             history.pushState(null, null, newURL);
                         }
