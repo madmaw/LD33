@@ -32,7 +32,7 @@
                     } else {
                         time = "-:--";
                     }
-                    var s = "<a id=L" + name + " class='l'><div>" + name + "</div><div>" + attempts + "</div><div>" + time + "</div></a>";
+                    var s = "<a id=L" + name + " class='l'><div>" + name + "</div><div>" + attempts + "</div><div>" + time + "</div>";
 
                     innerHTML = s + innerHTML;
                     levels.push(name);
@@ -58,7 +58,7 @@
                 })(level);
                 levelElement.onclick = f;
                 if (i == levels.length - 1) {
-                    var playElement = <HTMLElement>this._element.querySelector("#p");
+                    var playElement = <HTMLElement>this._element.querySelector("h1");
                     playElement.onclick = f;
                 }
             }

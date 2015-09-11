@@ -8,7 +8,7 @@
             seed: o['s'],
             bestTime: o['t']
         };
-        if (!data.attempts) {
+        if (!data.seed) {
             data = null;
         }
     } 

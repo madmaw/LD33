@@ -167,11 +167,10 @@
             }
                 
 
-            var gun = <AbstractGun>playerEntity._gun;
             var gunScale: number;
 
-            if (gun._chargeTime) {
-                gunScale = 1 + Math.min(0.5, (gun._chargeTime / 999));
+            if (playerEntity._chargeTime) {
+                gunScale = 1 + Math.min(0.5, (playerEntity._chargeTime / 999));
             } else {
                 gunScale = 1;
             }
@@ -188,7 +187,7 @@
             context.lineTo(-gunWidth / 2, armLength - armWidth / 2 + gunThickness);
             context.lineTo(-gunWidth / 2, armLength - armWidth / 2);
             context.closePath();
-            if (gun.canShoot()) {
+            if (playerEntity.canShoot()) {
                 context.fillStyle = gunFillStyle;
             } else {
                 context.fillStyle = "#000";

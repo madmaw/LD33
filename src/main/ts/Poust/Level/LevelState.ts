@@ -847,7 +847,7 @@
         }
 
         if (this._player.dead || this._player.isDying()) {
-            var text = "GAMEOVER";
+            var text = "GAME OVER";
             var textMetric = this._context.measureText(text);
             this._context.fillText(text, (w - textMetric.width) / 2, (h + fontHeight) / 2);
         }

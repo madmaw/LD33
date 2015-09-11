@@ -22,6 +22,7 @@
         difficultyScaleWidth: number,
         difficultyScaleHeight: number,
         ringWidth: number,
+        wallWidth: number,
         ringGapPx: number,
         ringGapDelta: number, 
         ringGapDeltaScale: number,
@@ -29,7 +30,9 @@
         baseTimeoutDifficultyMultiplier: number,
         ringDeltaTimeout: number, 
         gridFactory: IGridFactory
-    ): IStateFactory {
+        ): IStateFactory {
+
+        
 
         return function (paramType: number, param: ILevelStateFactoryParam) {
             var rng = rngFactory(param.seed);
@@ -115,7 +118,7 @@
                         
                         //var to = tos[iy - maxCount + 1] + (tos[iy - 1] - tos[iy - maxCount + 1] - dt/2) * rng();
                         var to = initialTimeout + (height - iy - 1 + (maxCount - 0.5) * rng()) * ringDeltaTimeout;
-                        var arc = ringWidth / r;
+                        var arc = wallWidth / r;
                         var a = (ix * pi2) / grid._width - arc / 2 + aoff;
                         //var h = (ringGapPx + ringWidth) * maxCount - ringWidth;
                         var h = rs[iy - maxCount + 1] - r - ringWidth;
@@ -177,7 +180,7 @@
                             //cr = r  - (leftFlagAbove - 1) * (ringGapPx + ringWidth);
                             cr = rs[y + leftFlagAbove - 1];
                         }
-                        var ca = ringWidth / cr;
+                        var ca = wallWidth / cr;
                         if (leftFlagAbove > 0 && leftFlagBelow > 0) {
                             a += ca/2;
                             arc -= ca/2;
@@ -192,7 +195,7 @@
                             //cr = r - (rightFlagAbove - 1) * (ringGapPx + ringWidth);
                             cr = rs[y + rightFlagAbove - 1];
                         }
-                        var ca = ringWidth / cr;
+                        var ca = wallWidth / cr;
                         if (rightFlagAbove > 0 && rightFlagBelow > 0) {
                             arc -= ca/2;
                         } else {
@@ -216,6 +219,21 @@
                         } else {
                             maxHeight = rs[y - 1] - r - ringWidth;
                         }
+                        // ensure that enemies don't appear in the walls
+
+                        if (leftFlagAbove) {
+                            cr = rs[y + leftFlagAbove - 1];
+                            ca = wallWidth / cr;
+                            a += ca;
+                            arc -= ca;
+                        }
+                        if (rightFlagAbove) {
+                            cr = rs[y + rightFlagAbove - 1];
+                            ca = wallWidth / cr;
+                            arc -= ca;
+                        }
+                  
+
                         var baddies = entitySpawner(a, r, maxHeight, arc, Math.sqrt((param.difficulty * ring * 2) / height));
                         for (var j in baddies) {
                             var baddy = <AbstractPolarEntity>baddies[j];

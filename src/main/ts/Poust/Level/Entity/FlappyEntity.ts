@@ -31,7 +31,9 @@
         } else if (onEdge == POLAR_EDGE_RIGHT) {
             this._goingLeft = true;
         } else if (onEdge == POLAR_EDGE_BOTTOM) {
-            this._flapAnyway = true;
+            this._minRadius++;
+        } else {
+            this._minRadius--;
         }
     }
 

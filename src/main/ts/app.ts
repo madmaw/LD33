@@ -97,10 +97,10 @@ _w.onload = () => {
 
     var levelStateFactories: { [_: string]: IStateFactory } = {};
     //levelStateFactories[level1] = _concentricLevelStateFactory(level2, 0, 4, 20, 70, 300, 5);
-    levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 28, 1, 2, 1, 25, 75, 10, 1, 20000, 2000, 8000, _concentriGridFactory);
-    levelStateFactories[level2] = _gridLevelStateFactory(level3, 0, 350, 14, 1, 3, 1, 20, 85, 5, 1, 20000, 7000, 7000, looseEndsTrimmingGridFactoryProxy(mergingGridFactoryProxy([_mazeGridFactory], 3, 0)));
-    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 500, 20, 3, 3.5, 1, 30, 90, 2, 0.5, 60000, 0, 8000, mergingGridFactoryProxy([_circuitGridFactory], 4, 0));
-    levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 400, 14, 2, 4, 1, 20, 75, 3, 1, 40000, 5000, 6000, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 3, 0.2));
+    levelStateFactories[level1] = _gridLevelStateFactory(level2, 0, 250, 28, 1, 2, 1, 30, 0, 70, 10, 1, 20000, 2000, 8000, _concentriGridFactory);
+    levelStateFactories[level2] = _gridLevelStateFactory(level3, 0, 350, 14, 1, 3, 1, 20, 20, 85, 5, 1, 20000, 7000, 7000, looseEndsTrimmingGridFactoryProxy(mergingGridFactoryProxy([_mazeGridFactory], 3, 0)));
+    levelStateFactories[level3] = _gridLevelStateFactory(level4, 0, 600, 18, 3, 4, 1, 25, 60, 90, 2, 0.5, 60000, 0, 8000, mergingGridFactoryProxy([_circuitGridFactory], 4.1, 0));
+    levelStateFactories[level4] = _gridLevelStateFactory(level1, 1, 400, 14, 2, 4, 1, 20, 40, 75, 3, 1, 40000, 5000, 6000, mergingGridFactoryProxy([_concentriGridFactory, _mazeGridFactory, _circuitGridFactory], 3.2, 0.2));
 
     var menuState = new MenuState(menuStateElement, "l", levelStateFactories);
     

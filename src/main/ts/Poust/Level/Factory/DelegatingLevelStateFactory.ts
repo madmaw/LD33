@@ -9,8 +9,7 @@
         wallJumpAvailableSound: ISound
     ): IStateFactory {
     var createPlayer = function () {
-        var gun = new AbstractGun(100, 0.03, shootSound);
-        var player = new PlayerEntity(GROUP_ID_PLAYER, 0.4, gun, deathSound, jumpSound, winSound, wallJumpAvailableSound);
+        var player = new PlayerEntity(GROUP_ID_PLAYER, 0.4, deathSound, jumpSound, winSound, wallJumpAvailableSound, 100, 0.03, shootSound);
         player.setBounds(600, 0, 32, 24);
         return player;
     };

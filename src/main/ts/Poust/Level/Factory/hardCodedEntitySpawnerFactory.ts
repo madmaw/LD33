@@ -39,7 +39,7 @@
                         {
                             var obstacle: AbstractPolarEntity;
                             if (difficulty * rng() < 2) {
-                                obstacle = createChomperEntity(deathSound, rng() > 0.5);
+                                obstacle = createChomperEntity(deathSound);
                             } else {
                                 obstacle = obstacleEntity();
                                 entityWidth = 22 + difficulty * rng();
