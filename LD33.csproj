@@ -63,8 +63,6 @@
     <TypeScriptCompile Include="src\main\ts\Poust\Level\IEntityHolder.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\AbstractLivingPolarEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\BouncyEntity.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\Gun\AbstractGun.ts" />
-    <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\IGun.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\ILevelExitEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\obstacleEntity.ts" />
     <TypeScriptCompile Include="src\main\ts\Poust\Level\Entity\PlayerEntity.ts" />
