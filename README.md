@@ -46,7 +46,7 @@ Touch anywhere else: shoot
 Browser Back: go to the menu
 Browser Refresh: reload the current level
 
-## Postmortem
+## Post Mortem
 
 ### Tools
 
@@ -68,6 +68,7 @@ I occasionally teach kids to code and the most common game we make is Flappy Bir
 * It would be nice to be able to learn the level and have warning of what's coming up
 * Maybe you could do something where you could control your jumping using shooting
 * I wonder if you could represent x and y in terms of angle and radius (which I later learned was called Polar Coordinates)
+
 Anyway, the week before LD I realised that I could do all this in the one game! And, because I'd need to write a custom physics engine for the polar coordinates, I may as well enter it in JS13K too! 
 
 ### LD33
@@ -160,6 +161,7 @@ I wanted to have a lava monster that started to eat the level after a certain pe
 * Particles!
 * Background 
 * Test on firefox
+* Turn off sounds if WebAudio not supported
 * Touch jump lock
 * Touch jump still frustrating, maybe scale area a bit higher
 * Walls wider than floors
@@ -185,6 +187,7 @@ The compression tricks I used included
 * removed the space in "GAME OVER" so it read "GAMEOVER" (put it back in because I had 2 bytes spare in the end)
 * changed things like if(x!=null) to if(x) 
 * created a global variable for window, which seemed to reduce space (Closure is worried you might reassign window to something else and won't do this automatically)
-* wrote my own WebAudio sounds and passed them parameters to make a lot of different noises
+* wrote my own WebAudio sythesizers and passed them parameters to make a lot of different noises
+* removed the check for webkitWebAudio, which didn't work anyway due to different method signatures
 
-I tend to be a bit of a "fire-and-forget" programmer, rarely revisiting my own work, so it was a really good experience to have to go back over my code and try and squeeze every little bit of complexity out of it. I learned a lot.
+I tend to be a bit of a "fire-and-forget" programmer, rarely revisiting my own work, so it was a really good experience to have to go back over my code and try and squeeze every little bit of complexity out of it. I learned a lot. It was also nice to have a longer timeframe than 48 hours to polish my game after Ludum Dare, while not having so long (or so few constraints) that I could spend heaps of time stroking my chin, thinking the best way to do something.
