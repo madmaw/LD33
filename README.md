@@ -85,7 +85,7 @@ http://ludumdare.com/compo/ludum-dare-33/?action=preview&uid=5068
 
 An artist is never understood in his own time. 
 
-### The decent into madness
+### The descent into madness
 
 As is the norm after finishing a Ludum Dare, I wanted to keep working on the game. My clients and job had other ideas, but I managed to make some time anyway at the expense of sleep, physical and mental health, a few slipped deadlines, etc... 
 
