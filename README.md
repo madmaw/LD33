@@ -189,5 +189,7 @@ The compression tricks I used included
 * created a global variable for window, which seemed to reduce space (Closure is worried you might reassign window to something else and won't do this automatically)
 * wrote my own WebAudio sythesizers and passed them parameters to make a lot of different noises
 * removed the check for webkitWebAudio, which didn't work anyway due to different method signatures
+* didn't fix a bug where you can occasionally fall through the floor (actually never even tracked it down)
+* didn't fix the point-blank instakill bug (which is a neat feature anyway, although it should generate blood particles, which it doesn't)
 
-I tend to be a bit of a "fire-and-forget" programmer, rarely revisiting my own work, so it was a really good experience to have to go back over my code and try and squeeze every little bit of complexity out of it. I learned a lot. It was also nice to have a longer timeframe than 48 hours to polish my game after Ludum Dare, while not having so long (or so few constraints) that I could spend heaps of time stroking my chin, thinking the best way to do something.
+I tend to be a bit of a "fire-and-forget" programmer, rarely revisiting my own work, so it was a really good experience to have to go back over my code and try and squeeze every little bit of complexity out of it. I learned a lot. It was also nice to have a longer timeframe than 48 hours to polish my game after Ludum Dare, while not having so long (or so few constraints) that I could spend heaps of time stroking my chin, thinking of the best way to do something.
