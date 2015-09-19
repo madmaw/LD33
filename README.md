@@ -11,7 +11,7 @@ http://madmaw.github.io/LD33/js13k/index.html
 ### Basic
 
 * Your character will always run forward
-* Shooting has recoil, which can be used to accelerate and declerate, but not turn around
+* Shooting has recoil, which can be used to accelerate and declerate (and jump higher), but not turn around
 * You can wall jump, which will reverse direction
 * Running into a wall while on the ground will also reverse direction
 
@@ -40,6 +40,7 @@ Mouse: Shoots
 When on ground: touch below jumps
 When on a wall: touch the wall to wall jump
 Touch anywhere else: shoot
+Multitouch is supported
 
 ### Both
 
