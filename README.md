@@ -51,7 +51,7 @@ Browser Refresh: reload the current level
 
 ### Tools
 
-I used TypeScript to write the actual code. Probably a sacreligious thing to say, but I don't like JavaScript (or any dynamic language) that much and TypeScript takes the edge off it. While it does introduce some overheads of it's own, it pays you back many times over as soon as you have to refactor something. 
+I used TypeScript to write the actual code. Probably a sacreligious thing to say, but I don't like JavaScript (or any dynamic language) that much and TypeScript takes the edge off it. While it does introduce some overheads of its own, it pays you back many times over as soon as you have to refactor something. 
 
 A weird thing I noticed (unfortunately only after LD was finished) is that something in my stack was somehow compiling the TypeScript code every time I refreshed the browser. I never actually investigated how this was happening, but I assume this is some fancy new feature of Chrome. Anyway, it eliminates the biggest problem with using TS, which is manually compiling between each run. 
 
@@ -176,7 +176,7 @@ The compression tricks I used included
 * reducing the use of reserved words (which the Closure Compiler can't remove)
 * replacing Math.PI with a global variable named pi (and pi2 for Math.PI * 2)
 * merging all HTML/CSS/JS into one file using grunt-inline
-* removing the end tags for <HTML>, <BODY>, <HEAD>, <CANVAS> and a couple of carefully chosen <DIV> elements
+* removing the end tags for HTML, BODY, HEAD, CANVAS and a couple of carefully chosen DIV elements
 * reducing code. An interesting thing that happened on several occasions is that my smaller code ended up being better than the original algorithm
 * removing/shortening string constants
 * the latest version of grunt-zip doesn't do compression, so I had to roll back to an earlier version!
