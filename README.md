@@ -77,7 +77,7 @@ While I have written basic physics engines before, I've always done the collisio
 
 In spite of introducing some subtle bugs that would later cause me headaches, it basically worked quite well and within 12 hours I had something. I still didn't know what I was making though, so the remainder of the weekend was spent trying to put in gameplay mechanics and seeing what worked. I originally wanted to make a Joust style game, hence the name Poust: Polar Joust. It only really started to be fun once I added in enemies and I was running out of time, so I integrated the shooting idea I mentioned before. It was really hard and the level design was brutal, it also looked very rough and didn't follow the theme at all, but I submitted it anyway
 
-Original version: http://madmaw.github.io/LD33/js13k/index.html
+Original version: http://madmaw.github.io/LD33/dist/index.html
 
 The comments and ratings on Ludum Dare were fairly unforgiving. 
 
