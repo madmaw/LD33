@@ -32,20 +32,20 @@ http://madmaw.github.io/LD33/js13k/index.html
 
 ### Desktop
 
-Any key: jumps
-Mouse: Shoots
+* Any key: jumps
+* Mouse: Shoots
 
 ### Touch
 
-When on ground: touch below jumps
-When on a wall: touch the wall to wall jump
-Touch anywhere else: shoot
-Multitouch is supported
+* When on ground: touch below jumps
+* When on a wall: touch the wall to wall jump
+* Touch anywhere else: shoot
+* Multitouch is supported
 
 ### Both
 
-Browser Back: go to the menu
-Browser Refresh: reload the current level
+* Browser Back: go to the menu
+* Browser Refresh: reload the current level
 
 ## Post Mortem
 
