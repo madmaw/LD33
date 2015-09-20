@@ -20,8 +20,11 @@ http://madmaw.github.io/LD33/js13k/index.html
 * When you first click, you will shoot one bullet, that has no recoil, when you release the click, you will shoot 4 bullets that do have recoil
 * The distance the 4 bullets travel is a function of how long you held the mouse button for
 * The faster you run, the higher you can jump
+* Wall jumping always has the same outgoing vertical and horizontal speed, regardless of your incoming speed
+* Sliding down a wall should be slightly slower than falling
 * Keeping the jump button held after jumping will make you jump higher 
 * Pressing the jump button a second time while in air will make you jump when you hit an obstacle
+* Similarly with touch controls, you can prepare for a context-specific jump by touching and holding before you hit the obstacle (you will shoot, but remember the first shot has no recoil)
 * Larger enemies take multiple hits to die and have a brief period of invulnerability after being shot
 * (Actually a bug) if you shoot an enemy from above at point-blank, it will die instantly, regardless of size
 * Levels are randomly generated, however once generated they will not change between plays
@@ -92,10 +95,10 @@ As is the norm after finishing a Ludum Dare, I wanted to keep working on the gam
 
 Rather than go through it in detail, here is my TODO list of enhancements that I made before I started to run out of space
 
-* Touch controls should be context-aware, if youíre on the ground clicking on the bottom half of the screen should jump, similar with walls, anywhere on the left or right should wall jump
+* Touch controls should be context-aware, if you‚Äôre on the ground clicking on the bottom half of the screen should jump, similar with walls, anywhere on the left or right should wall jump
 * Any key jumps
 * Physics bug where things can fall through the ground needs to be fixed
-* Move update method to after collision handling and movement so created entities donít get left behind creator (bullets)
+* Move update method to after collision handling and movement so created entities don‚Äôt get left behind creator (bullets)
 * Touch coordinates do not respect absolute positions, but instead rotate as the world rotates
 * Seems to be a second, less horrible physics bug
 * Some performance fixes 
@@ -110,10 +113,10 @@ Rather than go through it in detail, here is my TODO list of enhancements that I
 * Can reverse direction by shooting (no longer compounds)
 * Switched to using closure compiler for compression 
 * The browser back button and reload button respect the current level and can be able to be used to go back to the start or restart (back) the current level (refresh)
-* Concentric circles level should ìtwistî for every difficulty level
+* Concentric circles level should ‚Äútwist‚Äù for every difficulty level
 * Restart on current level when dying
 * Analytics should track individual levels
-* Touch controls should shoot on release and decide if itís a jump between touch and release
+* Touch controls should shoot on release and decide if it‚Äôs a jump between touch and release
 * Add enemy that works like a spike, but can be shot (maneater plant)
 * Maybe incorporate more powerful shots when the touch is held longer
 * Level select screen
@@ -153,7 +156,7 @@ I wanted to have a lava monster that started to eat the level after a certain pe
 * (allow compressor to) replace 999999+1 with scientific notation
 * Have an entity type instead of using instanceof
 * Centre aligned by default
-* delete circular level factory (if I havenít already?)
+* delete circular level factory (if I haven‚Äôt already?)
 * Turn on shake and throbbing
 * Merge AbstractEntity and AbstractPolarEntity
 * Boom sound overlayed on falling sound
