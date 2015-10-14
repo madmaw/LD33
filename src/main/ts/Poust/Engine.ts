@@ -23,24 +23,22 @@
                             history.pushState(null, null, newURL);
                         }
                     }
-                //} else {
-                    //pageId = "";
+                } else {
+                    pageId = "";
                 }
-                this.setStateFromParam(paramType, param);
-                /* for analytics
-                if (w['ga']) {
-                    ga('send', 'pageview', {
-                        page: pageId
-                    });
-                }
-                */
+                this.setStateFromParam(paramType, param, pageId);
 
             }
         };
     }
 
-    public setStateFromParam(paramType: number, param : any) {
+    public setStateFromParam(paramType: number, param : any, pageId : string) {
         var state = this._stateFactory(paramType, param);
+        if (_w['ga']) {
+            ga('send', 'pageview', {
+                page: pageId
+            });
+        }
         this.setState(state);
     }
 

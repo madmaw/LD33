@@ -117,12 +117,19 @@ _w.onload = () => {
 
     var engine = new Engine(_delegatingLevelStateFactory);
 
-    var locationToLevel = function () {
+    var locationToPageId = function () {
         var hash = location.hash;
-        var param: any;
         if (hash) {
-            // attempt to load a specific level
             hash = hash.substr(1);
+        }
+        return hash;
+    }
+
+    var locationToLevel = function () {
+        var param: any;
+        var pageId = locationToPageId();
+        if (pageId) {
+            // attempt to load a specific level
             var levelStateFactoryParam = levelNameToLevelStatFactoryParam(hash);
             if (levelStateFactoryParam) {
                 var data = loadLevelStateData(levelStateFactoryParam.difficulty, levelStateFactoryParam.levelName);
@@ -142,8 +149,9 @@ _w.onload = () => {
 
     var param = locationToLevel();
     var paramType: number;
+    var pageId = locationToPageId();
     if (!param) {
-        paramType = StateFactoryParamType.LevelRestart;
+        paramType = StateFactoryParamType.LevelRestart;        
     } else {
         var hash = location.hash;
         var oldURL = location.href;
@@ -153,7 +161,7 @@ _w.onload = () => {
         history.pushState(null, null, oldURL);
     }
 
-    engine.setStateFromParam(paramType, param);
+    engine.setStateFromParam(paramType, param, pageId);
 
     _w.onpopstate = (event: PopStateEvent) => {
         var state = event.state;
@@ -162,11 +170,11 @@ _w.onload = () => {
         }
         if (state) {
             // load it!
-            engine.setStateFromParam(StateFactoryParamType.LevelLoad, state);
+            engine.setStateFromParam(StateFactoryParamType.LevelLoad, state, locationToPageId());
         } else {
             // restart!
             // TODO menu
-            engine.setStateFromParam(StateFactoryParamType.LevelRestart, null);
+            engine.setStateFromParam(StateFactoryParamType.LevelRestart, null, "");
         }
     }
 

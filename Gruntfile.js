@@ -30,7 +30,7 @@
             },
             dist: {
                 files: {
-                    'dist/out.min.js': ['build/out.js'],
+                    //'dist/out.min.js': ['build/out.js'],
                     'dist/lib/analytics.min.js': ['lib/analytics.js']
                 }
             }
@@ -159,7 +159,7 @@
 
     // Default task(s).
     grunt.registerTask('reset', ['clean:all']);
-    grunt.registerTask('prod', ['ts', 'closure-compiler', 'htmlmin', 'copy', 'replace:dist',  'replace:js13k', 'inline']);
+    grunt.registerTask('prod', ['ts', 'closure-compiler', 'htmlmin', 'copy', 'replace:dist',  'replace:js13k', 'uglify', 'inline']);
     grunt.registerTask('dist', ['prod', 'clean:js', 'zip:dist', 'clean:dist']);
     grunt.registerTask('js13k', ['prod', 'replace:js13k', 'clean:js', 'zip:js13k', 'clean:dist']);
     grunt.registerTask('default', ['ts']);
